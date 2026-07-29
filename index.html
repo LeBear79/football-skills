@@ -4,8 +4,8 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <meta name="theme-color" content="#07130f" />
-  <meta name="description" content="Skills Academy v1.1 – Train. Track. Improve." />
-  <title>Skills Academy v1.1</title>
+  <meta name="description" content="Skills Academy v1.2 – Train. Track. Improve." />
+  <title>Skills Academy v1.2</title>
   <style>
     :root {
       --bg: #06100d;
@@ -314,6 +314,23 @@
     .card-player-image img { width:100%; height:100%; object-fit:contain; object-position:center bottom; display:block; }
     .card-player-image .fallback-player { font-size:8rem; filter:sepia(1) saturate(.4); line-height:1; }
 
+    .crop-modal { max-width: 470px; }
+    .crop-help { margin: -4px 0 12px; color: var(--muted); font-size: .78rem; line-height: 1.45; }
+    .crop-stage {
+      width: min(100%, 340px); aspect-ratio: 4 / 5; margin: 0 auto; position: relative; overflow: hidden;
+      border-radius: 18px; border: 1px solid var(--line); background: #020806; touch-action: none; cursor: grab; user-select: none;
+    }
+    .crop-stage.dragging { cursor: grabbing; }
+    .crop-stage canvas { width: 100%; height: 100%; display: block; pointer-events: none; }
+    .crop-guide { position:absolute; inset:0; pointer-events:none; box-shadow: inset 0 0 0 2px rgba(255,255,255,.75), inset 0 0 0 999px rgba(0,0,0,.08); }
+    .crop-guide:before, .crop-guide:after { content:""; position:absolute; background:rgba(255,255,255,.38); }
+    .crop-guide:before { left:33.333%; top:0; bottom:0; width:1px; box-shadow: calc(33.333% * 1) 0 0 rgba(255,255,255,.38); }
+    .crop-guide:after { top:33.333%; left:0; right:0; height:1px; box-shadow: 0 calc(33.333% * 1) 0 rgba(255,255,255,.38); }
+    .crop-controls { display:grid; gap:10px; margin-top:14px; }
+    .crop-zoom-row { display:grid; grid-template-columns:auto 1fr auto; align-items:center; gap:10px; }
+    .crop-zoom-row input[type=range] { width:100%; accent-color:var(--green); }
+    .crop-actions { display:grid; grid-template-columns:1fr 1fr; gap:9px; }
+
     .profile-list { display:grid; gap:9px; margin-top:12px; }
     .profile-row { display:grid; grid-template-columns: auto 1fr auto; gap:10px; align-items:center; padding:11px; border:1px solid var(--line); border-radius:14px; background:rgba(255,255,255,.035); }
     .profile-row .avatar { width:38px; height:38px; border-radius:50%; display:grid; place-items:center; background:var(--green-soft); color:var(--green); font-weight:900; }
@@ -353,7 +370,7 @@
   </style>
 </head>
 <body>
-  <!-- Skills Academy v1.1 -->
+  <!-- Skills Academy v1.2 -->
   <div class="app">
     <header class="topbar">
       <div class="brand">
@@ -571,6 +588,21 @@
     </div>
   </div>
 
+  <div class="modal-backdrop" id="cropModal">
+    <div class="modal crop-modal">
+      <div class="modal-head"><h2>Tilpass profilbildet</h2><button type="button" class="btn ghost small" id="closeCropModal">Avbryt</button></div>
+      <p class="crop-help">Dra bildet for å plassere spilleren. Bruk glidebryteren, musehjulet eller to fingre for å zoome.</p>
+      <div class="crop-stage" id="cropStage">
+        <canvas id="cropCanvas" width="720" height="900"></canvas>
+        <div class="crop-guide"></div>
+      </div>
+      <div class="crop-controls">
+        <div class="crop-zoom-row"><span>−</span><input id="cropZoom" type="range" min="1" max="3" step="0.01" value="1" aria-label="Zoom"><span>+</span></div>
+        <div class="crop-actions"><button type="button" class="btn ghost" id="resetCrop">Tilbakestill</button><button type="button" class="btn primary" id="saveCrop">Bruk bildet</button></div>
+      </div>
+    </div>
+  </div>
+
   <div class="toast" id="toast"></div>
 
   <script>
@@ -586,6 +618,11 @@
     let challenge = null;
     let newProfileImageData = null;
     let editProfileImageId = null;
+    let cropTarget = null;
+    let cropImage = null;
+    let cropState = { zoom: 1, offsetX: 0, offsetY: 0 };
+    let cropDrag = null;
+    let cropPinch = null;
 
     const $ = (id) => document.getElementById(id);
     const all = (selector, root = document) => Array.from(root.querySelectorAll(selector));
@@ -687,7 +724,7 @@
     $("closeProfileModal").addEventListener("click", closeProfileModal);
     $("profileModal").addEventListener("click", e => { if (e.target === $("profileModal")) closeProfileModal(); });
 
-    function compressProfileImage(file, maxSize = 720, quality = 0.82) {
+    function readImageFile(file) {
       return new Promise((resolve, reject) => {
         if (!file || !file.type.startsWith("image/")) { reject(new Error("Ugyldig bildefil")); return; }
         const reader = new FileReader();
@@ -695,47 +732,173 @@
         reader.onload = () => {
           const img = new Image();
           img.onerror = () => reject(new Error("Kunne ikke åpne bildet"));
-          img.onload = () => {
-            const scale = Math.min(1, maxSize / Math.max(img.width, img.height));
-            const width = Math.max(1, Math.round(img.width * scale));
-            const height = Math.max(1, Math.round(img.height * scale));
-            const canvas = document.createElement("canvas");
-            canvas.width = width; canvas.height = height;
-            const ctx = canvas.getContext("2d");
-            ctx.drawImage(img, 0, 0, width, height);
-            resolve(canvas.toDataURL("image/jpeg", quality));
-          };
+          img.onload = () => resolve(img);
           img.src = reader.result;
         };
         reader.readAsDataURL(file);
       });
     }
 
-    $("newProfileImage").addEventListener("change", async e => {
-      const file = e.target.files?.[0];
+    function openCropModal(img, target) {
+      cropImage = img;
+      cropTarget = target;
+      cropState = { zoom: 1, offsetX: 0, offsetY: 0 };
+      $("cropZoom").value = "1";
+      $("cropModal").classList.add("open");
+      requestAnimationFrame(drawCropPreview);
+    }
+
+    function closeCropModal() {
+      $("cropModal").classList.remove("open");
+      cropImage = null;
+      cropTarget = null;
+      cropDrag = null;
+      cropPinch = null;
+    }
+
+    function cropGeometry(canvas) {
+      const baseScale = Math.max(canvas.width / cropImage.naturalWidth, canvas.height / cropImage.naturalHeight);
+      const scale = baseScale * cropState.zoom;
+      const width = cropImage.naturalWidth * scale;
+      const height = cropImage.naturalHeight * scale;
+      const maxX = Math.max(0, (width - canvas.width) / 2);
+      const maxY = Math.max(0, (height - canvas.height) / 2);
+      cropState.offsetX = Math.max(-maxX, Math.min(maxX, cropState.offsetX));
+      cropState.offsetY = Math.max(-maxY, Math.min(maxY, cropState.offsetY));
+      return { width, height, x: (canvas.width - width) / 2 + cropState.offsetX, y: (canvas.height - height) / 2 + cropState.offsetY };
+    }
+
+    function drawCropPreview() {
+      if (!cropImage) return;
+      const canvas = $("cropCanvas");
+      const ctx = canvas.getContext("2d");
+      const g = cropGeometry(canvas);
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      ctx.fillStyle = "#020806";
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      ctx.imageSmoothingEnabled = true;
+      ctx.imageSmoothingQuality = "high";
+      ctx.drawImage(cropImage, g.x, g.y, g.width, g.height);
+    }
+
+    function createCroppedImage() {
+      const source = $("cropCanvas");
+      const output = document.createElement("canvas");
+      output.width = 720;
+      output.height = 900;
+      output.getContext("2d").drawImage(source, 0, 0);
+      return output.toDataURL("image/jpeg", 0.84);
+    }
+
+    async function chooseImage(file, target) {
       if (!file) return;
       try {
-        newProfileImageData = await compressProfileImage(file);
-        $("newProfileImagePreview").innerHTML = `<img src="${newProfileImageData}" alt="Forhåndsvisning">`;
+        const img = await readImageFile(file);
+        openCropModal(img, target);
       } catch (error) {
-        newProfileImageData = null;
-        $("newProfileImagePreview").innerHTML = "<span>Kunne ikke lese bildet</span>";
         toast(error.message || "Kunne ikke lese bildet");
       }
+    }
+
+    $("newProfileImage").addEventListener("change", e => {
+      const file = e.target.files?.[0];
+      e.target.value = "";
+      chooseImage(file, { type: "new" });
     });
 
-    $("profileImageEditor").addEventListener("change", async e => {
+    $("profileImageEditor").addEventListener("change", e => {
       const file = e.target.files?.[0];
-      const profile = state.profiles.find(p => p.id === editProfileImageId);
-      if (!file || !profile) return;
-      try {
-        profile.image = await compressProfileImage(file);
-        saveState(); renderProfileUI(); renderChallengePlayerPicker(); renderCard();
-        toast("Bildet er oppdatert");
-      } catch (error) {
-        toast(error.message || "Kunne ikke lagre bildet");
+      e.target.value = "";
+      if (!file || !editProfileImageId) return;
+      chooseImage(file, { type: "edit", profileId: editProfileImageId });
+    });
+
+    $("closeCropModal").addEventListener("click", closeCropModal);
+    $("cropModal").addEventListener("click", e => { if (e.target === $("cropModal")) closeCropModal(); });
+    $("resetCrop").addEventListener("click", () => {
+      cropState = { zoom: 1, offsetX: 0, offsetY: 0 };
+      $("cropZoom").value = "1";
+      drawCropPreview();
+    });
+    $("cropZoom").addEventListener("input", e => {
+      cropState.zoom = Number(e.target.value);
+      drawCropPreview();
+    });
+    $("saveCrop").addEventListener("click", () => {
+      if (!cropImage || !cropTarget) return;
+      const imageData = createCroppedImage();
+      if (cropTarget.type === "new") {
+        newProfileImageData = imageData;
+        $("newProfileImagePreview").innerHTML = `<img src="${imageData}" alt="Forhåndsvisning">`;
+        toast("Bildet er tilpasset");
+      } else {
+        const profile = state.profiles.find(p => p.id === cropTarget.profileId);
+        if (profile) {
+          profile.image = imageData;
+          saveState(); renderProfileUI(); renderChallengePlayerPicker(); renderCard();
+          toast("Bildet er oppdatert");
+        }
+      }
+      closeCropModal();
+    });
+
+    const cropStage = $("cropStage");
+    cropStage.addEventListener("pointerdown", e => {
+      if (!cropImage) return;
+      cropStage.setPointerCapture(e.pointerId);
+      cropDrag = { id: e.pointerId, x: e.clientX, y: e.clientY, startX: cropState.offsetX, startY: cropState.offsetY };
+      cropStage.classList.add("dragging");
+    });
+    cropStage.addEventListener("pointermove", e => {
+      if (!cropDrag || cropDrag.id !== e.pointerId || !cropImage) return;
+      const rect = cropStage.getBoundingClientRect();
+      const scaleX = $("cropCanvas").width / rect.width;
+      const scaleY = $("cropCanvas").height / rect.height;
+      cropState.offsetX = cropDrag.startX + (e.clientX - cropDrag.x) * scaleX;
+      cropState.offsetY = cropDrag.startY + (e.clientY - cropDrag.y) * scaleY;
+      drawCropPreview();
+    });
+    function stopCropDrag(e) {
+      if (cropDrag?.id === e.pointerId) cropDrag = null;
+      cropStage.classList.remove("dragging");
+    }
+    cropStage.addEventListener("pointerup", stopCropDrag);
+    cropStage.addEventListener("pointercancel", stopCropDrag);
+    cropStage.addEventListener("wheel", e => {
+      if (!cropImage) return;
+      e.preventDefault();
+      cropState.zoom = Math.max(1, Math.min(3, cropState.zoom + (e.deltaY < 0 ? .08 : -.08)));
+      $("cropZoom").value = String(cropState.zoom);
+      drawCropPreview();
+    }, { passive: false });
+
+    // Tofinger-zoom på mobil. Pointer Events brukes slik at det også fungerer på iPad.
+    const activeCropPointers = new Map();
+    cropStage.addEventListener("pointerdown", e => {
+      activeCropPointers.set(e.pointerId, { x:e.clientX, y:e.clientY });
+      if (activeCropPointers.size === 2) {
+        const pts = [...activeCropPointers.values()];
+        cropPinch = { distance: Math.hypot(pts[0].x-pts[1].x, pts[0].y-pts[1].y), zoom: cropState.zoom };
+        cropDrag = null;
       }
     });
+    cropStage.addEventListener("pointermove", e => {
+      if (!activeCropPointers.has(e.pointerId)) return;
+      activeCropPointers.set(e.pointerId, { x:e.clientX, y:e.clientY });
+      if (activeCropPointers.size === 2 && cropPinch) {
+        const pts = [...activeCropPointers.values()];
+        const distance = Math.hypot(pts[0].x-pts[1].x, pts[0].y-pts[1].y);
+        cropState.zoom = Math.max(1, Math.min(3, cropPinch.zoom * distance / Math.max(1, cropPinch.distance)));
+        $("cropZoom").value = String(cropState.zoom);
+        drawCropPreview();
+      }
+    });
+    function removeCropPointer(e) {
+      activeCropPointers.delete(e.pointerId);
+      if (activeCropPointers.size < 2) cropPinch = null;
+    }
+    cropStage.addEventListener("pointerup", removeCropPointer);
+    cropStage.addEventListener("pointercancel", removeCropPointer);
 
     $("addProfile").addEventListener("click", () => {
       const name = $("newProfileName").value.trim();
