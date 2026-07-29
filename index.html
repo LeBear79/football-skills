@@ -4,8 +4,8 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <meta name="theme-color" content="#07130f" />
-  <meta name="description" content="Skills Academy v2.0 – Train. Track. Improve." />
-  <title>Skills Academy v2.0</title>
+  <meta name="description" content="Skills Academy v2.1 – Train. Track. Improve." />
+  <title>Skills Academy v2.1</title>
   <style>
     :root {
       --bg: #06100d;
@@ -289,6 +289,23 @@
     .pill { padding: 7px 9px; border-radius: 99px; background: var(--green-soft); color: var(--green); font-size: .7rem; font-weight: 900; white-space: nowrap; }
     .empty { padding: 30px 12px; text-align: center; color: var(--muted); }
 
+    /* Nivåstyrt app-tema */
+    body { --level-accent: var(--green); --level-accent-soft: rgba(57,228,135,.14); --level-glow: rgba(57,228,135,.16); }
+    body.theme-rookie { --level-accent:#d59a6f; --level-accent-soft:rgba(213,154,111,.14); --level-glow:rgba(213,154,111,.18); }
+    body.theme-prospect { --level-accent:#c9d0d5; --level-accent-soft:rgba(201,208,213,.14); --level-glow:rgba(201,208,213,.16); }
+    body.theme-player { --level-accent:#f2c85b; --level-accent-soft:rgba(242,200,91,.14); --level-glow:rgba(242,200,91,.18); }
+    body.theme-elite { --level-accent:#39e487; --level-accent-soft:rgba(57,228,135,.14); --level-glow:rgba(57,228,135,.2); }
+    body.theme-master { --level-accent:#c77dff; --level-accent-soft:rgba(199,125,255,.14); --level-glow:rgba(199,125,255,.22); }
+    body.theme-legend { --level-accent:#ffd264; --level-accent-soft:rgba(255,210,100,.14); --level-glow:rgba(255,210,100,.24); }
+    body[class*="theme-"] .profile-chip { border-color:color-mix(in srgb,var(--level-accent) 42%,var(--line)); box-shadow:0 0 24px var(--level-glow); }
+    body[class*="theme-"] .profile-chip .avatar,
+    body[class*="theme-"] .profile-row .avatar,
+    body[class*="theme-"] .player-pick .mini-avatar { border:2px solid var(--level-accent); box-shadow:0 0 0 3px rgba(0,0,0,.28),0 0 16px var(--level-glow); }
+    body[class*="theme-"] .nav-btn.active { color:var(--level-accent); background:var(--level-accent-soft); }
+    body[class*="theme-"] .xp-bar span { background:linear-gradient(90deg,color-mix(in srgb,var(--level-accent) 58%,#06150f),var(--level-accent)); box-shadow:0 0 16px var(--level-glow); }
+    body[class*="theme-"] .level-panel-head strong { color:var(--level-accent); }
+    body[class*="theme-"] .level-node.active { border-color:var(--level-accent); background:var(--level-accent-soft); color:var(--level-accent); }
+
     .player-card {
       --card-a:#c99a36; --card-b:#fff0a6; --card-c:#815515; --card-ink:#171006; --card-accent:#5e3b09;
       width:min(390px,100%); margin:0 auto; aspect-ratio:.72/1; border-radius:30px; padding:22px; color:var(--card-ink);
@@ -316,10 +333,16 @@
     .card-stats { display:grid; grid-template-columns:repeat(2,1fr); gap:9px 18px; margin-top:14px; position:relative; z-index:2; }
     .card-stat { display:flex; justify-content:space-between; gap:8px; font-weight:900; font-size:.78rem; }
     .card-stat b { font-size:1rem; }
-    .card-player-image { height:34%; display:grid; place-items:end center; position:relative; z-index:2; overflow:hidden; margin:3px 8px 0; }
-    .card-player-image:after { content:""; position:absolute; left:8%; right:8%; bottom:0; height:22%; background:radial-gradient(ellipse,rgba(0,0,0,.28),transparent 68%); filter:blur(5px); z-index:-1; }
-    .card-player-image img { width:100%; height:100%; object-fit:contain; object-position:center bottom; display:block; filter:drop-shadow(0 10px 10px rgba(0,0,0,.32)); }
-    .card-player-image .fallback-player { font-size:7.2rem; line-height:1; }
+    .card-player-image {
+      width:43%; aspect-ratio:1; height:auto; display:grid; place-items:center; position:relative; z-index:2;
+      overflow:hidden; margin:10px auto 12px; border-radius:50%; border:4px solid var(--card-accent);
+      background:linear-gradient(145deg,rgba(255,255,255,.22),rgba(0,0,0,.18));
+      box-shadow:0 0 0 5px color-mix(in srgb,var(--card-accent) 20%,transparent),0 16px 30px rgba(0,0,0,.32),inset 0 0 22px rgba(255,255,255,.1);
+    }
+    .card-player-image:before { content:""; position:absolute; inset:5px; border-radius:50%; border:1px solid color-mix(in srgb,var(--card-accent) 68%,white); z-index:3; pointer-events:none; }
+    .card-player-image:after { content:""; position:absolute; inset:0; border-radius:50%; background:linear-gradient(135deg,rgba(255,255,255,.2),transparent 38%,rgba(0,0,0,.12)); pointer-events:none; }
+    .card-player-image img { width:100%; height:100%; object-fit:cover; object-position:center; display:block; }
+    .card-player-image .fallback-player { font-size:5.8rem; line-height:1; }
     .level-panel { width:min(520px,100%); margin:16px auto 0; padding:17px; border-radius:20px; border:1px solid var(--line); background:linear-gradient(145deg,rgba(22,47,38,.96),rgba(8,22,17,.96)); box-shadow:var(--shadow); }
     .level-panel-head { display:flex; justify-content:space-between; align-items:flex-end; gap:12px; }
     .level-panel-head small { color:var(--muted); display:block; margin-bottom:3px; }
@@ -394,7 +417,7 @@
   </style>
 </head>
 <body>
-  <!-- Skills Academy v2.0 -->
+  <!-- Skills Academy v2.1 -->
   <div class="app">
     <header class="topbar">
       <div class="brand">
@@ -1398,6 +1421,8 @@
       const card=$("playerCard");
       LEVELS.forEach(l=>card.classList.remove(`level-${l.key}`));
       card.classList.add(`level-${d.level.key}`);
+      LEVELS.forEach(l=>document.body.classList.remove(`theme-${l.key}`));
+      document.body.classList.add(`theme-${d.level.key}`);
       $("cardRibbon").textContent=d.level.short;
       $("cardTitle").textContent=`${d.level.name} · ${precisionTitle(d.accuracy)}`;
       $("cardPrecision").textContent=`${Math.round(d.accuracy*100)} % presisjon`;
