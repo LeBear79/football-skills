@@ -387,10 +387,10 @@
     .bottom-nav {
       position: fixed; left: 50%; transform: translateX(-50%); bottom: 0; z-index: 30;
       width: min(1120px,100%); padding: 8px 10px calc(8px + var(--safe-bottom));
-      display: grid; grid-template-columns: repeat(5,1fr); gap: 5px;
+      display: grid; grid-template-columns: repeat(6,1fr); gap: 4px;
       background: rgba(5,14,11,.94); backdrop-filter: blur(20px); border-top: 1px solid var(--line);
     }
-    .nav-btn { border:0; background:transparent; color:var(--muted); border-radius:13px; padding:7px 3px; min-height:55px; cursor:pointer; font-size:.66rem; font-weight:780; }
+    .nav-btn { border:0; background:transparent; color:var(--muted); border-radius:13px; padding:7px 3px; min-height:55px; cursor:pointer; font-size:.61rem; font-weight:780; }
     .nav-btn .nav-icon { display:block; font-size:1.2rem; margin-bottom:3px; }
     .nav-btn.active { color:var(--green); background:var(--green-soft); }
 
@@ -414,10 +414,51 @@
       .modal-backdrop { align-items:center; }
       .modal { border-radius:24px; }
     }
+
+
+    /* Fotballmerket */
+    .badge-hero { background:linear-gradient(145deg,rgba(20,75,49,.8),rgba(8,25,19,.95)); border:1px solid rgba(72,231,145,.22); border-radius:22px; padding:20px; margin-bottom:16px; position:relative; overflow:hidden; }
+    .badge-hero:after { content:"⚽"; position:absolute; right:-10px; top:-20px; font-size:7rem; opacity:.07; transform:rotate(-14deg); }
+    .badge-hero h2 { margin:0 0 7px; font-size:1.55rem; }
+    .badge-hero p { margin:0; color:var(--muted); line-height:1.55; max-width:720px; }
+    .badge-age { display:inline-flex; align-items:center; gap:7px; margin-top:13px; padding:8px 11px; border-radius:999px; background:rgba(255,255,255,.06); border:1px solid var(--line); font-size:.78rem; font-weight:800; }
+    .badge-tabs { display:flex; gap:8px; overflow:auto; padding-bottom:4px; margin-bottom:14px; }
+    .badge-tab { white-space:nowrap; border:1px solid var(--line); background:rgba(255,255,255,.035); color:var(--muted); border-radius:999px; padding:9px 13px; font-weight:850; cursor:pointer; }
+    .badge-tab.active { color:#06170f; background:var(--green); border-color:var(--green); }
+    .badge-overview { display:grid; gap:10px; grid-template-columns:repeat(2,minmax(0,1fr)); margin-bottom:15px; }
+    .badge-level-card { border:1px solid var(--line); background:rgba(255,255,255,.035); border-radius:17px; padding:14px; cursor:pointer; text-align:left; color:var(--text); }
+    .badge-level-card.active { border-color:var(--green); box-shadow:0 0 0 1px rgba(53,230,128,.22),0 10px 35px rgba(0,0,0,.18); }
+    .badge-level-card strong { display:block; font-size:.92rem; margin-bottom:4px; }
+    .badge-level-card small { color:var(--muted); }
+    .badge-level-card .badge-progress { margin-top:10px; height:6px; background:rgba(255,255,255,.08); border-radius:999px; overflow:hidden; }
+    .badge-level-card .badge-progress span { display:block; height:100%; background:var(--green); }
+    .badge-level-card.blue { border-left:4px solid #4aa8ff; } .badge-level-card.red { border-left:4px solid #ff5b63; }
+    .badge-level-card.bronze { border-left:4px solid #bb7648; } .badge-level-card.silver { border-left:4px solid #d7dee6; }
+    .badge-level-card.gold { border-left:4px solid #f0c44e; }
+    .badge-exercises { display:grid; gap:10px; }
+    .badge-exercise { border:1px solid var(--line); background:rgba(255,255,255,.03); border-radius:17px; padding:14px; }
+    .badge-exercise-head { display:flex; justify-content:space-between; gap:12px; align-items:flex-start; }
+    .badge-exercise h3 { margin:0 0 4px; font-size:.95rem; }
+    .badge-exercise p { margin:0; color:var(--muted); font-size:.77rem; line-height:1.45; }
+    .badge-status { flex:0 0 auto; padding:6px 9px; border-radius:999px; font-size:.7rem; font-weight:900; background:rgba(255,255,255,.06); color:var(--muted); }
+    .badge-status.passed { background:var(--green-soft); color:var(--green); }
+    .badge-requirement { margin-top:10px; padding:9px 11px; border-radius:12px; background:rgba(255,255,255,.045); font-size:.78rem; }
+    .badge-entry { display:grid; grid-template-columns:1fr auto; gap:8px; margin-top:10px; }
+    .badge-entry input { min-width:0; }
+    .badge-note { margin-top:12px; padding:11px 12px; border:1px solid rgba(240,196,78,.22); background:rgba(240,196,78,.065); border-radius:14px; color:#e8dfbd; font-size:.76rem; line-height:1.5; }
+    .badge-summary { display:grid; grid-template-columns:repeat(3,1fr); gap:8px; margin-bottom:14px; }
+    .badge-summary > div { padding:12px 8px; text-align:center; border:1px solid var(--line); border-radius:14px; background:rgba(255,255,255,.035); }
+    .badge-summary strong { display:block; color:var(--green); font-size:1.25rem; }
+    .badge-summary span { color:var(--muted); font-size:.7rem; }
+    .mini-checklist { display:grid; gap:8px; margin-top:12px; }
+    .mini-check { display:flex; align-items:flex-start; gap:9px; color:var(--muted); font-size:.78rem; line-height:1.4; }
+    .mini-check input { margin-top:2px; accent-color:var(--green); }
+    @media (min-width:720px){ .badge-overview{grid-template-columns:repeat(5,minmax(0,1fr));} .badge-exercises{grid-template-columns:repeat(2,minmax(0,1fr));} }
+
   </style>
 </head>
 <body>
-  <!-- Skills Academy v2.2 -->
+  <!-- Skills Academy v2.3 – Fotballmerket -->
   <div class="app">
     <header class="topbar">
       <div class="brand">
@@ -454,6 +495,9 @@
           </button>
           <button type="button" class="quick-card" data-go="card">
             <span class="icon">⭐</span><h3>Player Card</h3><p>Se spillerkortet som utvikler seg med aktivitet og resultater.</p>
+          </button>
+          <button type="button" class="quick-card" data-go="fotballmerket">
+            <span class="icon">🏅</span><h3>Fotballmerket</h3><p>Gjennomfør NFFs mini- og teknikkmerkeprøver og samle XP.</p>
           </button>
           <button type="button" class="quick-card" data-go="history">
             <span class="icon">📈</span><h3>Historikk</h3><p>Finn igjen tidligere økter og konkurranser.</p>
@@ -609,7 +653,29 @@
           <div class="record-box"><strong id="cardWins">0</strong><span>seire</span></div>
           <div class="record-box"><strong id="cardCompleted">0</strong><span>fullført</span></div>
         </div>
-        <div class="panel" style="margin-top:16px"><p style="margin:0;color:var(--muted);line-height:1.55">Du tjener XP gjennom trening, skudd og challenges. Høy presisjon gir ekstra XP. Kortdesign og tittel oppgraderes automatisk når du når et nytt nivå.</p></div>
+        <div class="panel" style="margin-top:16px"><p style="margin:0;color:var(--muted);line-height:1.55">Du tjener XP gjennom trening, skudd, challenges og Fotballmerket. Høy presisjon og beståtte merkeprøver gir ekstra XP. Kortdesign og tittel oppgraderes automatisk når du når et nytt nivå.</p></div>
+      </section>
+
+
+      <section class="page" id="page-fotballmerket">
+        <div class="badge-hero">
+          <div class="eyebrow">Skills Academy</div>
+          <h2>Fotballmerket</h2>
+          <p>Tren, registrer og følg utviklingen din gjennom Minimerket og Teknikkmerket etter NFFs publiserte krav.</p>
+          <div class="badge-age" id="badgeAgeInfo">Velg en profil med fødselsår</div>
+        </div>
+        <div class="badge-summary">
+          <div><strong id="badgePassedCount">0</strong><span>øvelser bestått</span></div>
+          <div><strong id="badgeCompletedLevels">0</strong><span>merker fullført</span></div>
+          <div><strong id="badgeXpEarned">0</strong><span>XP fra merker</span></div>
+        </div>
+        <div class="badge-tabs">
+          <button class="badge-tab active" type="button" data-badge-section="mini1">Minimerket 1</button>
+          <button class="badge-tab" type="button" data-badge-section="mini2">Minimerket 2</button>
+          <button class="badge-tab" type="button" data-badge-section="technique">Teknikkmerket</button>
+        </div>
+        <div id="footballBadgeContent"></div>
+        <div class="badge-note"><strong>Viktig:</strong> Appen er et trenings- og dokumentasjonsverktøy. For formell godkjenning krever NFF at prøven observeres og godkjennes av en person over 18 år, og registreres gjennom klubb/fotballkrets.</div>
       </section>
 
       <section class="page" id="page-history">
@@ -623,6 +689,7 @@
     <button type="button" class="nav-btn active" data-page="home"><span class="nav-icon">⌂</span>Hjem</button>
     <button type="button" class="nav-btn" data-page="analyse"><span class="nav-icon">🎯</span>Analyse</button>
     <button type="button" class="nav-btn" data-page="challenge"><span class="nav-icon">🏆</span>Challenge</button>
+    <button type="button" class="nav-btn" data-page="fotballmerket"><span class="nav-icon">🏅</span>Merket</button>
     <button type="button" class="nav-btn" data-page="card"><span class="nav-icon">⭐</span>Kort</button>
     <button type="button" class="nav-btn" data-page="history"><span class="nav-icon">▤</span>Historikk</button>
   </nav>
@@ -667,7 +734,7 @@
 
     const STORAGE_KEY = "skillsAcademyV2";
     const LEGACY_STORAGE_KEY = "ballSkillsV2";
-    const defaultState = { profiles: [], activeProfileId: null, sessions: [], challenges: [] };
+    const defaultState = { profiles: [], activeProfileId: null, sessions: [], challenges: [], footballBadgeResults: [] };
     let state = loadState();
     let analysisShots = [];
     let analysisPlan = [];
@@ -680,6 +747,9 @@
     let cropState = { zoom: 1, offsetX: 0, offsetY: 0 };
     let cropDrag = null;
     let cropPinch = null;
+    let badgeSection = "mini1";
+    let badgeLevel = "blue";
+    let badgeAdultVerified = false;
 
     const $ = (id) => document.getElementById(id);
     const all = (selector, root = document) => Array.from(root.querySelectorAll(selector));
@@ -729,6 +799,7 @@
       all(".nav-btn").forEach(b => b.classList.toggle("active", b.dataset.page === name));
       if (name === "history") renderHistory();
       if (name === "card") renderCard();
+      if (name === "fotballmerket") renderFootballBadge();
       window.scrollTo({ top: 0, behavior: "smooth" });
     }
 
@@ -1332,7 +1403,8 @@
       if (!profile) { list.innerHTML='<div class="empty">Velg en profil for å se historikken.</div>'; return; }
       const entries=[
         ...state.sessions.filter(x=>x.profileId===profile.id).map(x=>({...x,kind:"session"})),
-        ...state.challenges.filter(x=>x.profileId===profile.id).map(x=>({...x,kind:"challenge"}))
+        ...state.challenges.filter(x=>x.profileId===profile.id).map(x=>({...x,kind:"challenge"})),
+        ...(state.footballBadgeResults||[]).filter(x=>x.profileId===profile.id).map(x=>({...x,kind:"badge"}))
       ].sort((a,b)=>new Date(b.createdAt)-new Date(a.createdAt));
       if (!entries.length) { list.innerHTML='<div class="empty">Ingen lagrede økter ennå.</div>'; return; }
       list.innerHTML=entries.map(item => {
@@ -1343,6 +1415,11 @@
           const detail=planned ? `${exact} fulltreff · ${item.near || 0} nærtreff av ${item.total}` : `${item.hits} av ${item.total} på mål`;
           return `<div class="history-item"><div><h3>Skuddanalyse · ${escapeHtml(item.situation)}</h3><p>${formatDate(item.createdAt)} · ${item.goalType}'er-mål · ${detail}</p></div><span class="pill">${pct} %</span></div>`;
         }
+        if (item.kind === "badge") {
+          const levelName=item.type==="mini1"?"Minimerket 1":item.type==="mini2"?"Minimerket 2":(BADGE_LEVELS.find(l=>l.key===item.level)?.name||item.level);
+          const exercise=item.exerciseId==="complete"?"Hele merket":(TECH_EXERCISES.find(x=>x.id===item.exerciseId)?.name||"Øvelse");
+          return `<div class="history-item"><div><h3>Fotballmerket · ${escapeHtml(levelName)}</h3><p>${formatDate(item.createdAt)} · ${escapeHtml(exercise)}${item.exerciseId!=="complete"?` · resultat ${item.value}`:""}</p></div><span class="pill">${item.passed?"Bestått":"Trening"} · +${item.xpAwarded||0} XP</span></div>`;
+        }
         const name=item.mode === "points" ? `Førstemann til ${item.target}` : "Treff alle rutene";
         const matchText=item.playMode === "multi" ? `Kamp · ${item.winner ? "Seier" : "Deltok"}` : "Challenge";
         return `<div class="history-item"><div><h3>${matchText} · ${name}</h3><p>${formatDate(item.createdAt)} · ${item.goalType}'er-mål · ${item.attempts} forsøk</p></div><span class="pill">${item.winner ? "Vinner" : (item.completed ? "Fullført" : `${item.score}/${item.target}`)}</span></div>`;
@@ -1352,9 +1429,102 @@
     $("clearHistory").addEventListener("click", () => {
       const p=activeProfile(); if (!p) return;
       if (!confirm(`Slette all historikk for ${p.name}?`)) return;
-      state.sessions=state.sessions.filter(x=>x.profileId!==p.id); state.challenges=state.challenges.filter(x=>x.profileId!==p.id);
+      state.sessions=state.sessions.filter(x=>x.profileId!==p.id); state.challenges=state.challenges.filter(x=>x.profileId!==p.id); state.footballBadgeResults=(state.footballBadgeResults||[]).filter(x=>x.profileId!==p.id);
       saveState(); renderHistory(); renderCard(); toast("Historikken er slettet");
     });
+
+
+    // FOTBALLMERKET – krav hentet fra NFFs publiserte merkeprøver
+    const BADGE_LEVELS = [
+      {key:"blue",name:"Blått",className:"blue",exerciseXp:35,bonusXp:150},
+      {key:"red",name:"Rødt",className:"red",exerciseXp:50,bonusXp:250},
+      {key:"bronze",name:"Bronse",className:"bronze",exerciseXp:75,bonusXp:400},
+      {key:"silver",name:"Sølv",className:"silver",exerciseXp:100,bonusXp:600},
+      {key:"gold",name:"Gull",className:"gold",exerciseXp:140,bonusXp:900}
+    ];
+    const TECH_EXERCISES = [
+      {id:"juggle",name:"1. Sjonglering",unit:"tilslag",mode:"min",req:{blue:5,red:10,bronze:25,silver:50,gold:80},desc:"Maks 60 sekunder. Bare ett tilslag med samme kroppsdel etter hverandre teller."},
+      {id:"receivePass",name:"2. Mottak og pasning",unit:"treff av 10",mode:"min",req:{blue:4,red:5,bronze:7,silver:8,gold:9},desc:"Mottak og pasning mot et 1,5 m bredt mål. De tre høyeste gradene spilles direkte."},
+      {id:"dribble",name:"3. Føring og dribling",unit:"sekunder",mode:"max",req:{blue:70,red:58,bronze:49,silver:43,gold:40},desc:"To runder i den fastsatte dribleløypen. Lavere tid er bedre."},
+      {id:"heading",name:"4. Heading",unit:"meter",mode:"min",req:{blue:3,red:5,bronze:8,silver:10,gold:12},desc:"Kast ballen opp selv og head så langt som mulig fra stillestående posisjon."},
+      {id:"longPass",name:"5. Langpasning",unit:"treff av 10",mode:"min",req:{blue:4,red:6,bronze:4,silver:6,gold:8},desc:"Treff et felt på 5 × 5 m. Avstand og utførelse varierer med merkenivå."},
+      {id:"receiveShoot",name:"6. Mottak, vending og skudd",unit:"mål av 10",mode:"min",req:{blue:4,red:5,bronze:5,silver:7,gold:9},desc:"Motta, vend og avslutt etter kravene for valgt merkenivå."},
+      {id:"carryShoot",name:"7. Føring og skudd",unit:"mål av 10",mode:"min",req:{blue:4,red:5,bronze:6,silver:7,gold:10},desc:"Før ballen ca. 10 m og skyt fem ganger med hvert bein mens ballen er i bevegelse."}
+    ];
+    const MINI_STEPS = {
+      mini1:["Føre ballen på fritt valgt måte","Føre ballen i åttetall mellom to kjegler","Slalåm mellom kjegler med ca. 1,5 m avstand","360° vending begge veier","Valgfri vending ved to kjegler","Treffe et 2 m bredt mål","Løpe over mål med ballen under kontroll"],
+      mini2:["Føre ballen kun med venstre fot","Føre ballen kun med høyre fot","Slalåm med innsiden av begge føtter","360° vending begge veier","Sålevending og utsidevending","Cruijff-vending og overstegsvending","Treffe mål med innsiden av foten","Løpe over mål med ballen under kontroll"]
+    };
+
+    function profileAge(p){ const y=Number(p?.birthYear); return y ? new Date().getFullYear()-y : null; }
+    function badgeResultsForProfile(){ return state.footballBadgeResults.filter(r=>r.profileId===state.activeProfileId); }
+    function latestBadgeResult(type,level,exerciseId){ return badgeResultsForProfile().filter(r=>r.type===type && r.level===level && r.exerciseId===exerciseId).sort((a,b)=>new Date(b.createdAt)-new Date(a.createdAt))[0]||null; }
+    function hasPassedBadgeResult(type,level,exerciseId){ return badgeResultsForProfile().some(r=>r.type===type && r.level===level && r.exerciseId===exerciseId && r.passed); }
+    function isTechniquePassed(ex,value,level){ const n=Number(value); if(!Number.isFinite(n)) return false; return ex.mode==="max" ? n<=ex.req[level] : n>=ex.req[level]; }
+    function techniqueLevelCompleted(level){ return TECH_EXERCISES.every(ex=>hasPassedBadgeResult("technique",level,ex.id)); }
+    function miniCompleted(type){ return hasPassedBadgeResult(type,type,"complete"); }
+    function footballBadgeXp(){ return badgeResultsForProfile().reduce((sum,r)=>sum+(Number(r.xpAwarded)||0),0); }
+
+    function renderFootballBadge(){
+      if(!state.footballBadgeResults) state.footballBadgeResults=[];
+      const p=activeProfile(); const age=profileAge(p); const ageEl=$("badgeAgeInfo");
+      ageEl.textContent=!p?"Velg en profil først":age===null?"Legg inn fødselsår for aldersveiledning":`${p.name}: ${age} år · ${age<=12?"Minimerket tilgjengelig":"Minimerket er utenfor NFFs aldersgrense"} · ${age<=14?"Teknikkmerket tilgjengelig":"Teknikkmerket er utenfor NFFs aldersgrense"}`;
+      const results=badgeResultsForProfile();
+      const uniquePassed=new Set(results.filter(r=>r.passed && r.exerciseId!=="complete").map(r=>`${r.type}:${r.level}:${r.exerciseId}`));
+      $("badgePassedCount").textContent=uniquePassed.size;
+      $("badgeCompletedLevels").textContent=[miniCompleted("mini1"),miniCompleted("mini2"),...BADGE_LEVELS.map(l=>techniqueLevelCompleted(l.key))].filter(Boolean).length;
+      $("badgeXpEarned").textContent=footballBadgeXp().toLocaleString("nb-NO");
+      all("[data-badge-section]").forEach(b=>b.classList.toggle("active",b.dataset.badgeSection===badgeSection));
+      if(!p){ $("footballBadgeContent").innerHTML='<div class="panel empty">Opprett eller velg en profil før du registrerer Fotballmerket.</div>'; return; }
+      if(badgeSection==="technique") renderTechniqueBadge(); else renderMiniBadge(badgeSection);
+    }
+
+    function renderMiniBadge(type){
+      const n=type==="mini1"?1:2; const done=miniCompleted(type); const latest=latestBadgeResult(type,type,"complete");
+      $("footballBadgeContent").innerHTML=`<div class="panel"><div class="section-head"><div><h2>Minimerket ${n}</h2><p>Gjennomføres uten tidtaking og uten stopp, med ballen under kontroll. Kjeglene skal ikke berøres.</p></div><span class="badge-status ${done?'passed':''}">${done?'Bestått':'Ikke bestått'}</span></div><div class="mini-checklist">${MINI_STEPS[type].map((x,i)=>`<label class="mini-check"><input type="checkbox" data-mini-step="${i}"> <span>${i+1}. ${x}</span></label>`).join('')}</div><label class="mini-check" style="margin-top:14px"><input type="checkbox" id="miniAdultVerified"> <span>Prøven er observert og godkjent av en person over 18 år</span></label><button class="btn primary" type="button" id="saveMiniBadge" style="width:100%;margin-top:12px">Registrer gjennomført Minimerke ${n}</button>${latest?`<p style="color:var(--muted);font-size:.75rem;margin:10px 0 0">Sist registrert ${formatDate(latest.createdAt)} · ${latest.xpAwarded||0} XP</p>`:''}</div>`;
+      $("saveMiniBadge").onclick=()=>saveMiniBadge(type);
+    }
+
+    function saveMiniBadge(type){
+      if(!ensureProfile()) return;
+      const checks=all("[data-mini-step]");
+      if(!checks.every(c=>c.checked)){ toast("Alle delene må være gjennomført"); return; }
+      if(!$("miniAdultVerified").checked){ toast("Merk av at prøven er godkjent av en voksen"); return; }
+      const already=miniCompleted(type); const xp=already?0:(type==="mini1"?150:250);
+      state.footballBadgeResults.push({id:uid("badge"),profileId:state.activeProfileId,type,level:type,exerciseId:"complete",value:1,passed:true,verified:true,xpAwarded:xp,createdAt:new Date().toISOString()});
+      saveState(); renderFootballBadge(); renderCard(); toast(already?"Resultatet er lagret":"Minimerket bestått! +"+xp+" XP");
+    }
+
+    function renderTechniqueBadge(){
+      const progress=BADGE_LEVELS.map(l=>({l,passed:TECH_EXERCISES.filter(ex=>hasPassedBadgeResult("technique",l.key,ex.id)).length}));
+      const selected=BADGE_LEVELS.find(l=>l.key===badgeLevel)||BADGE_LEVELS[0];
+      $("footballBadgeContent").innerHTML=`<div class="badge-overview">${progress.map(({l,passed})=>`<button type="button" class="badge-level-card ${l.className} ${l.key===badgeLevel?'active':''}" data-tech-level="${l.key}"><strong>${l.name}</strong><small>${passed}/7 øvelser</small><div class="badge-progress"><span style="width:${passed/7*100}%"></span></div></button>`).join('')}</div><div class="panel"><div class="section-head"><div><h2>Teknikkmerket – ${selected.name}</h2><p>Registrer hver øvelse. Krav og utførelse endrer seg mellom nivåene.</p></div><span class="badge-status ${techniqueLevelCompleted(selected.key)?'passed':''}">${techniqueLevelCompleted(selected.key)?'Merket bestått':'Under arbeid'}</span></div><label class="mini-check"><input type="checkbox" id="techAdultVerified" ${badgeAdultVerified?'checked':''}> <span>Forsøkene er observert og godkjent av en person over 18 år</span></label><div class="badge-exercises" style="margin-top:13px">${TECH_EXERCISES.map(ex=>techExerciseHtml(ex,selected)).join('')}</div></div>`;
+      all("[data-tech-level]").forEach(b=>b.onclick=()=>{badgeLevel=b.dataset.techLevel;renderFootballBadge();});
+      $("techAdultVerified").onchange=e=>{ badgeAdultVerified=e.target.checked; };
+      all("[data-save-tech]").forEach(b=>b.onclick=()=>saveTechniqueResult(b.dataset.saveTech));
+    }
+
+    function techExerciseHtml(ex,level){
+      const last=latestBadgeResult("technique",level.key,ex.id); const req=ex.req[level.key];
+      return `<div class="badge-exercise"><div class="badge-exercise-head"><div><h3>${ex.name}</h3><p>${ex.desc}</p></div><span class="badge-status ${hasPassedBadgeResult("technique",level.key,ex.id)?'passed':''}">${hasPassedBadgeResult("technique",level.key,ex.id)?'Bestått':'Ikke bestått'}</span></div><div class="badge-requirement">Krav for ${level.name.toLowerCase()}: <strong>${ex.mode==='max'?'maks ':''}${req} ${ex.unit}</strong></div><div class="badge-entry"><input class="input" type="number" min="0" step="0.1" id="badgeValue_${ex.id}" placeholder="Registrer resultat" value="${last?.value??''}"><button class="btn primary small" type="button" data-save-tech="${ex.id}">Lagre</button></div>${last?`<p style="margin-top:8px">Sist: ${last.value} ${ex.unit} · ${last.passed?'bestått':'ikke bestått'}</p>`:''}</div>`;
+    }
+
+    function saveTechniqueResult(exerciseId){
+      if(!ensureProfile()) return;
+      const ex=TECH_EXERCISES.find(x=>x.id===exerciseId); const level=BADGE_LEVELS.find(x=>x.key===badgeLevel); const input=$("badgeValue_"+exerciseId); const value=Number(input.value);
+      if(!Number.isFinite(value)||value<0){toast("Skriv inn et gyldig resultat");return;}
+      const verified=badgeAdultVerified || $("techAdultVerified").checked; const passed=isTechniquePassed(ex,value,badgeLevel) && verified;
+      const wasPassed=hasPassedBadgeResult("technique",badgeLevel,exerciseId);
+      let xp=passed&&!wasPassed?level.exerciseXp:10;
+      const completedBefore=techniqueLevelCompleted(badgeLevel);
+      state.footballBadgeResults.push({id:uid("badge"),profileId:state.activeProfileId,type:"technique",level:badgeLevel,exerciseId,value,passed,verified,xpAwarded:xp,createdAt:new Date().toISOString()});
+      const completedAfter=techniqueLevelCompleted(badgeLevel);
+      if(completedAfter&&!completedBefore){ state.footballBadgeResults.push({id:uid("badge"),profileId:state.activeProfileId,type:"technique",level:badgeLevel,exerciseId:"complete",value:1,passed:true,verified:true,xpAwarded:level.bonusXp,createdAt:new Date().toISOString()}); xp+=level.bonusXp; }
+      saveState(); renderFootballBadge(); renderCard();
+      toast(passed?`Bestått! +${xp} XP`:verified?`Resultatet er lagret · +${xp} XP`:`Lagret som trening · godkjenning av voksen mangler`);
+    }
+
+    all("[data-badge-section]").forEach(b=>b.addEventListener("click",()=>{badgeSection=b.dataset.badgeSection;renderFootballBadge();}));
 
     // PLAYER CARD / LEVEL SYSTEM
     const LEVELS = [
@@ -1383,10 +1553,13 @@
       const near=sessions.reduce((sum,x)=>sum+(x.near||0),0);
       const accuracy=totalShots ? exact/totalShots : .5;
       const completedChallenges=challenges.filter(x=>x.completed).length;
-      const completed=sessions.length+completedChallenges;
+      const badgeResults=(state.footballBadgeResults||[]).filter(x=>x.profileId===p.id);
+      const badgeXp=badgeResults.reduce((sum,x)=>sum+(Number(x.xpAwarded)||0),0);
+      const completedBadges=badgeResults.filter(x=>x.exerciseId==="complete" && x.passed).length;
+      const completed=sessions.length+completedChallenges+completedBadges;
       const matches=challenges.filter(x=>x.playMode==="multi").length;
       const wins=challenges.filter(x=>x.playMode==="multi" && x.winner).length;
-      const xp=Math.round(sessions.length*120 + totalShots*2 + exact*8 + near*3 + completedChallenges*180 + wins*250);
+      const xp=Math.round(sessions.length*120 + totalShots*2 + exact*8 + near*3 + completedChallenges*180 + wins*250 + badgeXp);
       const fin=clamp(Math.round(42+accuracy*45+Math.min(totalShots,150)/150*8),40,99);
       const acc=clamp(Math.round(40+accuracy*50),40,99);
       const sessionPcts=sessions.map(x=>x.total ? (Array.isArray(x.plan) ? (x.exact ?? x.shots.filter(y=>y.result==="exact").length) : x.hits)/x.total : 0);
