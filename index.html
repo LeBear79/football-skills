@@ -417,7 +417,7 @@
   </style>
 </head>
 <body>
-  <!-- Skills Academy v2.1 -->
+  <!-- Skills Academy v2.1.1 -->
   <div class="app">
     <header class="topbar">
       <div class="brand">
@@ -1383,23 +1383,24 @@
       const exact=sessions.reduce((sum,x)=>sum+(Array.isArray(x.plan) ? (x.exact ?? x.shots.filter(y=>y.result==="exact").length) : (x.hits||0)),0);
       const near=sessions.reduce((sum,x)=>sum+(x.near||0),0);
       const accuracy=totalShots ? exact/totalShots : .5;
-      const completed=challenges.filter(x=>x.completed).length;
+      const completedChallenges=challenges.filter(x=>x.completed).length;
+      const completed=sessions.length+completedChallenges;
       const matches=challenges.filter(x=>x.playMode==="multi").length;
       const wins=challenges.filter(x=>x.playMode==="multi" && x.winner).length;
-      const xp=Math.round(sessions.length*120 + totalShots*2 + exact*8 + near*3 + completed*180 + wins*250);
+      const xp=Math.round(sessions.length*120 + totalShots*2 + exact*8 + near*3 + completedChallenges*180 + wins*250);
       const fin=clamp(Math.round(42+accuracy*45+Math.min(totalShots,150)/150*8),40,99);
       const acc=clamp(Math.round(40+accuracy*50),40,99);
       const sessionPcts=sessions.map(x=>x.total ? (Array.isArray(x.plan) ? (x.exact ?? x.shots.filter(y=>y.result==="exact").length) : x.hits)/x.total : 0);
       const consistency=sessionPcts.length<2 ? 50 : clamp(Math.round(92-standardDeviation(sessionPcts)*100),40,99);
       const exp=clamp(45+Math.min(sessions.length+challenges.length,20)*2,45,90);
-      const cha=clamp(45+Math.min(completed,12)*4,45,95);
+      const cha=clamp(45+Math.min(completedChallenges,12)*4,45,95);
       const ctl=50;
       const ovr=Math.round(fin*.24+acc*.24+consistency*.18+exp*.14+cha*.14+ctl*.06);
       let level=LEVELS[0];
       LEVELS.forEach(l=>{ if(xp>=l.min) level=l; });
       const levelIndex=LEVELS.findIndex(l=>l.key===level.key);
       const next=LEVELS[levelIndex+1]||null;
-      return {sessions,challenges,totalShots,exact,near,accuracy,completed,matches,wins,xp,fin,acc,consistency,exp,cha,ctl,ovr,level,next,levelIndex};
+      return {sessions,challenges,totalShots,exact,near,accuracy,completed,completedChallenges,matches,wins,xp,fin,acc,consistency,exp,cha,ctl,ovr,level,next,levelIndex};
     }
 
     function renderCard() {
