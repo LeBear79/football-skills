@@ -4,8 +4,8 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <meta name="theme-color" content="#07130f" />
-  <meta name="description" content="Skills Academy v2.5 – Train. Track. Improve." />
-  <title>Skills Academy v2.5</title>
+  <meta name="description" content="Skills Academy v2.6 – Train. Track. Improve." />
+  <title>Skills Academy v2.6</title>
   <style>
     :root {
       --bg: #06100d;
@@ -228,6 +228,12 @@
     .choice-card p { margin: 0; color: var(--muted); font-size: .78rem; }
 
     .challenge-layout { display: grid; gap: 14px; }
+    .challenge-top-actions { display:flex; justify-content:space-between; gap:8px; margin-bottom:12px; }
+    .score-editor { margin-top:12px; padding:14px; border:1px solid var(--line); border-radius:16px; background:rgba(255,255,255,.025); }
+    .score-editor-grid { display:grid; gap:7px; margin-top:10px; }
+    .score-editor-cell { min-width:0; text-align:center; padding:10px 4px; border:1px solid var(--line); border-radius:11px; background:#0b1d17; color:var(--text); font-weight:900; }
+    .score-editor-cell input { width:100%; min-height:40px; text-align:center; border:0; border-radius:8px; background:rgba(255,255,255,.06); color:var(--yellow); font-weight:950; }
+    .goal-edit-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:8px; margin-top:10px; }
     .scoreboard { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 8px; margin-bottom: 13px; }
     .score-box { text-align: center; border: 1px solid var(--line); border-radius: 15px; padding: 12px 7px; background: rgba(255,255,255,.035); }
     .score-box .number { font-size: clamp(1.25rem,5vw,2rem); font-weight: 950; line-height: 1; }
@@ -473,7 +479,7 @@
   </style>
 </head>
 <body>
-  <!-- Skills Academy v2.5 – tilpassede mål, dynamiske ruter og sikkerhetskopi -->
+  <!-- Skills Academy v2.6 – tilpassede mål, dynamiske ruter og sikkerhetskopi -->
   <div class="app">
     <header class="topbar">
       <div class="brand">
@@ -617,8 +623,13 @@
             <div class="field"><label for="challengeGoalType">3. Måltype</label><select class="select" id="challengeGoalType"></select></div>
             <div class="field"><label for="challengeGridSize">4. Antall ruter</label><select class="select" id="challengeGridSize"><option value="2">2 × 2 (4 ruter)</option><option value="3" selected>3 × 3 (9 ruter)</option><option value="4">4 × 4 (16 ruter)</option><option value="5">5 × 5 (25 ruter)</option></select></div>
             <div class="field" id="targetField"><label for="challengeTarget">4. Poengmål</label><select class="select" id="challengeTarget"><option value="10">10 poeng</option><option value="21" selected>21 poeng</option><option value="50">50 poeng</option><option value="100">100 poeng</option></select></div>
-            <div class="field" id="presetField"><label for="challengePreset">5. Poengoppsett</label><select class="select" id="challengePreset"><option value="classic">Klassisk</option><option value="corners">Keeperhjørner</option><option value="precision">Presisjon</option></select></div>
+            <div class="field" id="presetField"><label for="challengePreset">5. Poengoppsett</label><select class="select" id="challengePreset"><option value="classic">Klassisk</option><option value="corners">Keeperhjørner</option><option value="precision">Presisjon</option><option value="custom">Egendefinerte poeng</option></select></div>
             <div class="field hidden" id="roundsField"><label for="challengeRounds">Treff per rute</label><select class="select" id="challengeRounds"><option value="1" selected>Én gang</option><option value="2">To ganger</option><option value="3">Tre ganger</option></select></div>
+          </div>
+          <div class="score-editor hidden" id="customScoreEditor">
+            <strong>Egendefinerte poeng</strong>
+            <p style="color:var(--muted);font-size:.78rem;line-height:1.45;margin:5px 0 0">Skriv poengverdien for hver rute. Oppsettet lagres automatisk på det valgte egne målet.</p>
+            <div class="score-editor-grid" id="customScoreGrid"></div>
           </div>
           <button type="button" class="btn primary" id="startChallenge" style="width:100%; margin-top:16px">Start challenge</button>
         </div>
@@ -626,6 +637,7 @@
         <div id="challengePlay" class="hidden">
           <div class="challenge-layout">
             <div class="panel">
+              <div class="challenge-top-actions"><button type="button" class="btn ghost small" id="challengeBack">← Tilbake til oppsett</button><button type="button" class="btn danger small" id="challengeExit">Avslutt uten å lagre</button></div>
               <h3 class="panel-title" id="challengeTitle">Førstemann til 21</h3>
               <div class="turn-banner hidden" id="turnBanner"><small>Det er din tur</small><strong id="turnPlayerName">Spiller</strong></div>
               <div class="multiplayer-board hidden" id="multiplayerBoard"></div>
@@ -639,7 +651,7 @@
               <div class="action-row">
                 <button type="button" class="btn" id="challengeMiss">Bom</button>
                 <button type="button" class="btn ghost" id="challengeUndo">Angre</button>
-                <button type="button" class="btn danger" id="challengeRestart">Start på nytt</button>
+                <button type="button" class="btn danger" id="challengeRestart">Nullstill konkurransen</button>
                 <button type="button" class="btn primary" id="challengeFinish">Avslutt og lagre</button>
               </div>
             </div>
@@ -1163,7 +1175,7 @@
     $("saveCustomGoal").addEventListener("click",()=>{
       const name=$("customGoalName").value.trim(), width=Number($("customGoalWidth").value), height=Number($("customGoalHeight").value), grid=Number($("customGoalGrid").value);
       if(!name||!width||!height){toast("Fyll inn navn, bredde og høyde");return;}
-      const goal={id:uid("goal"),name,width,height,grid}; state.customGoals.push(goal); saveState(); refreshGoalOptions(); $("analysisGoalType").value=goal.id; $("challengeGoalType").value=goal.id; $("analysisGridSize").value=String(grid); $("challengeGridSize").value=String(grid); renderAnalysisPlanner(); toast("Det egne målet er lagret");
+      const goal={id:uid("goal"),name,width,height,grid,pointValues:createPresetValues("classic",grid)}; state.customGoals.push(goal); saveState(); refreshGoalOptions(); $("analysisGoalType").value=goal.id; $("challengeGoalType").value=goal.id; $("analysisGridSize").value=String(grid); $("challengeGridSize").value=String(grid); renderAnalysisPlanner(); toast("Det egne målet er lagret");
       ["customGoalName","customGoalWidth","customGoalHeight"].forEach(id=>$(id).value="");
     });
     $("planUndo").addEventListener("click",()=>{ analysisPlan.pop(); renderAnalysisPlanner(); });
@@ -1201,8 +1213,30 @@
       precision: [4,6,4, 2,8,2, 4,6,4]
     };
     function createPresetValues(preset,size){
+      if(preset==="custom") {
+        const goal=selectedGoal("challengeGoalType");
+        if(Array.isArray(goal.pointValues) && goal.pointValues.length===size*size) return [...goal.pointValues];
+        return createPresetValues("classic",size);
+      }
       if(size===3) return [...PRESETS[preset]];
+      if(size===2){
+        if(preset==="corners") return [7,7,4,4];
+        if(preset==="precision") return [8,5,3,6];
+        return [5,4,3,2];
+      }
       return Array.from({length:size*size},(_,i)=>{const r=Math.floor(i/size),c=i%size,corner=(r===0||r===size-1)&&(c===0||c===size-1),edge=r===0||r===size-1||c===0||c===size-1,center=Math.abs(r-(size-1)/2)<.6&&Math.abs(c-(size-1)/2)<.6;if(preset==="corners")return corner?7:edge?3:1;if(preset==="precision")return center?8:corner?5:edge?4:2;return corner?5:edge?3:1;});
+    }
+    function renderCustomScoreEditor(){
+      const editor=$("customScoreEditor"), grid=$("customScoreGrid"); if(!editor||!grid)return;
+      const show=selectedChallengeMode==="points" && $("challengePreset").value==="custom"; editor.classList.toggle("hidden",!show); if(!show)return;
+      const size=gridSize("challenge"), goal=selectedGoal("challengeGoalType");
+      let values=Array.isArray(goal.pointValues)&&goal.pointValues.length===size*size?[...goal.pointValues]:createPresetValues("classic",size);
+      grid.style.gridTemplateColumns=`repeat(${size},minmax(0,1fr))`;
+      grid.innerHTML=values.map((v,i)=>`<label class="score-editor-cell"><span style="font-size:.65rem;color:var(--muted)">${zoneName(i,size)}</span><input type="number" min="0" max="99" value="${v}" data-score-index="${i}" aria-label="Poeng for ${zoneName(i,size)}"></label>`).join("");
+      all("[data-score-index]",grid).forEach(input=>input.addEventListener("change",()=>{
+        const current=selectedGoal("challengeGoalType"); if(!state.customGoals.some(g=>g.id===current.id)){toast("Egendefinerte poeng lagres bare på egne mål");return;}
+        const vals=all("[data-score-index]",grid).map(x=>clamp(Number(x.value)||0,0,99)); current.pointValues=vals; current.grid=size; saveState(); toast("Poengoppsettet er lagret");
+      }));
     }
     let selectedChallengeMode = "points";
     let selectedPlayMode = "solo";
@@ -1215,7 +1249,12 @@
       $("targetField").classList.toggle("hidden", cover);
       $("presetField").classList.toggle("hidden", cover);
       $("roundsField").classList.toggle("hidden", !cover);
+      renderCustomScoreEditor();
     }));
+
+    $("challengePreset").addEventListener("change",renderCustomScoreEditor);
+    $("challengeGridSize").addEventListener("change",renderCustomScoreEditor);
+    $("challengeGoalType").addEventListener("change",()=>{ const g=selectedGoal("challengeGoalType"); if(g.grid){$("challengeGridSize").value=String(g.grid);} renderCustomScoreEditor(); });
 
     all("[data-play-mode]").forEach(button => button.addEventListener("click", () => {
       selectedPlayMode = button.dataset.playMode;
@@ -1254,7 +1293,8 @@
       const mode = selectedChallengeMode, size=gridSize("challenge"), cellCount=size*size, goal=selectedGoal("challengeGoalType");
       const target = mode === "points" ? Number($("challengeTarget").value) : cellCount * Number($("challengeRounds").value);
       const rounds = mode === "cover" ? Number($("challengeRounds").value) : 1;
-      const values = mode === "points" ? createPresetValues($("challengePreset").value,size) : Array(cellCount).fill(1);
+      let values = mode === "points" ? createPresetValues($("challengePreset").value,size) : Array(cellCount).fill(1);
+      if(mode==="points" && $("challengePreset").value==="custom"){ const inputs=all("[data-score-index]",$("customScoreGrid")); if(inputs.length===cellCount) values=inputs.map(x=>clamp(Number(x.value)||0,0,99)); }
       challenge = {
         mode, playMode:selectedPlayMode, goalType:goal.id, targetName:goal.name, gridSize:size, target, rounds,
         preset:$("challengePreset").value, values, currentPlayerIndex:0, history:[], completed:false,
@@ -1322,6 +1362,14 @@
       $("winnerBox").classList.add("hidden");
       setFeedback("Siste forsøk ble fjernet", ""); renderChallenge();
     });
+
+    function leaveChallengeWithoutSaving(){
+      if(!challenge)return;
+      if(challenge.history.length && !confirm("Avslutte konkurransen? Registrerte forsøk blir ikke lagret."))return;
+      challenge=null; $("challengePlay").classList.add("hidden"); $("challengeSetup").classList.remove("hidden"); renderChallengePlayerPicker(); renderCustomScoreEditor(); toast("Konkurransen ble avsluttet uten lagring");
+    }
+    $("challengeBack").addEventListener("click",leaveChallengeWithoutSaving);
+    $("challengeExit").addEventListener("click",leaveChallengeWithoutSaving);
 
     function restartChallenge() {
       if (!challenge) {
@@ -1475,7 +1523,8 @@
     function renderCustomGoalAdmin(){
       const box=$("customGoalAdminList"); if(!box) return; const goals=state.customGoals||[];
       if(!goals.length){box.innerHTML='<div class="empty">Ingen egne mål er opprettet ennå.</div>';return;}
-      box.innerHTML=goals.map(g=>`<div class="goal-admin-row"><div><strong>${escapeHtml(g.name)}</strong><small>${g.width} × ${g.height} cm · ${g.grid}×${g.grid} ruter</small></div><button type="button" class="btn danger small" data-delete-goal="${g.id}">Slett</button></div>`).join('');
+      box.innerHTML=goals.map(g=>`<div class="goal-admin-row"><div style="min-width:0"><strong>${escapeHtml(g.name)}</strong><small>${g.width} × ${g.height} cm · ${g.grid}×${g.grid} ruter${Array.isArray(g.pointValues)?" · eget poengoppsett":""}</small></div><div style="display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end"><button type="button" class="btn small" data-edit-goal="${g.id}">Rediger</button><button type="button" class="btn danger small" data-delete-goal="${g.id}">Slett</button></div></div>`).join('');
+      all('[data-edit-goal]',box).forEach(btn=>btn.onclick=()=>{const g=goals.find(x=>x.id===btn.dataset.editGoal);if(!g)return;const name=prompt("Navn på målet",g.name);if(name===null)return;const width=Number(prompt("Bredde i cm",g.width));if(!width)return;const height=Number(prompt("Høyde i cm",g.height));if(!height)return;const grid=Number(prompt("Rutenett (2, 3, 4 eller 5)",g.grid));if(![2,3,4,5].includes(grid)){toast("Rutenettet må være 2, 3, 4 eller 5");return;}g.name=name.trim()||g.name;g.width=width;g.height=height;if(g.grid!==grid){g.grid=grid;g.pointValues=createPresetValues("classic",grid);}saveState();refreshGoalOptions();refreshHistoryGoalFilter();renderCustomGoalAdmin();toast("Målet er oppdatert");});
       all('[data-delete-goal]',box).forEach(btn=>btn.onclick=()=>{const g=goals.find(x=>x.id===btn.dataset.deleteGoal);if(!g||!confirm(`Slette målet ${g.name}? Historiske økter beholdes.`))return;state.customGoals=state.customGoals.filter(x=>x.id!==g.id);saveState();refreshGoalOptions();refreshHistoryGoalFilter();renderCustomGoalAdmin();renderHistory();toast("Målet er slettet");});
     }
 
@@ -1492,7 +1541,7 @@
 
     // SIKKERHETSKOPI
     $("exportBackup").addEventListener("click",()=>{
-      const backup={app:"Skills Academy",version:"2.5",exportedAt:new Date().toISOString(),data:state};
+      const backup={app:"Skills Academy",version:"2.6",exportedAt:new Date().toISOString(),data:state};
       const blob=new Blob([JSON.stringify(backup,null,2)],{type:"application/json"}),url=URL.createObjectURL(blob),a=document.createElement("a");
       a.href=url;a.download=`skills-academy-sikkerhetskopi-${new Date().toISOString().slice(0,10)}.json`;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1000);toast("Sikkerhetskopien er eksportert");
     });
@@ -1695,7 +1744,7 @@
     }
 
     // START
-    refreshGoalOptions(); renderProfileUI(); renderChallengePlayerPicker(); renderAnalysisPlanner(); renderAnalysis(); renderHistory(); renderPersonalRecords(); renderCustomGoalAdmin(); renderCard();
+    refreshGoalOptions(); renderCustomScoreEditor(); renderProfileUI(); renderChallengePlayerPicker(); renderAnalysisPlanner(); renderAnalysis(); renderHistory(); renderPersonalRecords(); renderCustomGoalAdmin(); renderCard();
     if (!state.profiles.length) setTimeout(openProfileModal, 450);
   </script>
 </body>
