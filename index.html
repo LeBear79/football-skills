@@ -4,8 +4,8 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <meta name="theme-color" content="#07130f" />
-  <meta name="description" content="Skills Academy v2.2 – Train. Track. Improve." />
-  <title>Skills Academy v2.2</title>
+  <meta name="description" content="Skills Academy v2.4 – Train. Track. Improve." />
+  <title>Skills Academy v2.4</title>
   <style>
     :root {
       --bg: #06100d;
@@ -458,7 +458,7 @@
   </style>
 </head>
 <body>
-  <!-- Skills Academy v2.3 – Fotballmerket -->
+  <!-- Skills Academy v2.4 – tilpassede mål, dynamiske ruter og sikkerhetskopi -->
   <div class="app">
     <header class="topbar">
       <div class="brand">
@@ -511,9 +511,21 @@
         <div class="panel" id="analysisSetupPanel">
           <h3 class="panel-title">1. Planlegg skuddserien</h3>
           <div class="form-grid cols-2">
-            <div class="field"><label for="analysisGoalType">Måltype</label><select class="select" id="analysisGoalType"><option value="5">5'er-mål</option><option value="7">7'er-mål</option><option value="11" selected>11'er-mål</option></select></div>
+            <div class="field"><label for="analysisGoalType">Måltype</label><select class="select" id="analysisGoalType"></select></div>
+            <div class="field"><label for="analysisGridSize">Antall ruter</label><select class="select" id="analysisGridSize"><option value="2">2 × 2 (4 ruter)</option><option value="3" selected>3 × 3 (9 ruter)</option><option value="4">4 × 4 (16 ruter)</option><option value="5">5 × 5 (25 ruter)</option></select></div>
             <div class="field"><label for="analysisSituation">Situasjon</label><select class="select" id="analysisSituation"><option value="Spill">Spill</option><option value="Dødball">Dødball</option><option value="Straffe">Straffe</option></select></div>
           </div>
+          <details class="panel" style="margin-top:14px;padding:14px;background:rgba(255,255,255,.025)">
+            <summary style="cursor:pointer;font-weight:900">Lag et eget tilpasset mål</summary>
+            <p style="color:var(--muted);font-size:.82rem;line-height:1.5">Passer blant annet til ballvegg, rebounder, garasjevegg eller hjemmelagde mål.</p>
+            <div class="form-grid cols-2">
+              <div class="field"><label for="customGoalName">Navn</label><input class="input" id="customGoalName" maxlength="40" placeholder="For eksempel Vetles ballvegg"></div>
+              <div class="field"><label for="customGoalWidth">Bredde i cm</label><input class="input" id="customGoalWidth" type="number" min="20" max="2000" placeholder="180"></div>
+              <div class="field"><label for="customGoalHeight">Høyde i cm</label><input class="input" id="customGoalHeight" type="number" min="20" max="1000" placeholder="120"></div>
+              <div class="field"><label for="customGoalGrid">Standard ruter</label><select class="select" id="customGoalGrid"><option value="2">2 × 2</option><option value="3" selected>3 × 3</option><option value="4">4 × 4</option><option value="5">5 × 5</option></select></div>
+            </div>
+            <button type="button" class="btn primary small" id="saveCustomGoal" style="margin-top:12px">Lagre eget mål</button>
+          </details>
           <div class="analysis-planner">
             <p class="goal-instruction">Trykk på rutene i den rekkefølgen du ønsker å skyte. Samme rute kan velges flere ganger.</p>
             <div class="planner-layout">
@@ -587,7 +599,8 @@
           </div>
 
           <div class="form-grid cols-2" style="margin-top:16px">
-            <div class="field"><label for="challengeGoalType">3. Måltype</label><select class="select" id="challengeGoalType"><option value="5">5'er-mål</option><option value="7">7'er-mål</option><option value="11" selected>11'er-mål</option></select></div>
+            <div class="field"><label for="challengeGoalType">3. Måltype</label><select class="select" id="challengeGoalType"></select></div>
+            <div class="field"><label for="challengeGridSize">4. Antall ruter</label><select class="select" id="challengeGridSize"><option value="2">2 × 2 (4 ruter)</option><option value="3" selected>3 × 3 (9 ruter)</option><option value="4">4 × 4 (16 ruter)</option><option value="5">5 × 5 (25 ruter)</option></select></div>
             <div class="field" id="targetField"><label for="challengeTarget">4. Poengmål</label><select class="select" id="challengeTarget"><option value="10">10 poeng</option><option value="21" selected>21 poeng</option><option value="50">50 poeng</option><option value="100">100 poeng</option></select></div>
             <div class="field" id="presetField"><label for="challengePreset">5. Poengoppsett</label><select class="select" id="challengePreset"><option value="classic">Klassisk</option><option value="corners">Keeperhjørner</option><option value="precision">Presisjon</option></select></div>
             <div class="field hidden" id="roundsField"><label for="challengeRounds">Treff per rute</label><select class="select" id="challengeRounds"><option value="1" selected>Én gang</option><option value="2">To ganger</option><option value="3">Tre ganger</option></select></div>
@@ -681,6 +694,15 @@
       <section class="page" id="page-history">
         <div class="section-head"><div><h2>Historikk</h2><p>Lagret lokalt på denne enheten.</p></div><button type="button" class="btn danger small" id="clearHistory">Slett historikk</button></div>
         <div class="panel"><div class="history-list" id="historyList"></div></div>
+        <div class="panel" style="margin-top:14px">
+          <h3 class="panel-title">Sikkerhetskopi</h3>
+          <p style="color:var(--muted);line-height:1.55;margin-top:0">Eksporter alle profiler, bilder, økter, challenges, Fotballmerket-resultater og egne mål til én fil. Filen kan senere importeres på samme eller en annen enhet.</p>
+          <div class="action-row">
+            <button type="button" class="btn primary" id="exportBackup">Eksporter sikkerhetskopi</button>
+            <button type="button" class="btn ghost" id="importBackupButton">Importer sikkerhetskopi</button>
+            <input type="file" id="importBackupFile" accept="application/json,.json" class="hidden">
+          </div>
+        </div>
       </section>
     </main>
   </div>
@@ -734,7 +756,7 @@
 
     const STORAGE_KEY = "skillsAcademyV2";
     const LEGACY_STORAGE_KEY = "ballSkillsV2";
-    const defaultState = { profiles: [], activeProfileId: null, sessions: [], challenges: [], footballBadgeResults: [] };
+    const defaultState = { profiles: [], activeProfileId: null, sessions: [], challenges: [], footballBadgeResults: [], customGoals: [] };
     let state = loadState();
     let analysisShots = [];
     let analysisPlan = [];
@@ -1056,145 +1078,87 @@
     }
 
     // ANALYSE
-    const ANALYSIS_ZONES = [
+    const STANDARD_GOALS = [
+      {id:"5",name:"5'er-mål"},{id:"7",name:"7'er-mål"},{id:"11",name:"11'er-mål"}
+    ];
+    const CLASSIC_3X3_NAMES = [
       "Øvre venstre", "Øvre midt", "Øvre høyre",
       "Midtre venstre", "Midten", "Midtre høyre",
       "Nedre venstre", "Nedre midt", "Nedre høyre"
     ];
-
-    function zoneFromPoint(x,y) {
-      return Math.min(2,Math.floor(y*3))*3 + Math.min(2,Math.floor(x*3));
+    function gridSize(context="analysis") { return Number($(context==="analysis"?"analysisGridSize":"challengeGridSize").value)||3; }
+    function zoneName(index,size=gridSize()) {
+      if(size===3) return CLASSIC_3X3_NAMES[index];
+      const row=Math.floor(index/size)+1, col=index%size+1;
+      return `Rute ${row}.${col}`;
     }
-    function zoneDistance(a,b) {
-      const ar=Math.floor(a/3), ac=a%3, br=Math.floor(b/3), bc=b%3;
+    function selectedGoal(selectId) {
+      const id=$(selectId)?.value || "11";
+      const custom=(state.customGoals||[]).find(g=>g.id===id);
+      return custom || STANDARD_GOALS.find(g=>g.id===id) || STANDARD_GOALS[2];
+    }
+    function refreshGoalOptions() {
+      const html=[...STANDARD_GOALS,...(state.customGoals||[])].map(g=>`<option value="${escapeHtml(g.id)}">${escapeHtml(g.name)}</option>`).join("");
+      ["analysisGoalType","challengeGoalType"].forEach((id,i)=>{ const el=$(id); if(!el)return; const old=el.value; el.innerHTML=html; el.value=[...(STANDARD_GOALS),(state.customGoals||[])].some(g=>g.id===old)?old:"11"; });
+    }
+    function applyGridToElements(size) {
+      ["analysisPlannerGoal","analysisTargetOverlay"].forEach(id=>{ const el=$(id); if(el){el.style.gridTemplateColumns=`repeat(${size},1fr)`;el.style.gridTemplateRows=`repeat(${size},1fr)`;} });
+    }
+    function zoneFromPoint(x,y,size=gridSize()) { return Math.min(size-1,Math.floor(y*size))*size + Math.min(size-1,Math.floor(x*size)); }
+    function zoneDistance(a,b,size=gridSize()) {
+      const ar=Math.floor(a/size), ac=a%size, br=Math.floor(b/size), bc=b%size;
       return Math.max(Math.abs(ar-br),Math.abs(ac-bc));
     }
-    function classifyShot(targetZone, actualZone) {
+    function classifyShot(targetZone, actualZone,size=gridSize()) {
       if (actualZone === null || actualZone === undefined) return "miss";
-      const distance=zoneDistance(targetZone,actualZone);
+      const distance=zoneDistance(targetZone,actualZone,size);
       return distance===0 ? "exact" : distance===1 ? "near" : "off";
     }
-
     function renderAnalysisPlanner() {
-      const counts=Array(9).fill(0);
-      analysisPlan.forEach(z=>counts[z]++);
-      $("analysisPlannerGoal").innerHTML=ANALYSIS_ZONES.map((name,i)=>`<button type="button" class="planner-cell" data-plan-zone="${i}"><strong>${name}</strong>${counts[i] ? `<span class="count">${counts[i]}</span>` : ""}</button>`).join("");
-      all("[data-plan-zone]",$("analysisPlannerGoal")).forEach(btn=>btn.addEventListener("click",()=>{
-        if (!ensureProfile()) return;
-        analysisPlan.push(Number(btn.dataset.planZone)); renderAnalysisPlanner();
-      }));
+      const size=gridSize(), count=size*size;
+      analysisPlan=analysisPlan.filter(z=>z<count);
+      applyGridToElements(size);
+      const counts=Array(count).fill(0); analysisPlan.forEach(z=>counts[z]++);
+      $("analysisPlannerGoal").innerHTML=Array.from({length:count},(_,i)=>`<button type="button" class="planner-cell" data-plan-zone="${i}"><strong>${zoneName(i,size)}</strong>${counts[i] ? `<span class="count">${counts[i]}</span>` : ""}</button>`).join("");
+      all("[data-plan-zone]",$("analysisPlannerGoal")).forEach(btn=>btn.addEventListener("click",()=>{ if (!ensureProfile()) return; analysisPlan.push(Number(btn.dataset.planZone)); renderAnalysisPlanner(); }));
       $("plannedCount").textContent=analysisPlan.length;
-      $("analysisPlanList").innerHTML=analysisPlan.length ? analysisPlan.map((z,i)=>`<span class="plan-chip"><strong>${i+1}</strong>${ANALYSIS_ZONES[z]}</span>`).join("") : '<span style="color:var(--muted);font-size:.8rem">Ingen skudd planlagt ennå.</span>';
+      $("analysisPlanList").innerHTML=analysisPlan.length ? analysisPlan.map((z,i)=>`<span class="plan-chip"><strong>${i+1}</strong>${zoneName(z,size)}</span>`).join("") : '<span style="color:var(--muted);font-size:.8rem">Ingen skudd planlagt ennå.</span>';
       $("startAnalysisSeries").disabled=!analysisPlan.length;
     }
-
+    $("analysisGridSize").addEventListener("change",()=>{ analysisPlan=[]; analysisShots=[]; renderAnalysisPlanner(); renderAnalysis(); });
+    $("analysisGoalType").addEventListener("change",()=>{ const g=selectedGoal("analysisGoalType"); if(g.grid){$("analysisGridSize").value=String(g.grid);analysisPlan=[];renderAnalysisPlanner();} });
+    $("saveCustomGoal").addEventListener("click",()=>{
+      const name=$("customGoalName").value.trim(), width=Number($("customGoalWidth").value), height=Number($("customGoalHeight").value), grid=Number($("customGoalGrid").value);
+      if(!name||!width||!height){toast("Fyll inn navn, bredde og høyde");return;}
+      const goal={id:uid("goal"),name,width,height,grid}; state.customGoals.push(goal); saveState(); refreshGoalOptions(); $("analysisGoalType").value=goal.id; $("challengeGoalType").value=goal.id; $("analysisGridSize").value=String(grid); $("challengeGridSize").value=String(grid); renderAnalysisPlanner(); toast("Det egne målet er lagret");
+      ["customGoalName","customGoalWidth","customGoalHeight"].forEach(id=>$(id).value="");
+    });
     $("planUndo").addEventListener("click",()=>{ analysisPlan.pop(); renderAnalysisPlanner(); });
     $("planClear").addEventListener("click",()=>{ analysisPlan=[]; renderAnalysisPlanner(); });
-    $("planRandom").addEventListener("click",()=>{
-      if (!ensureProfile()) return;
-      const amount=Number(prompt("Hvor mange skudd skal serien inneholde?", "10"));
-      if (!Number.isInteger(amount) || amount<1 || amount>50) { toast("Velg mellom 1 og 50 skudd"); return; }
-      analysisPlan=Array.from({length:amount},()=>Math.floor(Math.random()*9)); renderAnalysisPlanner();
-    });
-
-    $("startAnalysisSeries").addEventListener("click",()=>{
-      if (!ensureProfile() || !analysisPlan.length) return;
-      analysisShots=[]; analysisStarted=true;
-      $("analysisSetupPanel").classList.add("hidden"); $("analysisPlayPanel").classList.remove("hidden");
-      renderAnalysis(); requestAnimationFrame(drawHeatmap);
-    });
-    $("cancelAnalysisSeries").addEventListener("click",()=>{
-      if (analysisShots.length && !confirm("Avslutte serien? Registrerte skudd blir ikke lagret.")) return;
-      resetAnalysisToSetup(false);
-    });
-
-    $("analysisGoal").addEventListener("click", e => {
-      if (!analysisStarted || analysisShots.length>=analysisPlan.length || !ensureProfile()) return;
-      const canvas = $("shotCanvas"); const rect = canvas.getBoundingClientRect();
-      if (e.clientX < rect.left || e.clientX > rect.right || e.clientY < rect.top || e.clientY > rect.bottom) return;
-      const x=clamp((e.clientX-rect.left)/rect.width,0,1), y=clamp((e.clientY-rect.top)/rect.height,0,1);
-      const targetZone=analysisPlan[analysisShots.length], actualZone=zoneFromPoint(x,y);
-      analysisShots.push({type:"hit",x,y,targetZone,actualZone,result:classifyShot(targetZone,actualZone)});
-      renderAnalysis();
-    });
-    $("analysisMiss").addEventListener("click",()=>{
-      if (!analysisStarted || analysisShots.length>=analysisPlan.length || !ensureProfile()) return;
-      const targetZone=analysisPlan[analysisShots.length];
-      analysisShots.push({type:"miss",targetZone,actualZone:null,result:"miss"}); renderAnalysis(); toast("Bom registrert");
-    });
+    $("planRandom").addEventListener("click",()=>{ if (!ensureProfile()) return; const amount=Number(prompt("Hvor mange skudd skal serien inneholde?", "10")); if (!Number.isInteger(amount) || amount<1 || amount>50) { toast("Velg mellom 1 og 50 skudd"); return; } const count=gridSize()*gridSize(); analysisPlan=Array.from({length:amount},()=>Math.floor(Math.random()*count)); renderAnalysisPlanner(); });
+    $("startAnalysisSeries").addEventListener("click",()=>{ if (!ensureProfile() || !analysisPlan.length) return; analysisShots=[]; analysisStarted=true; $("analysisSetupPanel").classList.add("hidden"); $("analysisPlayPanel").classList.remove("hidden"); renderAnalysis(); requestAnimationFrame(drawHeatmap); });
+    $("cancelAnalysisSeries").addEventListener("click",()=>{ if (analysisShots.length && !confirm("Avslutte serien? Registrerte skudd blir ikke lagret.")) return; resetAnalysisToSetup(false); });
+    $("analysisGoal").addEventListener("click", e => { if (!analysisStarted || analysisShots.length>=analysisPlan.length || !ensureProfile()) return; const canvas=$("shotCanvas"), rect=canvas.getBoundingClientRect(); if (e.clientX < rect.left || e.clientX > rect.right || e.clientY < rect.top || e.clientY > rect.bottom) return; const x=clamp((e.clientX-rect.left)/rect.width,0,1), y=clamp((e.clientY-rect.top)/rect.height,0,1), size=gridSize(); const targetZone=analysisPlan[analysisShots.length], actualZone=zoneFromPoint(x,y,size); analysisShots.push({type:"hit",x,y,targetZone,actualZone,result:classifyShot(targetZone,actualZone,size)}); renderAnalysis(); });
+    $("analysisMiss").addEventListener("click",()=>{ if (!analysisStarted || analysisShots.length>=analysisPlan.length || !ensureProfile()) return; const targetZone=analysisPlan[analysisShots.length]; analysisShots.push({type:"miss",targetZone,actualZone:null,result:"miss"}); renderAnalysis(); toast("Bom registrert"); });
     $("analysisUndo").addEventListener("click",()=>{ if (analysisShots.length) { analysisShots.pop(); renderAnalysis(); } });
-    function restartAnalysisSeries() {
-      if (!analysisStarted) return;
-      if (analysisShots.length && !window.confirm("Starte den planlagte serien på nytt?")) return;
-      analysisShots = [];
-      renderAnalysis();
-      requestAnimationFrame(drawHeatmap);
-      toast("Serien er startet på nytt");
-    }
-    $("analysisClear").addEventListener("click", restartAnalysisSeries);
-    $("analysisSave").addEventListener("click",saveAnalysis);
-    window.addEventListener("resize",()=>requestAnimationFrame(drawHeatmap));
-
+    function restartAnalysisSeries() { if (!analysisStarted) return; if (analysisShots.length && !window.confirm("Starte den planlagte serien på nytt?")) return; analysisShots=[]; renderAnalysis(); requestAnimationFrame(drawHeatmap); toast("Serien er startet på nytt"); }
+    $("analysisClear").addEventListener("click", restartAnalysisSeries); $("analysisSave").addEventListener("click",saveAnalysis); window.addEventListener("resize",()=>requestAnimationFrame(drawHeatmap));
     function clamp(n,min,max){ return Math.max(min,Math.min(max,n)); }
-
     function renderAnalysis() {
-      const completed=analysisShots.length;
-      const exact=analysisShots.filter(s=>s.result==="exact").length;
-      const near=analysisShots.filter(s=>s.result==="near").length;
-      $("analysisShots").textContent=completed;
-      $("analysisExact").textContent=exact;
-      $("analysisNear").textContent=near;
-      $("analysisAccuracy").textContent=`${completed ? Math.round(exact/completed*100) : 0} %`;
-      const layer=$("markerLayer");
-      layer.innerHTML=analysisShots.filter(s=>s.type==="hit").map(s=>`<span class="shot-marker ${s.result==="near"?"near":s.result==="off"?"off":""}" style="left:${6+s.x*88}%;top:${9+s.y*83}%"></span>`).join("");
-      const current=Math.min(completed+1,analysisPlan.length);
-      $("analysisProgress").textContent=completed>=analysisPlan.length ? `Serien er fullført · ${analysisPlan.length} skudd` : `Skudd ${current} av ${analysisPlan.length}`;
-      $("analysisTargetName").textContent=completed>=analysisPlan.length ? "Klar til å lagres" : `Sikt mot ${ANALYSIS_ZONES[analysisPlan[completed]].toLowerCase()}`;
-      $("analysisTargetOverlay").innerHTML=Array.from({length:9},(_,i)=>`<span class="${completed<analysisPlan.length && i===analysisPlan[completed] ? "active" : ""}"></span>`).join("");
-      const finished=analysisPlan.length>0 && completed===analysisPlan.length;
-      $("analysisSave").disabled=!finished;
-      $("analysisMiss").disabled=finished;
-      const wasFinished = $("analysisPlayPanel").dataset.finished === "true";
-      $("analysisPlayPanel").dataset.finished = finished ? "true" : "false";
-      if (finished && !wasFinished) toast(`Serien er ferdig: ${exact} av ${completed} fulltreff`);
-      drawHeatmap();
+      const completed=analysisShots.length, exact=analysisShots.filter(s=>s.result==="exact").length, near=analysisShots.filter(s=>s.result==="near").length, size=gridSize();
+      $("analysisShots").textContent=completed; $("analysisExact").textContent=exact; $("analysisNear").textContent=near; $("analysisAccuracy").textContent=`${completed ? Math.round(exact/completed*100) : 0} %`;
+      $("markerLayer").innerHTML=analysisShots.filter(s=>s.type==="hit").map(s=>`<span class="shot-marker ${s.result==="near"?"near":s.result==="off"?"off":""}" style="left:${6+s.x*88}%;top:${9+s.y*83}%"></span>`).join("");
+      const current=Math.min(completed+1,analysisPlan.length); $("analysisProgress").textContent=completed>=analysisPlan.length ? `Serien er fullført · ${analysisPlan.length} skudd` : `Skudd ${current} av ${analysisPlan.length}`; $("analysisTargetName").textContent=completed>=analysisPlan.length ? "Klar til å lagres" : `Sikt mot ${zoneName(analysisPlan[completed],size).toLowerCase()}`;
+      applyGridToElements(size); $("analysisTargetOverlay").innerHTML=Array.from({length:size*size},(_,i)=>`<span class="${completed<analysisPlan.length && i===analysisPlan[completed] ? "active" : ""}"></span>`).join("");
+      const finished=analysisPlan.length>0 && completed===analysisPlan.length; $("analysisSave").disabled=!finished; $("analysisMiss").disabled=finished; const wasFinished=$("analysisPlayPanel").dataset.finished==="true"; $("analysisPlayPanel").dataset.finished=finished?"true":"false"; if(finished&&!wasFinished)toast(`Serien er ferdig: ${exact} av ${completed} fulltreff`); drawHeatmap();
     }
-
-    function drawHeatmap() {
-      const canvas=$("shotCanvas"), rect=canvas.getBoundingClientRect();
-      if (!rect.width || !rect.height) return;
-      const dpr=Math.min(window.devicePixelRatio||1,2);
-      canvas.width=Math.round(rect.width*dpr); canvas.height=Math.round(rect.height*dpr);
-      const ctx=canvas.getContext("2d"); ctx.scale(dpr,dpr); ctx.clearRect(0,0,rect.width,rect.height); ctx.globalCompositeOperation="lighter";
-      analysisShots.filter(s=>s.type==="hit").forEach(s=>{
-        const x=s.x*rect.width,y=s.y*rect.height,radius=Math.max(28,rect.width*.07);
-        const g=ctx.createRadialGradient(x,y,0,x,y,radius);
-        const core=s.result==="exact"?"rgba(57,228,135,.34)":s.result==="near"?"rgba(255,211,90,.30)":"rgba(255,107,107,.28)";
-        g.addColorStop(0,core); g.addColorStop(1,"rgba(57,228,135,0)"); ctx.fillStyle=g; ctx.fillRect(x-radius,y-radius,radius*2,radius*2);
-      });
-      ctx.globalCompositeOperation="source-over";
-    }
-
-    function resetAnalysisToSetup(clearPlan=true) {
-      analysisShots=[]; analysisStarted=false; if (clearPlan) analysisPlan=[];
-      $("analysisPlayPanel").dataset.finished = "false";
-      $("analysisPlayPanel").classList.add("hidden"); $("analysisSetupPanel").classList.remove("hidden");
-      renderAnalysisPlanner(); renderAnalysis();
-    }
-
+    function drawHeatmap() { const canvas=$("shotCanvas"), rect=canvas.getBoundingClientRect(); if(!rect.width||!rect.height)return; const dpr=Math.min(window.devicePixelRatio||1,2); canvas.width=Math.round(rect.width*dpr);canvas.height=Math.round(rect.height*dpr);const ctx=canvas.getContext("2d");ctx.scale(dpr,dpr);ctx.clearRect(0,0,rect.width,rect.height);ctx.globalCompositeOperation="lighter";analysisShots.filter(s=>s.type==="hit").forEach(s=>{const x=s.x*rect.width,y=s.y*rect.height,radius=Math.max(28,rect.width*.07),g=ctx.createRadialGradient(x,y,0,x,y,radius),core=s.result==="exact"?"rgba(57,228,135,.34)":s.result==="near"?"rgba(255,211,90,.30)":"rgba(255,107,107,.28)";g.addColorStop(0,core);g.addColorStop(1,"rgba(57,228,135,0)");ctx.fillStyle=g;ctx.fillRect(x-radius,y-radius,radius*2,radius*2);});ctx.globalCompositeOperation="source-over"; }
+    function resetAnalysisToSetup(clearPlan=true) { analysisShots=[];analysisStarted=false;if(clearPlan)analysisPlan=[];$("analysisPlayPanel").dataset.finished="false";$("analysisPlayPanel").classList.add("hidden");$("analysisSetupPanel").classList.remove("hidden");renderAnalysisPlanner();renderAnalysis(); }
     function saveAnalysis() {
-      if (!ensureProfile()) return;
-      if (!analysisPlan.length || analysisShots.length!==analysisPlan.length) { toast("Fullfør hele serien først"); return; }
-      const hits=analysisShots.filter(s=>s.type==="hit").length;
-      const exact=analysisShots.filter(s=>s.result==="exact").length;
-      const near=analysisShots.filter(s=>s.result==="near").length;
-      state.sessions.unshift({
-        id:uid("session"),profileId:state.activeProfileId,createdAt:new Date().toISOString(),
-        goalType:$("analysisGoalType").value,situation:$("analysisSituation").value,
-        plan:[...analysisPlan],shots:analysisShots.map(s=>({...s})),total:analysisShots.length,hits,exact,near,
-        accuracy:analysisShots.length ? exact/analysisShots.length : 0
-      });
-      saveState(); resetAnalysisToSetup(true); renderHistory(); renderCard(); toast("Økten er lagret");
+      if(!ensureProfile())return;if(!analysisPlan.length||analysisShots.length!==analysisPlan.length){toast("Fullfør hele serien først");return;}
+      const hits=analysisShots.filter(s=>s.type==="hit").length,exact=analysisShots.filter(s=>s.result==="exact").length,near=analysisShots.filter(s=>s.result==="near").length,goal=selectedGoal("analysisGoalType"),size=gridSize();
+      state.sessions.unshift({id:uid("session"),profileId:state.activeProfileId,createdAt:new Date().toISOString(),goalType:goal.id,targetName:goal.name,gridSize:size,situation:$("analysisSituation").value,plan:[...analysisPlan],shots:analysisShots.map(s=>({...s})),total:analysisShots.length,hits,exact,near,hitPercentage:analysisShots.length?hits/analysisShots.length:0,accuracy:analysisShots.length?exact/analysisShots.length:0});
+      saveState();resetAnalysisToSetup(true);renderHistory();renderCard();toast("Økten er lagret");
     }
 
     // CHALLENGE
@@ -1203,6 +1167,10 @@
       corners: [7,2,7, 2,1,2, 7,2,7],
       precision: [4,6,4, 2,8,2, 4,6,4]
     };
+    function createPresetValues(preset,size){
+      if(size===3) return [...PRESETS[preset]];
+      return Array.from({length:size*size},(_,i)=>{const r=Math.floor(i/size),c=i%size,corner=(r===0||r===size-1)&&(c===0||c===size-1),edge=r===0||r===size-1||c===0||c===size-1,center=Math.abs(r-(size-1)/2)<.6&&Math.abs(c-(size-1)/2)<.6;if(preset==="corners")return corner?7:edge?3:1;if(preset==="precision")return center?8:corner?5:edge?4:2;return corner?5:edge?3:1;});
+    }
     let selectedChallengeMode = "points";
     let selectedPlayMode = "solo";
     let selectedPlayerIds = [];
@@ -1250,15 +1218,15 @@
       if (!ensureProfile()) return;
       if (selectedPlayMode === "solo") selectedPlayerIds = [state.activeProfileId];
       if (selectedPlayMode === "multi" && selectedPlayerIds.length < 2) { toast("Velg minst to spillere"); return; }
-      const mode = selectedChallengeMode;
-      const target = mode === "points" ? Number($("challengeTarget").value) : 9 * Number($("challengeRounds").value);
+      const mode = selectedChallengeMode, size=gridSize("challenge"), cellCount=size*size, goal=selectedGoal("challengeGoalType");
+      const target = mode === "points" ? Number($("challengeTarget").value) : cellCount * Number($("challengeRounds").value);
       const rounds = mode === "cover" ? Number($("challengeRounds").value) : 1;
-      const values = mode === "points" ? PRESETS[$("challengePreset").value] : Array(9).fill(1);
+      const values = mode === "points" ? createPresetValues($("challengePreset").value,size) : Array(cellCount).fill(1);
       challenge = {
-        mode, playMode:selectedPlayMode, goalType:$("challengeGoalType").value, target, rounds,
+        mode, playMode:selectedPlayMode, goalType:goal.id, targetName:goal.name, gridSize:size, target, rounds,
         preset:$("challengePreset").value, values, currentPlayerIndex:0, history:[], completed:false,
         winnerId:null, startedAt:new Date().toISOString(),
-        players:selectedPlayerIds.map(id => ({ profileId:id, score:0, attempts:0, hits:Array(9).fill(0) }))
+        players:selectedPlayerIds.map(id => ({ profileId:id, score:0, attempts:0, hits:Array(cellCount).fill(0) }))
       };
       $("challengeSetup").classList.add("hidden"); $("challengePlay").classList.remove("hidden");
       setFeedback("Trykk på ruten der skuddet traff", ""); renderChallenge();
@@ -1271,6 +1239,8 @@
     function renderChallengeGoal() {
       if (!challenge) return;
       const player=currentChallengePlayer();
+      $("challengeGoal").style.gridTemplateColumns=`repeat(${challenge.gridSize||3},1fr)`;
+      $("challengeGoal").style.gridTemplateRows=`repeat(${challenge.gridSize||3},1fr)`;
       $("challengeGoal").innerHTML = challenge.values.map((value,index) => {
         const hit = challenge.mode === "cover" && player.hits[index] >= challenge.rounds;
         const label = challenge.mode === "points" ? value : (hit ? "✓" : `${player.hits[index]}/${challenge.rounds}`);
@@ -1329,7 +1299,7 @@
       challenge.players.forEach(player => {
         player.score = 0;
         player.attempts = 0;
-        player.hits = Array(9).fill(0);
+        player.hits = Array(challenge.values.length).fill(0);
       });
       challenge.currentPlayerIndex = 0;
       challenge.history = [];
@@ -1388,8 +1358,8 @@
       challenge.players.forEach(p => state.challenges.unshift({
         id:uid("challenge"), matchId, profileId:p.profileId, playerIds:challenge.players.map(x=>x.profileId),
         createdAt:new Date().toISOString(), mode:challenge.mode, playMode:challenge.playMode,
-        goalType:challenge.goalType, target:challenge.target, rounds:challenge.rounds, preset:challenge.preset,
-        score:playerScore(p), attempts:p.attempts, completed:playerScore(p)>=challenge.target,
+        goalType:challenge.goalType, targetName:challenge.targetName, gridSize:challenge.gridSize, target:challenge.target, rounds:challenge.rounds, preset:challenge.preset,
+        score:playerScore(p), attempts:p.attempts, hitsOnTarget:p.hits.reduce((a,b)=>a+b,0), hitPercentage:p.attempts ? p.hits.reduce((a,b)=>a+b,0)/p.attempts : 0, completed:playerScore(p)>=challenge.target,
         winner:p.profileId===challenge.winnerId, winnerId:challenge.winnerId, hits:[...p.hits]
       }));
       saveState(); renderCard(); toast(challenge.playMode === "multi" ? "Kampen er lagret" : "Challenge lagret");
@@ -1411,9 +1381,10 @@
         if (item.kind === "session") {
           const planned=Array.isArray(item.plan);
           const exact=planned ? (item.exact ?? item.shots.filter(s=>s.result==="exact").length) : item.hits;
-          const pct=item.total ? Math.round(exact/item.total*100) : 0;
-          const detail=planned ? `${exact} fulltreff · ${item.near || 0} nærtreff av ${item.total}` : `${item.hits} av ${item.total} på mål`;
-          return `<div class="history-item"><div><h3>Skuddanalyse · ${escapeHtml(item.situation)}</h3><p>${formatDate(item.createdAt)} · ${item.goalType}'er-mål · ${detail}</p></div><span class="pill">${pct} %</span></div>`;
+          const precision=item.total ? Math.round(exact/item.total*100) : 0, hitPct=item.total ? Math.round((item.hits||0)/item.total*100) : 0;
+          const detail=planned ? `${exact} fulltreff · ${item.near || 0} nærtreff av ${item.total} · presisjon ${precision} %` : `${item.hits} av ${item.total} på mål`;
+          const goalLabel=item.targetName || (item.goalType ? `${item.goalType}'er-mål` : "Mål");
+          return `<div class="history-item"><div><h3>Skuddanalyse · ${escapeHtml(item.situation)}</h3><p>${formatDate(item.createdAt)} · ${escapeHtml(goalLabel)} · ${item.gridSize||3}×${item.gridSize||3} ruter · ${detail}</p></div><span class="pill">Treff ${hitPct} %</span></div>`;
         }
         if (item.kind === "badge") {
           const levelName=item.type==="mini1"?"Minimerket 1":item.type==="mini2"?"Minimerket 2":(BADGE_LEVELS.find(l=>l.key===item.level)?.name||item.level);
@@ -1422,7 +1393,9 @@
         }
         const name=item.mode === "points" ? `Førstemann til ${item.target}` : "Treff alle rutene";
         const matchText=item.playMode === "multi" ? `Kamp · ${item.winner ? "Seier" : "Deltok"}` : "Challenge";
-        return `<div class="history-item"><div><h3>${matchText} · ${name}</h3><p>${formatDate(item.createdAt)} · ${item.goalType}'er-mål · ${item.attempts} forsøk</p></div><span class="pill">${item.winner ? "Vinner" : (item.completed ? "Fullført" : `${item.score}/${item.target}`)}</span></div>`;
+        const challengeHitPct=item.attempts ? Math.round(((item.hitsOnTarget ?? (item.hits||[]).reduce((a,b)=>a+b,0))/item.attempts)*100) : 0;
+        const goalLabel=item.targetName || (item.goalType ? `${item.goalType}'er-mål` : "Mål");
+        return `<div class="history-item"><div><h3>${matchText} · ${name}</h3><p>${formatDate(item.createdAt)} · ${escapeHtml(goalLabel)} · ${item.gridSize||3}×${item.gridSize||3} ruter · ${item.attempts} forsøk · treff ${challengeHitPct} %</p></div><span class="pill">${item.winner ? "Vinner" : (item.completed ? "Fullført" : `${item.score}/${item.target}`)}</span></div>`;
       }).join("");
     }
 
@@ -1433,6 +1406,22 @@
       saveState(); renderHistory(); renderCard(); toast("Historikken er slettet");
     });
 
+
+
+    // SIKKERHETSKOPI
+    $("exportBackup").addEventListener("click",()=>{
+      const backup={app:"Skills Academy",version:"2.4",exportedAt:new Date().toISOString(),data:state};
+      const blob=new Blob([JSON.stringify(backup,null,2)],{type:"application/json"}),url=URL.createObjectURL(blob),a=document.createElement("a");
+      a.href=url;a.download=`skills-academy-sikkerhetskopi-${new Date().toISOString().slice(0,10)}.json`;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1000);toast("Sikkerhetskopien er eksportert");
+    });
+    $("importBackupButton").addEventListener("click",()=>$("importBackupFile").click());
+    $("importBackupFile").addEventListener("change",async e=>{
+      const file=e.target.files?.[0];e.target.value="";if(!file)return;
+      try{const parsed=JSON.parse(await file.text()),incoming=parsed.data||parsed;if(!incoming||!Array.isArray(incoming.profiles)||!Array.isArray(incoming.sessions)){throw new Error("Ugyldig fil");}
+        if(!confirm("Importen erstatter alle data som ligger i appen nå. Fortsette?"))return;
+        state={...structuredClone(defaultState),...incoming,customGoals:Array.isArray(incoming.customGoals)?incoming.customGoals:[],footballBadgeResults:Array.isArray(incoming.footballBadgeResults)?incoming.footballBadgeResults:[]};saveState();analysisPlan=[];analysisShots=[];challenge=null;refreshGoalOptions();renderProfileUI();renderChallengePlayerPicker();renderAnalysisPlanner();renderAnalysis();renderHistory();renderCard();renderFootballBadge();toast("Sikkerhetskopien er importert");
+      }catch(err){alert("Filen kunne ikke importeres. Kontroller at dette er en sikkerhetskopi fra Skills Academy.");}
+    });
 
     // FOTBALLMERKET – krav hentet fra NFFs publiserte merkeprøver
     const BADGE_LEVELS = [
@@ -1624,7 +1613,7 @@
     }
 
     // START
-    renderProfileUI(); renderChallengePlayerPicker(); renderAnalysisPlanner(); renderAnalysis(); renderHistory(); renderCard();
+    refreshGoalOptions(); renderProfileUI(); renderChallengePlayerPicker(); renderAnalysisPlanner(); renderAnalysis(); renderHistory(); renderCard();
     if (!state.profiles.length) setTimeout(openProfileModal, 450);
   </script>
 </body>
