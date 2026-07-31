@@ -4,8 +4,8 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <meta name="theme-color" content="#07130f" />
-  <meta name="description" content="Skills Academy v2.6 – Train. Track. Improve." />
-  <title>Skills Academy v2.6</title>
+  <meta name="description" content="Skills Academy v2.7 – Train. Track. Improve." />
+  <title>Skills Academy v2.7</title>
   <style>
     :root {
       --bg: #06100d;
@@ -255,6 +255,8 @@
     .target-cell.hit .value { background: var(--green); color: #06100d; border-color: #caffdf; }
     .target-cell.hit .value:after { content: "✓"; position: absolute; right: 8px; top: 6px; font-size: 1rem; color: white; }
     .target-cell.flash { animation: flash .35s ease; }
+    .target-cell.target-now { background:rgba(112,185,255,.25); box-shadow:inset 0 0 0 4px var(--blue); }
+    .target-cell.target-now .value { border-color:var(--blue); color:#d8ecff; background:rgba(112,185,255,.2); }
     @keyframes flash { 50% { background: rgba(57,228,135,.7); } }
 
     .play-mode { margin-top: 16px; }
@@ -479,7 +481,7 @@
   </style>
 </head>
 <body>
-  <!-- Skills Academy v2.6 – tilpassede mål, dynamiske ruter og sikkerhetskopi -->
+  <!-- Skills Academy v2.7 – tilpassede mål, dynamiske ruter og sikkerhetskopi -->
   <div class="app">
     <header class="topbar">
       <div class="brand">
@@ -603,8 +605,11 @@
         <div id="challengeSetup" class="panel">
           <h3 class="panel-title">1. Velg konkurranse</h3>
           <div class="challenge-setup-grid" id="challengeModeCards">
-            <button type="button" class="choice-card active" data-mode="points"><h3>Førstemann til poeng</h3><p>Hver rute gir poeng. Første spiller til valgt poengsum vinner.</p></button>
-            <button type="button" class="choice-card" data-mode="cover"><h3>Treff alle rutene</h3><p>Prikk ut rutene etter hvert. Første spiller som fullfører målet vinner.</p></button>
+            <button type="button" class="choice-card active" data-mode="points"><h3>Førstemann til poeng</h3><p>Hver rute gir poeng. Begge får like mange forsøk før vinneren avgjøres.</p></button>
+            <button type="button" class="choice-card" data-mode="cover"><h3>Treff alle rutene</h3><p>Prikk ut rutene etter hvert. Begge får like mange forsøk.</p></button>
+            <button type="button" class="choice-card" data-mode="chosen"><h3>Egenvalgt målområde</h3><p>Velg ruten dere skal sikte mot, og registrer om skuddet traff riktig rute.</p></button>
+            <button type="button" class="choice-card" data-mode="random"><h3>Tilfeldig målområde</h3><p>Appen velger en ny tilfeldig rute før hvert skudd.</p></button>
+            <button type="button" class="choice-card" data-mode="planned"><h3>Planlagt serie</h3><p>Lag en bestemt rekkefølge av ruter før konkurransen starter.</p></button>
           </div>
 
           <div class="play-mode">
@@ -625,6 +630,9 @@
             <div class="field" id="targetField"><label for="challengeTarget">4. Poengmål</label><select class="select" id="challengeTarget"><option value="10">10 poeng</option><option value="21" selected>21 poeng</option><option value="50">50 poeng</option><option value="100">100 poeng</option></select></div>
             <div class="field" id="presetField"><label for="challengePreset">5. Poengoppsett</label><select class="select" id="challengePreset"><option value="classic">Klassisk</option><option value="corners">Keeperhjørner</option><option value="precision">Presisjon</option><option value="custom">Egendefinerte poeng</option></select></div>
             <div class="field hidden" id="roundsField"><label for="challengeRounds">Treff per rute</label><select class="select" id="challengeRounds"><option value="1" selected>Én gang</option><option value="2">To ganger</option><option value="3">Tre ganger</option></select></div>
+            <div class="field hidden" id="challengeShotsField"><label for="challengeShots">Antall skudd per spiller</label><select class="select" id="challengeShots"><option value="5">5 skudd</option><option value="10" selected>10 skudd</option><option value="20">20 skudd</option><option value="30">30 skudd</option></select></div>
+            <div class="field hidden" id="chosenZoneField"><label for="chosenZone">Valgt rute</label><select class="select" id="chosenZone"></select></div>
+            <div class="field hidden" id="plannedSeriesField"><label for="plannedSeries">Planlagt serie</label><input class="input" id="plannedSeries" placeholder="Eksempel: 1, 3, 5, 9"></div>
           </div>
           <div class="score-editor hidden" id="customScoreEditor">
             <strong>Egendefinerte poeng</strong>
@@ -656,6 +664,7 @@
               </div>
             </div>
             <div class="panel">
+              <div class="series-banner hidden" id="challengeTargetBanner"><div><small id="challengeTargetProgress">Neste skudd</small><strong id="challengeTargetText">Sikt mot rute</strong></div></div>
               <p class="goal-instruction">Rutene er synlige hele tiden. Trykk på den ruten ballen traff.</p>
               <div class="challenge-goal" id="challengeGoal" aria-label="Fotballmål delt inn i ni trykkbare ruter"></div>
             </div>
@@ -1246,9 +1255,14 @@
       selectedChallengeMode = card.dataset.mode;
       all("[data-mode]").forEach(c => c.classList.toggle("active", c === card));
       const cover = selectedChallengeMode === "cover";
-      $("targetField").classList.toggle("hidden", cover);
-      $("presetField").classList.toggle("hidden", cover);
+      const accuracyMode = ["chosen","random","planned"].includes(selectedChallengeMode);
+      $("targetField").classList.toggle("hidden", cover || accuracyMode);
+      $("presetField").classList.toggle("hidden", cover || accuracyMode);
       $("roundsField").classList.toggle("hidden", !cover);
+      $("challengeShotsField").classList.toggle("hidden", !accuracyMode);
+      $("chosenZoneField").classList.toggle("hidden", selectedChallengeMode!=="chosen");
+      $("plannedSeriesField").classList.toggle("hidden", selectedChallengeMode!=="planned");
+      refreshChallengeZoneOptions();
       renderCustomScoreEditor();
     }));
 
@@ -1286,20 +1300,43 @@
       }));
     }
 
+    function refreshChallengeZoneOptions(){
+      const size=gridSize("challenge"), el=$("chosenZone"); if(!el)return;
+      const current=Number(el.value)||0; el.innerHTML=Array.from({length:size*size},(_,i)=>`<option value="${i}">${zoneName(i,size)}</option>`).join("");
+      el.value=String(Math.min(current,size*size-1));
+    }
+    $("challengeGridSize").addEventListener("change",refreshChallengeZoneOptions);
+
+    function buildChallengeSequence(mode,size,shots){
+      const count=size*size;
+      if(mode==="chosen") return Array(shots).fill(Number($("chosenZone").value)||0);
+      if(mode==="random") return Array.from({length:shots},()=>Math.floor(Math.random()*count));
+      if(mode==="planned") {
+        const values=$("plannedSeries").value.split(/[ ,;]+/).filter(Boolean).map(v=>Number(v)-1).filter(v=>Number.isInteger(v)&&v>=0&&v<count);
+        if(!values.length) return null;
+        return Array.from({length:shots},(_,i)=>values[i%values.length]);
+      }
+      return [];
+    }
+
     $("startChallenge").addEventListener("click", () => {
       if (!ensureProfile()) return;
       if (selectedPlayMode === "solo") selectedPlayerIds = [state.activeProfileId];
       if (selectedPlayMode === "multi" && selectedPlayerIds.length < 2) { toast("Velg minst to spillere"); return; }
       const mode = selectedChallengeMode, size=gridSize("challenge"), cellCount=size*size, goal=selectedGoal("challengeGoalType");
-      const target = mode === "points" ? Number($("challengeTarget").value) : cellCount * Number($("challengeRounds").value);
+      const accuracyMode=["chosen","random","planned"].includes(mode);
+      const shotLimit=accuracyMode ? Number($("challengeShots").value) : null;
+      const sequence=accuracyMode ? buildChallengeSequence(mode,size,shotLimit) : [];
+      if(accuracyMode && !sequence){ toast("Skriv inn minst én gyldig rute i serien"); return; }
+      const target = mode === "points" ? Number($("challengeTarget").value) : mode === "cover" ? cellCount * Number($("challengeRounds").value) : shotLimit;
       const rounds = mode === "cover" ? Number($("challengeRounds").value) : 1;
       let values = mode === "points" ? createPresetValues($("challengePreset").value,size) : Array(cellCount).fill(1);
       if(mode==="points" && $("challengePreset").value==="custom"){ const inputs=all("[data-score-index]",$("customScoreGrid")); if(inputs.length===cellCount) values=inputs.map(x=>clamp(Number(x.value)||0,0,99)); }
       challenge = {
-        mode, playMode:selectedPlayMode, goalType:goal.id, targetName:goal.name, gridSize:size, target, rounds,
-        preset:$("challengePreset").value, values, currentPlayerIndex:0, history:[], completed:false,
+        mode, playMode:selectedPlayMode, goalType:goal.id, targetName:goal.name, gridSize:size, target, rounds, shotLimit, sequence,
+        preset:$("challengePreset").value, values, currentPlayerIndex:0, history:[], completed:false, pendingEqualizer:false,
         winnerId:null, startedAt:new Date().toISOString(),
-        players:selectedPlayerIds.map(id => ({ profileId:id, score:0, attempts:0, hits:Array(cellCount).fill(0) }))
+        players:selectedPlayerIds.map(id => ({ profileId:id, score:0, attempts:0, hits:Array(cellCount).fill(0), correct:0 }))
       };
       $("challengeSetup").classList.add("hidden"); $("challengePlay").classList.remove("hidden");
       setFeedback("Trykk på ruten der skuddet traff", ""); renderChallenge();
@@ -1307,7 +1344,8 @@
 
     function currentChallengePlayer() { return challenge?.players[challenge.currentPlayerIndex] || null; }
     function profileName(id) { return state.profiles.find(p => p.id === id)?.name || "Spiller"; }
-    function playerScore(player) { return challenge.mode === "points" ? player.score : player.hits.reduce((sum,n)=>sum+Math.min(n,challenge.rounds),0); }
+    function playerScore(player) { if(["chosen","random","planned"].includes(challenge.mode)) return player.correct||0; return challenge.mode === "points" ? player.score : player.hits.reduce((sum,n)=>sum+Math.min(n,challenge.rounds),0); }
+    function targetZoneForPlayer(player){ return challenge.sequence?.[Math.min(player.attempts,challenge.sequence.length-1)] ?? null; }
 
     function renderChallengeGoal() {
       if (!challenge) return;
@@ -1315,9 +1353,11 @@
       $("challengeGoal").style.gridTemplateColumns=`repeat(${challenge.gridSize||3},1fr)`;
       $("challengeGoal").style.gridTemplateRows=`repeat(${challenge.gridSize||3},1fr)`;
       $("challengeGoal").innerHTML = challenge.values.map((value,index) => {
+        const accuracyMode=["chosen","random","planned"].includes(challenge.mode);
+        const targetZone=accuracyMode ? targetZoneForPlayer(player) : null;
         const hit = challenge.mode === "cover" && player.hits[index] >= challenge.rounds;
-        const label = challenge.mode === "points" ? value : (hit ? "✓" : `${player.hits[index]}/${challenge.rounds}`);
-        return `<button type="button" class="target-cell ${hit ? "hit" : ""}" data-zone="${index}" aria-label="Rute ${index+1}, ${label}"><span class="value">${label}</span></button>`;
+        const label = challenge.mode === "points" ? value : accuracyMode ? (index===targetZone ? "🎯" : index+1) : (hit ? "✓" : `${player.hits[index]}/${challenge.rounds}`);
+        return `<button type="button" class="target-cell ${hit ? "hit" : ""} ${accuracyMode&&index===targetZone?"target-now":""}" data-zone="${index}" aria-label="Rute ${index+1}, ${label}"><span class="value">${label}</span></button>`;
       }).join("");
       all("[data-zone]", $("challengeGoal")).forEach(cell => cell.addEventListener("click", () => registerChallengeHit(Number(cell.dataset.zone), cell)));
     }
@@ -1325,26 +1365,52 @@
     function registerChallengeHit(zone, cell) {
       if (!challenge || challenge.completed) return;
       const player=currentChallengePlayer();
+      const accuracyMode=["chosen","random","planned"].includes(challenge.mode);
+      const expected=accuracyMode ? targetZoneForPlayer(player) : null;
+      const correct=accuracyMode && zone===expected;
       const points=challenge.mode === "points" ? challenge.values[zone] : 1;
       player.attempts++; player.hits[zone]++;
       if (challenge.mode === "points") player.score += points;
-      challenge.history.push({type:"hit",playerIndex:challenge.currentPlayerIndex,zone,points});
+      if (correct) player.correct=(player.correct||0)+1;
+      challenge.history.push({type:"hit",playerIndex:challenge.currentPlayerIndex,zone,points,correct,expected});
       cell.classList.add("flash");
-      const completed=playerScore(player) >= challenge.target;
-      if (completed) completeChallenge(player.profileId);
-      else {
-        const text=challenge.mode === "points" ? `${profileName(player.profileId)} fikk ${points} poeng!` : (player.hits[zone] >= challenge.rounds ? `${profileName(player.profileId)} fullførte ruten!` : "Treff registrert!");
-        setFeedback(text,"good"); advanceTurn();
-      }
+      setFeedback(accuracyMode ? (correct?`${profileName(player.profileId)} traff riktig rute!`:`Treff i ${zoneName(zone,challenge.gridSize)} – målet var ${zoneName(expected,challenge.gridSize)}`) : challenge.mode === "points" ? `${profileName(player.profileId)} fikk ${points} poeng!` : (player.hits[zone] >= challenge.rounds ? `${profileName(player.profileId)} fullførte ruten!` : "Treff registrert!"), correct||!accuracyMode?"good":"");
+      evaluateChallengeAfterAttempt(player.profileId);
       renderChallenge();
     }
 
     $("challengeMiss").addEventListener("click", () => {
       if (!challenge || challenge.completed) return;
       const player=currentChallengePlayer(); player.attempts++;
-      challenge.history.push({type:"miss",playerIndex:challenge.currentPlayerIndex});
-      setFeedback(`${profileName(player.profileId)} bommet`, ""); advanceTurn(); renderChallenge();
+      challenge.history.push({type:"miss",playerIndex:challenge.currentPlayerIndex,expected:["chosen","random","planned"].includes(challenge.mode)?targetZoneForPlayer({...player,attempts:player.attempts-1}):null});
+      setFeedback(`${profileName(player.profileId)} bommet`, ""); evaluateChallengeAfterAttempt(player.profileId);
     });
+
+    function evaluateChallengeAfterAttempt(playerId){
+      const accuracyMode=["chosen","random","planned"].includes(challenge.mode);
+      if(accuracyMode){
+        const allDone=challenge.players.every(p=>p.attempts>=challenge.shotLimit);
+        if(allDone){ resolveChallengeWinner(); } else advanceTurn();
+        renderChallenge(); return;
+      }
+      const player=challenge.players.find(p=>p.profileId===playerId);
+      const reached=playerScore(player)>=challenge.target;
+      if(reached && challenge.playMode==="solo"){ completeChallenge(playerId); renderChallenge(); return; }
+      if(reached && challenge.playMode==="multi") challenge.pendingEqualizer=true;
+      advanceTurn();
+      if(challenge.pendingEqualizer){
+        const maxAttempts=Math.max(...challenge.players.map(p=>p.attempts));
+        const equal=challenge.players.every(p=>p.attempts===maxAttempts);
+        if(equal) resolveChallengeWinner();
+      }
+      renderChallenge();
+    }
+    function resolveChallengeWinner(){
+      const best=Math.max(...challenge.players.map(playerScore));
+      const leaders=challenge.players.filter(p=>playerScore(p)===best);
+      challenge.completed=true; challenge.winnerId=leaders.length===1?leaders[0].profileId:null;
+      setFeedback(leaders.length===1?`${profileName(leaders[0].profileId)} vant!`:`Uavgjort etter like mange skudd`,"done");
+    }
 
     function advanceTurn() {
       if (challenge.playMode === "multi") challenge.currentPlayerIndex=(challenge.currentPlayerIndex+1)%challenge.players.length;
@@ -1357,8 +1423,9 @@
       if (last.type === "hit") {
         player.hits[last.zone]=Math.max(0,player.hits[last.zone]-1);
         if (challenge.mode === "points") player.score=Math.max(0,player.score-last.points);
+        if (last.correct) player.correct=Math.max(0,(player.correct||0)-1);
       }
-      challenge.currentPlayerIndex=last.playerIndex; challenge.completed=false; challenge.winnerId=null;
+      challenge.currentPlayerIndex=last.playerIndex; challenge.completed=false; challenge.winnerId=null; challenge.pendingEqualizer=false;
       $("winnerBox").classList.add("hidden");
       setFeedback("Siste forsøk ble fjernet", ""); renderChallenge();
     });
@@ -1381,11 +1448,13 @@
         player.score = 0;
         player.attempts = 0;
         player.hits = Array(challenge.values.length).fill(0);
+        player.correct = 0;
       });
       challenge.currentPlayerIndex = 0;
       challenge.history = [];
       challenge.completed = false;
       challenge.winnerId = null;
+      challenge.pendingEqualizer = false;
       challenge.startedAt = new Date().toISOString();
       $("winnerBox").classList.add("hidden");
       setFeedback("Ny konkurranse startet", "");
@@ -1407,7 +1476,11 @@
     function renderChallenge() {
       if (!challenge) return;
       const player=currentChallengePlayer(); const score=playerScore(player); const remaining=Math.max(0,challenge.target-score);
-      $("challengeTitle").textContent=challenge.mode === "points" ? `Førstemann til ${challenge.target}` : `Treff alle rutene${challenge.rounds>1 ? ` ${challenge.rounds} ganger` : ""}`;
+      const titles={points:`Førstemann til ${challenge.target}`,cover:`Treff alle rutene${challenge.rounds>1?` ${challenge.rounds} ganger`:""}`,chosen:"Egenvalgt målområde",random:"Tilfeldig målområde",planned:"Planlagt serie"};
+      $("challengeTitle").textContent=titles[challenge.mode]||"Challenge";
+      const accuracyMode=["chosen","random","planned"].includes(challenge.mode);
+      $("challengeTargetBanner").classList.toggle("hidden",!accuracyMode||challenge.completed);
+      if(accuracyMode&&!challenge.completed){ const tz=targetZoneForPlayer(player); $("challengeTargetProgress").textContent=`Skudd ${Math.min(player.attempts+1,challenge.shotLimit)} av ${challenge.shotLimit}`; $("challengeTargetText").textContent=`Sikt mot ${zoneName(tz,challenge.gridSize)}`; }
       const multi=challenge.playMode === "multi";
       $("turnBanner").classList.toggle("hidden", !multi || challenge.completed);
       $("multiplayerBoard").classList.toggle("hidden", !multi);
@@ -1415,18 +1488,19 @@
       if (multi) {
         $("turnPlayerName").textContent=profileName(player.profileId);
         $("multiplayerBoard").innerHTML=challenge.players.map((p,index)=>{
-          const s=playerScore(p), rem=Math.max(0,challenge.target-s);
-          return `<div class="player-score-row ${index===challenge.currentPlayerIndex && !challenge.completed ? "active" : ""} ${p.profileId===challenge.winnerId ? "winner" : ""}"><div><strong>${escapeHtml(profileName(p.profileId))}</strong><small>${p.attempts} forsøk · ${rem} gjenstår</small></div><div class="player-score-number">${s}/${challenge.target}</div></div>`;
+          const s=playerScore(p), rem=["chosen","random","planned"].includes(challenge.mode)?Math.max(0,challenge.shotLimit-p.attempts):Math.max(0,challenge.target-s);
+          return `<div class="player-score-row ${index===challenge.currentPlayerIndex && !challenge.completed ? "active" : ""} ${p.profileId===challenge.winnerId ? "winner" : ""}"><div><strong>${escapeHtml(profileName(p.profileId))}</strong><small>${p.attempts} forsøk · ${rem} gjenstår</small></div><div class="player-score-number">${s}/${["chosen","random","planned"].includes(challenge.mode)?challenge.shotLimit:challenge.target}</div></div>`;
         }).join("");
       } else {
-        $("challengeScore").textContent=score; $("challengeRemaining").textContent=remaining; $("challengeAttempts").textContent=player.attempts;
-        $("scoreLabel").textContent=challenge.mode === "points" ? "poeng" : "rutetreff";
-        $("remainingLabel").textContent=challenge.mode === "points" ? "poeng gjenstår" : "rutetreff gjenstår";
+        const accuracyMode=["chosen","random","planned"].includes(challenge.mode);
+        $("challengeScore").textContent=score; $("challengeRemaining").textContent=accuracyMode?Math.max(0,challenge.shotLimit-player.attempts):remaining; $("challengeAttempts").textContent=player.attempts;
+        $("scoreLabel").textContent=challenge.mode === "points" ? "poeng" : accuracyMode?"riktige":"rutetreff";
+        $("remainingLabel").textContent=challenge.mode === "points" ? "poeng gjenstår" : accuracyMode?"skudd gjenstår":"rutetreff gjenstår";
       }
       $("winnerBox").classList.toggle("hidden", !challenge.completed);
       if (challenge.completed) {
-        $("winnerName").textContent=challenge.playMode === "multi" ? profileName(challenge.winnerId) : profileName(player.profileId);
-        $("winnerText").textContent=challenge.playMode === "multi" ? "vant konkurransen" : "fullførte challengen";
+        $("winnerName").textContent=challenge.playMode === "multi" ? (challenge.winnerId?profileName(challenge.winnerId):"Uavgjort") : profileName(player.profileId);
+        $("winnerText").textContent=challenge.playMode === "multi" ? (challenge.winnerId?"vant konkurransen":"Begge fikk samme resultat") : "fullførte challengen";
       }
       $("challengeMiss").disabled=challenge.completed;
       renderChallengeGoal();
@@ -1440,7 +1514,7 @@
         id:uid("challenge"), matchId, profileId:p.profileId, playerIds:challenge.players.map(x=>x.profileId),
         createdAt:new Date().toISOString(), mode:challenge.mode, playMode:challenge.playMode,
         goalType:challenge.goalType, targetName:challenge.targetName, gridSize:challenge.gridSize, target:challenge.target, rounds:challenge.rounds, preset:challenge.preset,
-        score:playerScore(p), attempts:p.attempts, hitsOnTarget:p.hits.reduce((a,b)=>a+b,0), hitPercentage:p.attempts ? p.hits.reduce((a,b)=>a+b,0)/p.attempts : 0, completed:playerScore(p)>=challenge.target,
+        score:playerScore(p), attempts:p.attempts, correct:p.correct||0, hitsOnTarget:p.hits.reduce((a,b)=>a+b,0), hitPercentage:p.attempts ? p.hits.reduce((a,b)=>a+b,0)/p.attempts : 0, completed:["chosen","random","planned"].includes(challenge.mode)?p.attempts>=challenge.shotLimit:playerScore(p)>=challenge.target,
         winner:p.profileId===challenge.winnerId, winnerId:challenge.winnerId, hits:[...p.hits]
       }));
       saveState(); renderCard(); renderHistory(); renderPersonalRecords(); requestAnimationFrame(drawProgressChart); toast(challenge.playMode === "multi" ? "Kampen er lagret" : "Challenge lagret");
@@ -1541,7 +1615,7 @@
 
     // SIKKERHETSKOPI
     $("exportBackup").addEventListener("click",()=>{
-      const backup={app:"Skills Academy",version:"2.6",exportedAt:new Date().toISOString(),data:state};
+      const backup={app:"Skills Academy",version:"2.7",exportedAt:new Date().toISOString(),data:state};
       const blob=new Blob([JSON.stringify(backup,null,2)],{type:"application/json"}),url=URL.createObjectURL(blob),a=document.createElement("a");
       a.href=url;a.download=`skills-academy-sikkerhetskopi-${new Date().toISOString().slice(0,10)}.json`;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1000);toast("Sikkerhetskopien er eksportert");
     });
