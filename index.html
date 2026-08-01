@@ -4,8 +4,8 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <meta name="theme-color" content="#07130f" />
-  <meta name="description" content="Skills Academy v2.9.1 Skills-test.1 – Train. Track. Improve." />
-  <title>Skills Academy v2.9.1 Skills-test</title>
+  <meta name="description" content="Skills Academy v2.9.2 Skills-test.1 – Train. Track. Improve." />
+  <title>Skills Academy v2.9.2 Skills-test</title>
   <link rel="manifest" href="manifest.webmanifest" />
   <link rel="icon" type="image/png" sizes="192x192" href="icon-192.png" />
   <link rel="apple-touch-icon" href="icon-192.png" />
@@ -300,6 +300,19 @@
     .history-item { border: 1px solid var(--line); background: rgba(255,255,255,.035); border-radius: 16px; padding: 14px; display: grid; grid-template-columns: 1fr auto; gap: 10px; align-items: center; }
     .history-item h3 { margin: 0 0 4px; font-size: .92rem; }
     .history-item p { margin: 0; color: var(--muted); font-size: .76rem; line-height: 1.4; }
+    .history-item-actions { display:flex; align-items:center; justify-content:flex-end; gap:7px; flex-wrap:wrap; }
+    .history-delete-btn {
+      min-width:42px; min-height:42px; padding:8px 10px; border-radius:12px;
+      border:1px solid rgba(255,128,139,.4); background:rgba(117,36,44,.18);
+      color:#ffb0b8; font:inherit; font-weight:900; cursor:pointer;
+    }
+    .history-delete-btn:hover, .history-delete-btn:focus-visible {
+      background:rgba(154,45,56,.3); border-color:#ff9ea8; outline:none;
+    }
+    @media (max-width:520px) {
+      .history-item-actions { flex-direction:column; align-items:flex-end; }
+      .history-delete-btn { min-width:46px; }
+    }
     .pill { padding: 7px 9px; border-radius: 99px; background: var(--green-soft); color: var(--green); font-size: .7rem; font-weight: 900; white-space: nowrap; }
     .empty { padding: 30px 12px; text-align: center; color: var(--muted); }
 
@@ -528,7 +541,7 @@
   </style>
 </head>
 <body>
-  <!-- Skills Academy v2.9.1 Skills-test.1 – tilpassede mål, dynamiske ruter og sikkerhetskopi -->
+  <!-- Skills Academy v2.9.2 Skills-test.1 – tilpassede mål, dynamiske ruter og sikkerhetskopi -->
   <div class="app">
     <header class="topbar">
       <div class="brand">
@@ -1667,6 +1680,72 @@
     }
 
     // HISTORIKK
+    function historyItemActions(item, statusHtml) {
+      const id = item.id ? String(item.id) : "";
+      const createdAt = item.createdAt ? String(item.createdAt) : "";
+      return `<div class="history-item-actions">
+        ${statusHtml}
+        <button type="button" class="history-delete-btn" aria-label="Slett denne aktiviteten"
+          title="Slett aktivitet"
+          data-delete-history-kind="${escapeHtml(item.kind)}"
+          data-delete-history-id="${escapeHtml(id)}"
+          data-delete-history-created="${escapeHtml(createdAt)}">🗑</button>
+      </div>`;
+    }
+
+    function recalculatePersonalRecordsAfterDelete() {
+      const juggling = [...(state.jugglingResults || [])].sort((a,b)=>new Date(a.createdAt)-new Date(b.createdAt));
+      const jugglingBest = new Map();
+      juggling.forEach(item => {
+        const previous = jugglingBest.get(item.profileId) || 0;
+        item.isRecord = Number(item.count) > previous;
+        if (Number(item.count) > previous) jugglingBest.set(item.profileId, Number(item.count));
+      });
+
+      const dribble = [...(state.dribbleResults || [])].sort((a,b)=>new Date(a.createdAt)-new Date(b.createdAt));
+      const dribbleBest = new Map();
+      dribble.forEach(item => {
+        const key = `${item.profileId}:${item.courseId}`;
+        const previous = dribbleBest.get(key);
+        const time = Number(item.time);
+        item.isRecord = Number.isFinite(time) && (previous === undefined || time < previous);
+        if (Number.isFinite(time) && (previous === undefined || time < previous)) dribbleBest.set(key, time);
+      });
+    }
+
+    function deleteHistoryEntry(kind, id, createdAt) {
+      const collections = {
+        session: "sessions",
+        challenge: "challenges",
+        badge: "footballBadgeResults",
+        juggling: "jugglingResults",
+        dribble: "dribbleResults"
+      };
+      const key = collections[kind];
+      if (!key) return;
+      const items = state[key] || [];
+      const target = items.find(item =>
+        (id && String(item.id || "") === id) ||
+        (!id && createdAt && String(item.createdAt || "") === createdAt)
+      );
+      if (!target) {
+        toast("Aktiviteten ble ikke funnet");
+        return;
+      }
+      if (!confirm("Slette denne aktiviteten? XP, kortverdier og rekorder blir beregnet på nytt.")) return;
+
+      state[key] = items.filter(item => item !== target);
+      recalculatePersonalRecordsAfterDelete();
+      saveState();
+      renderHistory();
+      renderPersonalRecords();
+      renderCard();
+      renderSkills();
+      renderFootballBadge();
+      requestAnimationFrame(drawProgressChart);
+      toast("Aktiviteten er slettet");
+    }
+
     function renderHistory() {
       const list=$("historyList");
       const profile=activeProfile();
@@ -1691,26 +1770,35 @@
           const total=sessionTotal(item), precision=total ? Math.round(exact/total*100) : 0, hitPct=total ? Math.round(sessionHits(item)/total*100) : 0;
           const detail=planned ? `${exact} fulltreff · ${sessionNear(item)} nærtreff av ${total} · presisjon ${precision} %` : `${sessionHits(item)} av ${total} på mål`;
           const goalLabel=item.targetName || (item.goalType ? `${item.goalType}'er-mål` : "Mål");
-          return `<div class="history-item"><div><h3>Skuddanalyse · ${escapeHtml(item.situation)}</h3><p>${formatDate(item.createdAt)} · ${escapeHtml(goalLabel)} · ${item.gridSize||3}×${item.gridSize||3} ruter · ${detail}</p></div><span class="pill">Treff ${hitPct} %</span></div>`;
+          return `<div class="history-item"><div><h3>Skuddanalyse · ${escapeHtml(item.situation)}</h3><p>${formatDate(item.createdAt)} · ${escapeHtml(goalLabel)} · ${item.gridSize||3}×${item.gridSize||3} ruter · ${detail}</p></div>${historyItemActions(item, `<span class="pill">Treff ${hitPct} %</span>`)}</div>`;
         }
         if (item.kind === "juggling") {
-          return `<div class="history-item"><div><h3>Triksing${item.isRecord?' · Ny rekord':''}</h3><p>${formatDate(item.createdAt)} · ${item.count} berøringer</p></div><span class="pill">+${item.xpAwarded||0} XP</span></div>`;
+          return `<div class="history-item"><div><h3>Triksing${item.isRecord?' · Ny rekord':''}</h3><p>${formatDate(item.createdAt)} · ${item.count} berøringer</p></div>${historyItemActions(item, `<span class="pill">+${item.xpAwarded||0} XP</span>`)}</div>`;
         }
         if (item.kind === "dribble") {
           const course=(state.dribbleCourses||[]).find(c=>c.id===item.courseId);
-          return `<div class="history-item"><div><h3>Dribleløype${item.isRecord?' · Ny rekord':''}</h3><p>${formatDate(item.createdAt)} · ${escapeHtml(course?.name||'Egen løype')} · ${Number(item.time).toFixed(2).replace('.',',')} s</p></div><span class="pill">+${item.xpAwarded||0} XP</span></div>`;
+          return `<div class="history-item"><div><h3>Dribleløype${item.isRecord?' · Ny rekord':''}</h3><p>${formatDate(item.createdAt)} · ${escapeHtml(course?.name||'Egen løype')} · ${Number(item.time).toFixed(2).replace('.',',')} s</p></div>${historyItemActions(item, `<span class="pill">+${item.xpAwarded||0} XP</span>`)}</div>`;
         }
         if (item.kind === "badge") {
           const levelName=item.type==="mini1"?"Minimerket 1":item.type==="mini2"?"Minimerket 2":(BADGE_LEVELS.find(l=>l.key===item.level)?.name||item.level);
           const exercise=item.exerciseId==="complete"?"Hele merket":(TECH_EXERCISES.find(x=>x.id===item.exerciseId)?.name||"Øvelse");
-          return `<div class="history-item"><div><h3>Fotballmerket · ${escapeHtml(levelName)}</h3><p>${formatDate(item.createdAt)} · ${escapeHtml(exercise)}${item.exerciseId!=="complete"?` · resultat ${item.value}`:""}</p></div><span class="pill">${item.passed?"Bestått":"Trening"} · +${item.xpAwarded||0} XP</span></div>`;
+          return `<div class="history-item"><div><h3>Fotballmerket · ${escapeHtml(levelName)}</h3><p>${formatDate(item.createdAt)} · ${escapeHtml(exercise)}${item.exerciseId!=="complete"?` · resultat ${item.value}`:""}</p></div>${historyItemActions(item, `<span class="pill">${item.passed?"Bestått":"Trening"} · +${item.xpAwarded||0} XP</span>`)}</div>`;
         }
         const name=item.mode === "points" ? `Førstemann til ${item.target}` : "Treff alle rutene";
         const matchText=item.playMode === "multi" ? `Kamp · ${item.winner ? "Seier" : "Deltok"}` : "Challenge";
         const challengeHitPct=item.attempts ? Math.round(((item.hitsOnTarget ?? (item.hits||[]).reduce((a,b)=>a+b,0))/item.attempts)*100) : 0;
         const goalLabel=item.targetName || (item.goalType ? `${item.goalType}'er-mål` : "Mål");
-        return `<div class="history-item"><div><h3>${matchText} · ${name}</h3><p>${formatDate(item.createdAt)} · ${escapeHtml(goalLabel)} · ${item.gridSize||3}×${item.gridSize||3} ruter · ${item.attempts} forsøk · treff ${challengeHitPct} %</p></div><span class="pill">${item.winner ? "Vinner" : (item.completed ? "Fullført" : `${item.score}/${item.target}`)}</span></div>`;
+        return `<div class="history-item"><div><h3>${matchText} · ${name}</h3><p>${formatDate(item.createdAt)} · ${escapeHtml(goalLabel)} · ${item.gridSize||3}×${item.gridSize||3} ruter · ${item.attempts} forsøk · treff ${challengeHitPct} %</p></div>${historyItemActions(item, `<span class="pill">${item.winner ? "Vinner" : (item.completed ? "Fullført" : `${item.score}/${item.target}`)}</span>`)}</div>`;
       }).join("");
+      all("[data-delete-history-kind]", list).forEach(button => {
+        button.addEventListener("click", () => {
+          deleteHistoryEntry(
+            button.dataset.deleteHistoryKind,
+            button.dataset.deleteHistoryId || "",
+            button.dataset.deleteHistoryCreated || ""
+          );
+        });
+      });
     }
 
 
@@ -1761,7 +1849,7 @@
     $("clearHistory").addEventListener("click", () => {
       const p=activeProfile(); if (!p) return;
       if (!confirm(`Slette all historikk for ${p.name}?`)) return;
-      state.sessions=state.sessions.filter(x=>x.profileId!==p.id); state.challenges=state.challenges.filter(x=>x.profileId!==p.id); state.footballBadgeResults=(state.footballBadgeResults||[]).filter(x=>x.profileId!==p.id); state.jugglingResults=(state.jugglingResults||[]).filter(x=>x.profileId!==p.id); state.dribbleResults=(state.dribbleResults||[]).filter(x=>x.profileId!==p.id);
+      state.sessions=state.sessions.filter(x=>!sessionBelongsToProfile(x,p.id)); state.challenges=state.challenges.filter(x=>x.profileId!==p.id); state.footballBadgeResults=(state.footballBadgeResults||[]).filter(x=>x.profileId!==p.id); state.jugglingResults=(state.jugglingResults||[]).filter(x=>x.profileId!==p.id); state.dribbleResults=(state.dribbleResults||[]).filter(x=>x.profileId!==p.id);
       saveState(); renderHistory(); renderPersonalRecords(); renderCard(); requestAnimationFrame(drawProgressChart); toast("Historikken er slettet");
     });
 
@@ -1769,7 +1857,7 @@
 
     // SIKKERHETSKOPI
     $("exportBackup").addEventListener("click",()=>{
-      const backup={app:"Skills Academy",version:"2.9.1",exportedAt:new Date().toISOString(),data:state};
+      const backup={app:"Skills Academy",version:"2.9.2",exportedAt:new Date().toISOString(),data:state};
       const blob=new Blob([JSON.stringify(backup,null,2)],{type:"application/json"}),url=URL.createObjectURL(blob),a=document.createElement("a");
       a.href=url;a.download=`skills-academy-sikkerhetskopi-${new Date().toISOString().slice(0,10)}.json`;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1000);toast("Sikkerhetskopien er eksportert");
     });

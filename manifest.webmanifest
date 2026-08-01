@@ -1,6 +1,7 @@
 {
   "name": "Skills Academy",
   "short_name": "Academy",
+  "description": "Skills Academy v2.9.2 – individuell sletting av aktiviteter",
   "start_url": "./index.html",
   "scope": "./",
   "display": "standalone",
@@ -20,6 +21,5 @@
       "type": "image/png",
       "purpose": "any maskable"
     }
-  ],
-  "description": "Skills Academy v2.9.1 – synlig totalsum på spillerkort"
+  ]
 }

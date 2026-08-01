@@ -1,4 +1,4 @@
-SKILLS ACADEMY v2.9.1 – TOTALSUM PÅ SPILLERKORT
+SKILLS ACADEMY v2.9.2 – INDIVIDUELL SLETTING
 
 Last opp alle filene til samme nivå i GitHub:
 - index.html
@@ -7,18 +7,16 @@ Last opp alle filene til samme nivå i GitHub:
 - icon-192.png
 - icon-512.png
 
-Rettelsen:
-- TOTAL vises nå nederst i full bredde på kortet.
-- Fast høyde som klippet bort totalsummen er fjernet.
-- Summen oppdateres automatisk.
-- Regnestykket vises under totalsummen.
-- Ingen andre funksjoner er endret.
-
-Eksempel:
-SHO 63 + DRI 45 + CON 45 + TAC 45 + CHL 99 + EXP 83 = TOTAL 380
+Nytt:
+- Hver aktivitet i historikken har egen søppelbøtteknapp.
+- Bare valgt aktivitet slettes.
+- Appen spør om bekreftelse.
+- XP, OVR, ferdigheter, TOTAL og rekorder beregnes på nytt.
+- Trikserekorder og driblerekorder beregnes på nytt.
+- «Slett historikk» beholdes for full sletting.
 
 Etter opplasting:
-1. Vent til GitHub Pages er publisert.
+1. Vent på ny GitHub Pages-publisering.
 2. Lukk PWA-en helt.
 3. Åpne nettsiden i Chrome og oppdater.
 4. Åpne PWA-en igjen.
