@@ -4,8 +4,14 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <meta name="theme-color" content="#07130f" />
-  <meta name="description" content="Skills Academy v2.7 – Train. Track. Improve." />
-  <title>Skills Academy v2.7</title>
+  <meta name="description" content="Skills Academy v2.8 Skills-test.1 – Train. Track. Improve." />
+  <title>Skills Academy v2.8 Skills-test</title>
+  <link rel="manifest" href="manifest.webmanifest" />
+  <link rel="icon" type="image/png" sizes="192x192" href="icon-192.png" />
+  <link rel="apple-touch-icon" href="icon-192.png" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+
   <style>
     :root {
       --bg: #06100d;
@@ -478,10 +484,23 @@
     .goal-admin-row small { display:block; color:var(--muted); margin-top:3px; }
     @media (min-width:720px){ .history-tools{grid-template-columns:repeat(3,minmax(0,1fr));}.records-grid{grid-template-columns:repeat(4,minmax(0,1fr));} }
 
+  
+    /* Triksing og dribleløype */
+    .skills-tabs{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px}
+    .skills-tab{border:1px solid var(--line);background:rgba(255,255,255,.04);color:var(--muted);border-radius:14px;padding:12px;font-weight:900;cursor:pointer}
+    .skills-tab.active{background:var(--green-soft);color:var(--green);border-color:rgba(57,228,135,.45)}
+    .record-hero{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:12px 0}
+    .record-hero>div{border:1px solid var(--line);background:rgba(255,255,255,.04);border-radius:15px;padding:12px;text-align:center}
+    .record-hero strong{display:block;font-size:1.35rem;color:var(--green)}
+    .record-hero span{display:block;color:var(--muted);font-size:.7rem;margin-top:3px}
+    .course-list{display:grid;gap:9px;margin-top:12px}
+    .course-row{display:grid;grid-template-columns:1fr auto;gap:10px;align-items:center;border:1px solid var(--line);border-radius:15px;padding:12px;background:rgba(255,255,255,.035)}
+    .course-row strong{display:block}.course-row small{display:block;color:var(--muted);margin-top:3px}
+
   </style>
 </head>
 <body>
-  <!-- Skills Academy v2.7 – tilpassede mål, dynamiske ruter og sikkerhetskopi -->
+  <!-- Skills Academy v2.8 Skills-test.1 – tilpassede mål, dynamiske ruter og sikkerhetskopi -->
   <div class="app">
     <header class="topbar">
       <div class="brand">
@@ -521,6 +540,9 @@
           </button>
           <button type="button" class="quick-card" data-go="fotballmerket">
             <span class="icon">🏅</span><h3>Fotballmerket</h3><p>Gjennomfør NFFs mini- og teknikkmerkeprøver og samle XP.</p>
+          </button>
+          <button type="button" class="quick-card" data-go="skills">
+            <span class="icon">⚽</span><h3>Ballferdigheter</h3><p>Sett personlige rekorder i triksing og egne dribleløyper.</p>
           </button>
           <button type="button" class="quick-card" data-go="history">
             <span class="icon">📈</span><h3>Historikk</h3><p>Finn igjen tidligere økter og konkurranser.</p>
@@ -683,12 +705,12 @@
           <div class="card-name" id="cardName">SPILLER</div>
           <div class="card-title" id="cardTitle">Academy Rookie</div>
           <div class="card-stats">
-            <div class="card-stat"><span>FIN Avslutning</span><b id="cardFin">50</b></div>
-            <div class="card-stat"><span>ACC Presisjon</span><b id="cardAcc">50</b></div>
-            <div class="card-stat"><span>CON Konsistens</span><b id="cardCon">50</b></div>
-            <div class="card-stat"><span>CTL Ballkontroll</span><b id="cardCtl">50</b></div>
+            <div class="card-stat"><span>SHO Skudd</span><b id="cardSho">50</b></div>
+            <div class="card-stat"><span>DRI Dribling</span><b id="cardDri">50</b></div>
+            <div class="card-stat"><span>CON Ballkontroll</span><b id="cardCon">50</b></div>
+            <div class="card-stat"><span>TAC Teknikk</span><b id="cardTac">50</b></div>
+            <div class="card-stat"><span>CHL Challenge</span><b id="cardChl">50</b></div>
             <div class="card-stat"><span>EXP Erfaring</span><b id="cardExp">50</b></div>
-            <div class="card-stat"><span>CHA Challenges</span><b id="cardCha">50</b></div>
           </div>
         </div>
         <div class="level-panel">
@@ -702,7 +724,7 @@
           <div class="record-box"><strong id="cardWins">0</strong><span>seire</span></div>
           <div class="record-box"><strong id="cardCompleted">0</strong><span>fullført</span></div>
         </div>
-        <div class="panel" style="margin-top:16px"><p style="margin:0;color:var(--muted);line-height:1.55">Du tjener XP gjennom trening, skudd, challenges og Fotballmerket. Høy presisjon og beståtte merkeprøver gir ekstra XP. Kortdesign og tittel oppgraderes automatisk når du når et nytt nivå.</p></div>
+        <div class="panel" style="margin-top:16px"><p style="margin:0;color:var(--muted);line-height:1.55">Kortet utvikler seg ut fra det du trener: skudd forbedrer SHO, dribleløype forbedrer DRI, triksing forbedrer CON, Fotballmerket forbedrer TAC, og konkurranser forbedrer CHL. Alle aktiviteter bygger EXP og XP.</p></div>
       </section>
 
 
@@ -727,12 +749,59 @@
         <div class="badge-note"><strong>Viktig:</strong> Appen er et trenings- og dokumentasjonsverktøy. For formell godkjenning krever NFF at prøven observeres og godkjennes av en person over 18 år, og registreres gjennom klubb/fotballkrets.</div>
       </section>
 
+
+      <section class="page" id="page-skills">
+        <div class="section-head"><div><h2>Ballferdigheter</h2><p>Sett rekorder, slå deg selv og samle ekstra XP.</p></div></div>
+        <div class="skills-tabs">
+          <button class="skills-tab active" type="button" data-skills-tab="juggling">Triksing</button>
+          <button class="skills-tab" type="button" data-skills-tab="dribble">Dribleløype</button>
+        </div>
+        <div id="jugglingPanel" class="panel">
+          <h3 class="panel-title">Triksing av ball</h3>
+          <p style="color:var(--muted);line-height:1.5">Tell sammenhengende berøringer uten at ballen treffer bakken. Hvert gyldige forsøk gir XP, og ny personlig rekord gir rekordbonus.</p>
+          <div class="record-hero">
+            <div><strong id="juggleBest">0</strong><span>personlig rekord</span></div>
+            <div><strong id="juggleAttempts">0</strong><span>registrerte forsøk</span></div>
+            <div><strong id="juggleXp">0</strong><span>XP fra triksing</span></div>
+          </div>
+          <div class="field"><label for="juggleCount">Antall berøringer</label><input class="input" id="juggleCount" type="number" min="1" max="100000" inputmode="numeric" placeholder="For eksempel 42"></div>
+          <button class="btn primary" type="button" id="saveJuggle" style="width:100%;margin-top:12px">Lagre forsøk</button>
+          <div class="history-list" id="juggleHistory" style="margin-top:14px"></div>
+        </div>
+        <div id="dribblePanel" class="panel hidden">
+          <h3 class="panel-title">Egne dribleløyper</h3>
+          <p style="color:var(--muted);line-height:1.5">Definer løypen selv og registrer tiden. Lavere tid er bedre. Ny personlig rekord gir ekstra XP.</p>
+          <details class="panel" style="padding:14px;background:rgba(255,255,255,.025)">
+            <summary style="cursor:pointer;font-weight:900">Lag ny dribleløype</summary>
+            <div class="form-grid cols-2" style="margin-top:12px">
+              <div class="field"><label for="courseName">Navn</label><input class="input" id="courseName" maxlength="40" placeholder="For eksempel Kjegleløypa"></div>
+              <div class="field"><label for="courseDistance">Lengde i meter</label><input class="input" id="courseDistance" type="number" min="1" max="1000" step="0.1" placeholder="18"></div>
+              <div class="field"><label for="courseCones">Antall kjegler</label><input class="input" id="courseCones" type="number" min="0" max="100" placeholder="8"></div>
+              <div class="field"><label for="courseSurface">Underlag</label><select class="select" id="courseSurface"><option>Gress</option><option>Kunstgress</option><option>Asfalt</option><option>Innendørs</option><option>Annet</option></select></div>
+            </div>
+            <button class="btn primary small" type="button" id="saveCourse" style="margin-top:12px">Lagre løype</button>
+          </details>
+          <div class="course-list" id="courseList"></div>
+          <div class="panel hidden" id="courseAttemptPanel" style="margin-top:14px;background:rgba(255,255,255,.025)">
+            <h3 class="panel-title" id="activeCourseName">Dribleløype</h3>
+            <div class="record-hero">
+              <div><strong id="courseBest">–</strong><span>personlig rekord</span></div>
+              <div><strong id="courseAttempts">0</strong><span>forsøk</span></div>
+              <div><strong id="courseXp">0</strong><span>XP fra løypen</span></div>
+            </div>
+            <div class="field"><label for="courseTime">Tid i sekunder</label><input class="input" id="courseTime" type="number" min="0.01" max="3600" step="0.01" inputmode="decimal" placeholder="17,84"></div>
+            <div class="action-row"><button class="btn primary" type="button" id="saveCourseAttempt">Lagre tid</button><button class="btn ghost" type="button" id="closeCourseAttempt">Lukk</button></div>
+            <div class="history-list" id="courseAttemptHistory" style="margin-top:14px"></div>
+          </div>
+        </div>
+      </section>
+
       <section class="page" id="page-history">
         <div class="section-head"><div><h2>Historikk</h2><p>Lagret lokalt på denne enheten.</p></div><button type="button" class="btn danger small" id="clearHistory">Slett historikk</button></div>
         <div class="panel">
           <h3 class="panel-title">Filtrer historikken</h3>
           <div class="history-tools">
-            <div class="field"><label for="historyTypeFilter">Type</label><select class="select" id="historyTypeFilter"><option value="all">Alle aktiviteter</option><option value="session">Skuddanalyse</option><option value="challenge">Challenge</option><option value="badge">Fotballmerket</option></select></div>
+            <div class="field"><label for="historyTypeFilter">Type</label><select class="select" id="historyTypeFilter"><option value="all">Alle aktiviteter</option><option value="session">Skuddanalyse</option><option value="challenge">Challenge</option><option value="badge">Fotballmerket</option><option value="juggling">Triksing</option><option value="dribble">Dribleløype</option></select></div>
             <div class="field"><label for="historyGoalFilter">Mål</label><select class="select" id="historyGoalFilter"><option value="all">Alle mål</option></select></div>
             <div class="field"><label for="historyPeriodFilter">Tidsperiode</label><select class="select" id="historyPeriodFilter"><option value="all">Hele perioden</option><option value="7">Siste 7 dager</option><option value="30">Siste 30 dager</option><option value="90">Siste 90 dager</option></select></div>
           </div>
@@ -741,7 +810,6 @@
         <div class="panel" style="margin-top:14px">
           <h3 class="panel-title">Personlige rekorder</h3>
           <div class="records-grid" id="personalRecords"></div>
-          <div class="chart-wrap"><canvas id="progressChart" width="900" height="300" aria-label="Utvikling i presisjon over tid"></canvas></div>
         </div>
         <div class="panel" style="margin-top:14px">
           <h3 class="panel-title">Mine tilpassede mål</h3>
@@ -810,7 +878,7 @@
 
     const STORAGE_KEY = "skillsAcademyV2";
     const LEGACY_STORAGE_KEY = "ballSkillsV2";
-    const defaultState = { profiles: [], activeProfileId: null, sessions: [], challenges: [], footballBadgeResults: [], customGoals: [] };
+    const defaultState = { profiles: [], activeProfileId: null, sessions: [], challenges: [], footballBadgeResults: [], customGoals: [], jugglingResults: [], dribbleCourses: [], dribbleResults: [] };
     let state = loadState();
     let analysisShots = [];
     let analysisPlan = [];
@@ -876,6 +944,7 @@
       if (name === "history") { renderHistory(); renderPersonalRecords(); renderCustomGoalAdmin(); requestAnimationFrame(drawProgressChart); }
       if (name === "card") renderCard();
       if (name === "fotballmerket") renderFootballBadge();
+      if (name === "skills") renderSkills();
       window.scrollTo({ top: 0, behavior: "smooth" });
     }
 
@@ -1521,6 +1590,46 @@
       challenge=null; $("challengePlay").classList.add("hidden"); $("challengeSetup").classList.remove("hidden"); renderChallengePlayerPicker();
     }
 
+
+    // Stabilitetsfunksjoner for eldre og nyere skuddøkter
+    function sessionBelongsToProfile(session, profileId) {
+      return session && (session.profileId === profileId || session.playerId === profileId);
+    }
+    function sessionShotsArray(session) {
+      return Array.isArray(session?.shots) ? session.shots : [];
+    }
+    function sessionTotal(session) {
+      const explicit = Number(session?.total);
+      if (Number.isFinite(explicit) && explicit > 0) return explicit;
+      const shots = sessionShotsArray(session);
+      if (shots.length) return shots.length;
+      const attempts = Number(session?.attempts);
+      return Number.isFinite(attempts) && attempts > 0 ? attempts : 0;
+    }
+    function sessionExact(session) {
+      const explicit = Number(session?.exact);
+      if (Number.isFinite(explicit) && explicit >= 0) return explicit;
+      const shots = sessionShotsArray(session);
+      if (shots.length) return shots.filter(s => s?.result === "exact").length;
+      const hits = Number(session?.hits);
+      return Number.isFinite(hits) && hits >= 0 ? hits : 0;
+    }
+    function sessionNear(session) {
+      const explicit = Number(session?.near);
+      if (Number.isFinite(explicit) && explicit >= 0) return explicit;
+      return sessionShotsArray(session).filter(s => s?.result === "near").length;
+    }
+    function sessionHits(session) {
+      const explicit = Number(session?.hits);
+      if (Number.isFinite(explicit) && explicit >= 0) return explicit;
+      const shots = sessionShotsArray(session);
+      return shots.filter(s => s?.type === "hit" || s?.actualZone !== null && s?.actualZone !== undefined).length;
+    }
+    function sessionPrecision(session) {
+      const total = sessionTotal(session);
+      return total ? sessionExact(session) / total : 0;
+    }
+
     // HISTORIKK
     function renderHistory() {
       const list=$("historyList");
@@ -1528,9 +1637,11 @@
       refreshHistoryGoalFilter();
       if (!profile) { list.innerHTML='<div class="empty">Velg en profil for å se historikken.</div>'; return; }
       let entries=[
-        ...state.sessions.filter(x=>x.profileId===profile.id).map(x=>({...x,kind:"session"})),
+        ...state.sessions.filter(x=>sessionBelongsToProfile(x,profile.id)).map(x=>({...x,kind:"session"})),
         ...state.challenges.filter(x=>x.profileId===profile.id).map(x=>({...x,kind:"challenge"})),
-        ...(state.footballBadgeResults||[]).filter(x=>x.profileId===profile.id).map(x=>({...x,kind:"badge"}))
+        ...(state.footballBadgeResults||[]).filter(x=>x.profileId===profile.id).map(x=>({...x,kind:"badge"})),
+        ...(state.jugglingResults||[]).filter(x=>x.profileId===profile.id).map(x=>({...x,kind:"juggling"})),
+        ...(state.dribbleResults||[]).filter(x=>x.profileId===profile.id).map(x=>({...x,kind:"dribble"}))
       ].sort((a,b)=>new Date(b.createdAt)-new Date(a.createdAt));
       const typeFilter=$("historyTypeFilter")?.value||"all", goalFilter=$("historyGoalFilter")?.value||"all", period=Number($("historyPeriodFilter")?.value)||0;
       if(typeFilter!=="all") entries=entries.filter(x=>x.kind===typeFilter);
@@ -1540,11 +1651,18 @@
       list.innerHTML=entries.map(item => {
         if (item.kind === "session") {
           const planned=Array.isArray(item.plan);
-          const exact=planned ? (item.exact ?? item.shots.filter(s=>s.result==="exact").length) : item.hits;
-          const precision=item.total ? Math.round(exact/item.total*100) : 0, hitPct=item.total ? Math.round((item.hits||0)/item.total*100) : 0;
-          const detail=planned ? `${exact} fulltreff · ${item.near || 0} nærtreff av ${item.total} · presisjon ${precision} %` : `${item.hits} av ${item.total} på mål`;
+          const exact=sessionExact(item);
+          const total=sessionTotal(item), precision=total ? Math.round(exact/total*100) : 0, hitPct=total ? Math.round(sessionHits(item)/total*100) : 0;
+          const detail=planned ? `${exact} fulltreff · ${sessionNear(item)} nærtreff av ${total} · presisjon ${precision} %` : `${sessionHits(item)} av ${total} på mål`;
           const goalLabel=item.targetName || (item.goalType ? `${item.goalType}'er-mål` : "Mål");
           return `<div class="history-item"><div><h3>Skuddanalyse · ${escapeHtml(item.situation)}</h3><p>${formatDate(item.createdAt)} · ${escapeHtml(goalLabel)} · ${item.gridSize||3}×${item.gridSize||3} ruter · ${detail}</p></div><span class="pill">Treff ${hitPct} %</span></div>`;
+        }
+        if (item.kind === "juggling") {
+          return `<div class="history-item"><div><h3>Triksing${item.isRecord?' · Ny rekord':''}</h3><p>${formatDate(item.createdAt)} · ${item.count} berøringer</p></div><span class="pill">+${item.xpAwarded||0} XP</span></div>`;
+        }
+        if (item.kind === "dribble") {
+          const course=(state.dribbleCourses||[]).find(c=>c.id===item.courseId);
+          return `<div class="history-item"><div><h3>Dribleløype${item.isRecord?' · Ny rekord':''}</h3><p>${formatDate(item.createdAt)} · ${escapeHtml(course?.name||'Egen løype')} · ${Number(item.time).toFixed(2).replace('.',',')} s</p></div><span class="pill">+${item.xpAwarded||0} XP</span></div>`;
         }
         if (item.kind === "badge") {
           const levelName=item.type==="mini1"?"Minimerket 1":item.type==="mini2"?"Minimerket 2":(BADGE_LEVELS.find(l=>l.key===item.level)?.name||item.level);
@@ -1571,10 +1689,10 @@
     function renderPersonalRecords(){
       const box=$("personalRecords"), p=activeProfile(); if(!box) return;
       if(!p){box.innerHTML='<div class="empty" style="grid-column:1/-1">Velg en profil for å se rekorder.</div>';return;}
-      const sessions=state.sessions.filter(x=>x.profileId===p.id), challenges=state.challenges.filter(x=>x.profileId===p.id);
-      const sessionPcts=sessions.map(x=>({pct:x.total?Math.round(((x.exact??x.hits??0)/x.total)*100):0,date:x.createdAt}));
+      const sessions=state.sessions.filter(x=>sessionBelongsToProfile(x,p.id)), challenges=state.challenges.filter(x=>x.profileId===p.id);
+      const sessionPcts=sessions.map(x=>({pct:Math.round(sessionPrecision(x)*100),date:x.createdAt}));
       const best=sessionPcts.length?Math.max(...sessionPcts.map(x=>x.pct)):0;
-      const totalShots=sessions.reduce((a,x)=>a+(Number(x.total)||0),0);
+      const totalShots=sessions.reduce((a,x)=>a+sessionTotal(x),0);
       const wins=challenges.filter(x=>x.winner).length;
       const d=calculatePlayerData(p);
       box.innerHTML=`<div class="record-stat"><strong>${best} %</strong><span>beste presisjon i én økt</span></div><div class="record-stat"><strong>${totalShots}</strong><span>registrerte skudd totalt</span></div><div class="record-stat"><strong>${wins}</strong><span>seire i flerspiller</span></div><div class="record-stat"><strong>${d.xp.toLocaleString("nb-NO")}</strong><span>opptjent XP totalt</span></div>`;
@@ -1585,7 +1703,7 @@
       const ctx=canvas.getContext("2d"), rect=canvas.getBoundingClientRect(), dpr=Math.min(devicePixelRatio||1,2);
       canvas.width=Math.max(600,Math.round(rect.width*dpr)); canvas.height=Math.round(220*dpr); ctx.setTransform(dpr,0,0,dpr,0,0);
       const w=canvas.width/dpr,h=canvas.height/dpr; ctx.clearRect(0,0,w,h);
-      const data=state.sessions.filter(x=>x.profileId===p.id).sort((a,b)=>new Date(a.createdAt)-new Date(b.createdAt)).slice(-20).map(x=>Math.round(((x.exact??x.hits??0)/Math.max(1,x.total))*100));
+      const data=state.sessions.filter(x=>sessionBelongsToProfile(x,p.id)).sort((a,b)=>new Date(a.createdAt)-new Date(b.createdAt)).slice(-20).map(x=>Math.round(((x.exact??x.hits??0)/Math.max(1,x.total))*100));
       ctx.strokeStyle="rgba(218,238,227,.16)";ctx.fillStyle="#9fb5aa";ctx.font="12px system-ui";ctx.lineWidth=1;
       [0,25,50,75,100].forEach(v=>{const y=18+(100-v)/100*(h-42);ctx.beginPath();ctx.moveTo(38,y);ctx.lineTo(w-10,y);ctx.stroke();ctx.fillText(v+" %",2,y+4);});
       if(!data.length){ctx.fillText("Ingen skuddøkter å vise ennå.",45,h/2);return;}
@@ -1607,7 +1725,7 @@
     $("clearHistory").addEventListener("click", () => {
       const p=activeProfile(); if (!p) return;
       if (!confirm(`Slette all historikk for ${p.name}?`)) return;
-      state.sessions=state.sessions.filter(x=>x.profileId!==p.id); state.challenges=state.challenges.filter(x=>x.profileId!==p.id); state.footballBadgeResults=(state.footballBadgeResults||[]).filter(x=>x.profileId!==p.id);
+      state.sessions=state.sessions.filter(x=>x.profileId!==p.id); state.challenges=state.challenges.filter(x=>x.profileId!==p.id); state.footballBadgeResults=(state.footballBadgeResults||[]).filter(x=>x.profileId!==p.id); state.jugglingResults=(state.jugglingResults||[]).filter(x=>x.profileId!==p.id); state.dribbleResults=(state.dribbleResults||[]).filter(x=>x.profileId!==p.id);
       saveState(); renderHistory(); renderPersonalRecords(); renderCard(); requestAnimationFrame(drawProgressChart); toast("Historikken er slettet");
     });
 
@@ -1615,7 +1733,7 @@
 
     // SIKKERHETSKOPI
     $("exportBackup").addEventListener("click",()=>{
-      const backup={app:"Skills Academy",version:"2.7",exportedAt:new Date().toISOString(),data:state};
+      const backup={app:"Skills Academy",version:"2.8",exportedAt:new Date().toISOString(),data:state};
       const blob=new Blob([JSON.stringify(backup,null,2)],{type:"application/json"}),url=URL.createObjectURL(blob),a=document.createElement("a");
       a.href=url;a.download=`skills-academy-sikkerhetskopi-${new Date().toISOString().slice(0,10)}.json`;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1000);toast("Sikkerhetskopien er eksportert");
     });
@@ -1624,7 +1742,7 @@
       const file=e.target.files?.[0];e.target.value="";if(!file)return;
       try{const parsed=JSON.parse(await file.text()),incoming=parsed.data||parsed;if(!incoming||!Array.isArray(incoming.profiles)||!Array.isArray(incoming.sessions)){throw new Error("Ugyldig fil");}
         if(!confirm("Importen erstatter alle data som ligger i appen nå. Fortsette?"))return;
-        state={...structuredClone(defaultState),...incoming,customGoals:Array.isArray(incoming.customGoals)?incoming.customGoals:[],footballBadgeResults:Array.isArray(incoming.footballBadgeResults)?incoming.footballBadgeResults:[]};saveState();analysisPlan=[];analysisShots=[];challenge=null;refreshGoalOptions();renderProfileUI();renderChallengePlayerPicker();renderAnalysisPlanner();renderAnalysis();renderHistory();renderPersonalRecords();renderCustomGoalAdmin();renderCard();renderFootballBadge();requestAnimationFrame(drawProgressChart);toast("Sikkerhetskopien er importert");
+        state={...structuredClone(defaultState),...incoming,customGoals:Array.isArray(incoming.customGoals)?incoming.customGoals:[],footballBadgeResults:Array.isArray(incoming.footballBadgeResults)?incoming.footballBadgeResults:[],jugglingResults:Array.isArray(incoming.jugglingResults)?incoming.jugglingResults:[],dribbleCourses:Array.isArray(incoming.dribbleCourses)?incoming.dribbleCourses:[],dribbleResults:Array.isArray(incoming.dribbleResults)?incoming.dribbleResults:[]};saveState();analysisPlan=[];analysisShots=[];challenge=null;refreshGoalOptions();renderProfileUI();renderChallengePlayerPicker();renderAnalysisPlanner();renderAnalysis();renderHistory();renderPersonalRecords();renderCustomGoalAdmin();renderCard();renderFootballBadge();requestAnimationFrame(drawProgressChart);toast("Sikkerhetskopien er importert");
       }catch(err){alert("Filen kunne ikke importeres. Kontroller at dette er en sikkerhetskopi fra Skills Academy.");}
     });
 
@@ -1720,6 +1838,70 @@
 
     all("[data-badge-section]").forEach(b=>b.addEventListener("click",()=>{badgeSection=b.dataset.badgeSection;renderFootballBadge();}));
 
+
+    // BALLFERDIGHETER: TRIKSING OG DRIBLELØYPE
+    let skillsTab="juggling";
+    let activeCourseId=null;
+    function skillsProfileResults(type){
+      const arr=type==="juggling"?(state.jugglingResults||[]):(state.dribbleResults||[]);
+      return arr.filter(x=>x.profileId===state.activeProfileId);
+    }
+    function renderSkills(){
+      if(!state.jugglingResults)state.jugglingResults=[];
+      if(!state.dribbleCourses)state.dribbleCourses=[];
+      if(!state.dribbleResults)state.dribbleResults=[];
+      all('[data-skills-tab]').forEach(b=>b.classList.toggle('active',b.dataset.skillsTab===skillsTab));
+      $('jugglingPanel').classList.toggle('hidden',skillsTab!=="juggling");
+      $('dribblePanel').classList.toggle('hidden',skillsTab!=="dribble");
+      renderJuggling(); renderCourses();
+    }
+    all('[data-skills-tab]').forEach(b=>b.addEventListener('click',()=>{skillsTab=b.dataset.skillsTab;renderSkills();}));
+    function renderJuggling(){
+      const p=activeProfile();
+      if(!p){$('juggleHistory').innerHTML='<div class="empty">Velg en profil først.</div>';return;}
+      const rows=skillsProfileResults('juggling').sort((a,b)=>new Date(b.createdAt)-new Date(a.createdAt));
+      const best=rows.reduce((m,x)=>Math.max(m,Number(x.count)||0),0);
+      $('juggleBest').textContent=best.toLocaleString('nb-NO');
+      $('juggleAttempts').textContent=rows.length;
+      $('juggleXp').textContent=rows.reduce((s,x)=>s+(Number(x.xpAwarded)||0),0).toLocaleString('nb-NO');
+      $('juggleHistory').innerHTML=rows.length?rows.slice(0,8).map(x=>`<div class="history-item"><div><h3>${x.isRecord?'Ny personlig rekord':'Triksing'}</h3><p>${formatDate(x.createdAt)} · ${x.count} berøringer</p></div><span class="pill">+${x.xpAwarded} XP</span></div>`).join(''):'<div class="empty">Ingen forsøk registrert ennå.</div>';
+    }
+    $('saveJuggle').addEventListener('click',()=>{
+      if(!ensureProfile())return;
+      const count=Number($('juggleCount').value);if(!Number.isInteger(count)||count<1){toast('Skriv inn antall berøringer');return;}
+      const oldBest=skillsProfileResults('juggling').reduce((m,x)=>Math.max(m,Number(x.count)||0),0);
+      const isRecord=count>oldBest;const base=20;const bonus=isRecord?(oldBest===0?30:50):0;const milestone=count>=500?50:count>=250?35:count>=100?20:0;
+      const xp=base+bonus+(isRecord?milestone:0);
+      state.jugglingResults.push({id:uid('juggle'),profileId:state.activeProfileId,count,isRecord,xpAwarded:xp,createdAt:new Date().toISOString()});
+      saveState();$('juggleCount').value='';renderSkills();renderCard();renderHistory();toast(isRecord?`Ny rekord! +${xp} XP`:`Forsøket er lagret · +${xp} XP`);
+    });
+    function renderCourses(){
+      const courses=(state.dribbleCourses||[]).filter(c=>c.profileId===state.activeProfileId||!c.profileId);
+      $('courseList').innerHTML=courses.length?courses.map(c=>{const rows=skillsProfileResults('dribble').filter(x=>x.courseId===c.id);const best=rows.length?Math.min(...rows.map(x=>Number(x.time))):null;return `<div class="course-row"><div><strong>${escapeHtml(c.name)}</strong><small>${c.distance||'?'} m · ${c.cones||0} kjegler · ${escapeHtml(c.surface||'Annet')}${best?` · rekord ${best.toFixed(2).replace('.',',')} s`:''}</small></div><div style="display:flex;gap:6px"><button class="btn small primary" data-use-course="${c.id}">Registrer</button><button class="btn small danger" data-delete-course="${c.id}">Slett</button></div></div>`}).join(''):'<div class="empty">Ingen dribleløyper opprettet ennå.</div>';
+      all('[data-use-course]').forEach(b=>b.onclick=()=>openCourse(b.dataset.useCourse));
+      all('[data-delete-course]').forEach(b=>b.onclick=()=>{const c=state.dribbleCourses.find(x=>x.id===b.dataset.deleteCourse);if(!c||!confirm(`Slette løypen ${c.name}? Registrerte tider slettes også.`))return;state.dribbleCourses=state.dribbleCourses.filter(x=>x.id!==c.id);state.dribbleResults=state.dribbleResults.filter(x=>x.courseId!==c.id);saveState();activeCourseId=null;$('courseAttemptPanel').classList.add('hidden');renderSkills();renderCard();renderHistory();});
+      if(activeCourseId)renderCourseAttempt();
+    }
+    $('saveCourse').addEventListener('click',()=>{
+      if(!ensureProfile())return;const name=$('courseName').value.trim(),distance=Number($('courseDistance').value),cones=Number($('courseCones').value),surface=$('courseSurface').value;
+      if(!name||!distance){toast('Fyll inn navn og lengde');return;}
+      state.dribbleCourses.push({id:uid('course'),profileId:state.activeProfileId,name,distance,cones:Number.isFinite(cones)?cones:0,surface,createdAt:new Date().toISOString()});saveState();['courseName','courseDistance','courseCones'].forEach(id=>$(id).value='');renderSkills();toast('Dribleløypen er lagret');
+    });
+    function openCourse(id){activeCourseId=id;$('courseAttemptPanel').classList.remove('hidden');renderCourseAttempt();$('courseAttemptPanel').scrollIntoView({behavior:'smooth',block:'start'});}
+    function renderCourseAttempt(){
+      const c=(state.dribbleCourses||[]).find(x=>x.id===activeCourseId);if(!c)return;
+      const rows=skillsProfileResults('dribble').filter(x=>x.courseId===c.id).sort((a,b)=>new Date(b.createdAt)-new Date(a.createdAt));
+      const best=rows.length?Math.min(...rows.map(x=>Number(x.time))):null;
+      $('activeCourseName').textContent=c.name;$('courseBest').textContent=best?best.toFixed(2).replace('.',',')+' s':'–';$('courseAttempts').textContent=rows.length;$('courseXp').textContent=rows.reduce((s,x)=>s+(Number(x.xpAwarded)||0),0).toLocaleString('nb-NO');
+      $('courseAttemptHistory').innerHTML=rows.length?rows.slice(0,8).map(x=>`<div class="history-item"><div><h3>${x.isRecord?'Ny personlig rekord':'Dribleløype'}</h3><p>${formatDate(x.createdAt)} · ${Number(x.time).toFixed(2).replace('.',',')} sekunder</p></div><span class="pill">+${x.xpAwarded} XP</span></div>`).join(''):'<div class="empty">Ingen tider registrert ennå.</div>';
+    }
+    $('saveCourseAttempt').addEventListener('click',()=>{
+      if(!ensureProfile()||!activeCourseId)return;const time=Number(String($('courseTime').value).replace(',','.'));if(!Number.isFinite(time)||time<=0){toast('Skriv inn en gyldig tid');return;}
+      const rows=skillsProfileResults('dribble').filter(x=>x.courseId===activeCourseId);const oldBest=rows.length?Math.min(...rows.map(x=>Number(x.time))):Infinity;const isRecord=time<oldBest;const xp=25+(isRecord?(oldBest===Infinity?35:60):0);
+      state.dribbleResults.push({id:uid('dribble'),profileId:state.activeProfileId,courseId:activeCourseId,time,isRecord,xpAwarded:xp,createdAt:new Date().toISOString()});saveState();$('courseTime').value='';renderSkills();renderCard();renderHistory();toast(isRecord?`Ny rekord! +${xp} XP`:`Tiden er lagret · +${xp} XP`);
+    });
+    $('closeCourseAttempt').addEventListener('click',()=>{$('courseAttemptPanel').classList.add('hidden');activeCourseId=null;});
+
     // PLAYER CARD / LEVEL SYSTEM
     const LEVELS = [
       { key:"rookie", name:"Academy Rookie", short:"Rookie", min:0 },
@@ -1739,34 +1921,83 @@
       return "Academy-spiller";
     }
 
+    function jugglingControlScore(results) {
+      if (!results.length) return 45;
+      const best = Math.max(...results.map(x => Number(x.count) || 0));
+      const records = results.filter(x => x.isRecord).length;
+      let bestBonus = 0;
+      if (best >= 500) bestBonus = 32;
+      else if (best >= 250) bestBonus = 27;
+      else if (best >= 100) bestBonus = 21;
+      else if (best >= 50) bestBonus = 16;
+      else if (best >= 25) bestBonus = 11;
+      else if (best >= 10) bestBonus = 6;
+      else bestBonus = Math.min(4, Math.floor(best / 2));
+      return clamp(Math.round(45 + bestBonus + Math.min(results.length, 16) * .45 + Math.min(records, 8) * 1.2), 40, 99);
+    }
+
+    function dribblingScore(results) {
+      if (!results.length) return 45;
+      const records = results.filter(x => x.isRecord).length;
+      const courseCount = new Set(results.map(x => x.courseId)).size;
+      return clamp(Math.round(45 + Math.min(results.length, 20) * 1.1 + Math.min(records, 10) * 2.1 + Math.min(courseCount, 5) * 1.5), 40, 99);
+    }
+
+    function techniqueScore(results) {
+      if (!results.length) return 45;
+      const passedExercises = new Set(
+        results.filter(x => x.passed && x.exerciseId !== "complete")
+          .map(x => `${x.type}:${x.level}:${x.exerciseId}`)
+      ).size;
+      const completedLevels = results.filter(x => x.passed && x.exerciseId === "complete").length;
+      return clamp(Math.round(45 + Math.min(passedExercises, 28) * 1.35 + Math.min(completedLevels, 7) * 3.1), 40, 99);
+    }
+
+    function specialtyTitle(data) {
+      const skills = [
+        { value:data.sho, title:"Avslutningsspesialist" },
+        { value:data.dri, title:"Driblespesialist" },
+        { value:data.con, title:"Ballkontrollør" },
+        { value:data.tac, title:"Teknisk spiller" },
+        { value:data.chl, title:"Challenge-spesialist" },
+        { value:data.exp, title:"Erfaren spiller" }
+      ].sort((a,b)=>b.value-a.value);
+      return skills[0].value >= 58 ? skills[0].title : "Academy-spiller";
+    }
+
     function calculatePlayerData(p) {
-      const sessions=state.sessions.filter(x=>x.profileId===p.id);
+      const sessions=state.sessions.filter(x=>sessionBelongsToProfile(x,p.id));
       const challenges=state.challenges.filter(x=>x.profileId===p.id);
-      const totalShots=sessions.reduce((sum,x)=>sum+(Number(x.total)||0),0);
-      const exact=sessions.reduce((sum,x)=>sum+(Array.isArray(x.plan) ? (x.exact ?? x.shots.filter(y=>y.result==="exact").length) : (x.hits||0)),0);
-      const near=sessions.reduce((sum,x)=>sum+(x.near||0),0);
+      const totalShots=sessions.reduce((sum,x)=>sum+sessionTotal(x),0);
+      const exact=sessions.reduce((sum,x)=>sum+sessionExact(x),0);
+      const near=sessions.reduce((sum,x)=>sum+sessionNear(x),0);
       const accuracy=totalShots ? exact/totalShots : .5;
       const completedChallenges=challenges.filter(x=>x.completed).length;
       const badgeResults=(state.footballBadgeResults||[]).filter(x=>x.profileId===p.id);
       const badgeXp=badgeResults.reduce((sum,x)=>sum+(Number(x.xpAwarded)||0),0);
       const completedBadges=badgeResults.filter(x=>x.exerciseId==="complete" && x.passed).length;
-      const completed=sessions.length+completedChallenges+completedBadges;
+      const juggling=(state.jugglingResults||[]).filter(x=>x.profileId===p.id);
+      const dribble=(state.dribbleResults||[]).filter(x=>x.profileId===p.id);
+      const skillXp=[...juggling,...dribble].reduce((sum,x)=>sum+(Number(x.xpAwarded)||0),0);
+      const completed=sessions.length+completedChallenges+completedBadges+juggling.length+dribble.length;
       const matches=challenges.filter(x=>x.playMode==="multi").length;
       const wins=challenges.filter(x=>x.playMode==="multi" && x.winner).length;
-      const xp=Math.round(sessions.length*120 + totalShots*2 + exact*8 + near*3 + completedChallenges*180 + wins*250 + badgeXp);
-      const fin=clamp(Math.round(42+accuracy*45+Math.min(totalShots,150)/150*8),40,99);
-      const acc=clamp(Math.round(40+accuracy*50),40,99);
-      const sessionPcts=sessions.map(x=>x.total ? (Array.isArray(x.plan) ? (x.exact ?? x.shots.filter(y=>y.result==="exact").length) : x.hits)/x.total : 0);
-      const consistency=sessionPcts.length<2 ? 50 : clamp(Math.round(92-standardDeviation(sessionPcts)*100),40,99);
-      const exp=clamp(45+Math.min(sessions.length+challenges.length,20)*2,45,90);
-      const cha=clamp(45+Math.min(completedChallenges,12)*4,45,95);
-      const ctl=50;
-      const ovr=Math.round(fin*.24+acc*.24+consistency*.18+exp*.14+cha*.14+ctl*.06);
+      const xp=Math.round(sessions.length*120 + totalShots*2 + exact*8 + near*3 + completedChallenges*180 + wins*250 + badgeXp + skillXp);
+
+      const sho=clamp(Math.round(43 + accuracy*40 + Math.min(totalShots,300)/300*14),40,99);
+      const dri=dribblingScore(dribble);
+      const con=jugglingControlScore(juggling);
+      const tac=techniqueScore(badgeResults);
+      const chl=clamp(Math.round(45 + Math.min(completedChallenges,15)*2.5 + Math.min(wins,12)*1.7 + Math.min(challenges.length,20)*.35),40,99);
+      const activityCount=sessions.length+challenges.length+juggling.length+dribble.length+completedBadges;
+      const exp=clamp(Math.round(45 + Math.min(activityCount,35)*1.05 + Math.min(xp,15000)/15000*15),40,99);
+
+      const ovr=Math.round(sho*.22+dri*.17+con*.17+tac*.14+chl*.14+exp*.16);
       let level=LEVELS[0];
       LEVELS.forEach(l=>{ if(xp>=l.min) level=l; });
       const levelIndex=LEVELS.findIndex(l=>l.key===level.key);
       const next=LEVELS[levelIndex+1]||null;
-      return {sessions,challenges,totalShots,exact,near,accuracy,completed,completedChallenges,matches,wins,xp,fin,acc,consistency,exp,cha,ctl,ovr,level,next,levelIndex};
+      return {sessions,challenges,totalShots,exact,near,accuracy,completed,completedChallenges,matches,wins,xp,sho,dri,con,tac,chl,exp,ovr,level,next,levelIndex};
     }
 
     function renderCard() {
@@ -1774,12 +2005,12 @@
       $("cardName").textContent=p ? p.name : "SPILLER";
       $("cardPlayerImage").innerHTML = p?.image ? `<img src="${p.image}" alt="Bilde av ${escapeHtml(p.name)}">` : '<span class="fallback-player">👤</span>';
       if (!p) {
-        setCardValues({ovr:50,fin:50,acc:50,con:50,ctl:50,exp:50,cha:50});
-        updateLevelUI({accuracy:.5,xp:0,level:LEVELS[0],next:LEVELS[1],levelIndex:0});
+        setCardValues({ovr:50,sho:50,dri:50,con:50,tac:50,chl:50,exp:50});
+        updateLevelUI({accuracy:.5,xp:0,sho:50,dri:50,con:50,tac:50,chl:50,exp:50,level:LEVELS[0],next:LEVELS[1],levelIndex:0});
         $("cardMatches").textContent=0; $("cardWins").textContent=0; $("cardCompleted").textContent=0; return;
       }
       const d=calculatePlayerData(p);
-      setCardValues({ovr:d.ovr,fin:d.fin,acc:d.acc,con:d.consistency,ctl:d.ctl,exp:d.exp,cha:d.cha});
+      setCardValues({ovr:d.ovr,sho:d.sho,dri:d.dri,con:d.con,tac:d.tac,chl:d.chl,exp:d.exp});
       updateLevelUI(d);
       $("cardMatches").textContent=d.matches; $("cardWins").textContent=d.wins; $("cardCompleted").textContent=d.completed;
     }
@@ -1791,8 +2022,8 @@
       LEVELS.forEach(l=>document.body.classList.remove(`theme-${l.key}`));
       document.body.classList.add(`theme-${d.level.key}`);
       $("cardRibbon").textContent=d.level.short;
-      $("cardTitle").textContent=`${d.level.name} · ${precisionTitle(d.accuracy)}`;
-      $("cardPrecision").textContent=`${Math.round(d.accuracy*100)} % presisjon`;
+      $("cardTitle").textContent=`${d.level.name} · ${specialtyTitle(d)}`;
+      $("cardPrecision").textContent=`${d.xp.toLocaleString("nb-NO")} XP`;
       $("levelName").textContent=d.level.name;
       $("nextLevelName").textContent=d.next ? d.next.name : "Maksnivå";
       $("xpText").textContent=`${d.xp.toLocaleString("nb-NO")} XP`;
@@ -1813,13 +2044,28 @@
       return Math.sqrt(values.reduce((sum,v)=>sum+(v-mean)**2,0)/values.length);
     }
     function setCardValues(v) {
-      $("cardOvr").textContent=v.ovr; $("cardFin").textContent=v.fin; $("cardAcc").textContent=v.acc;
-      $("cardCon").textContent=v.con; $("cardCtl").textContent=v.ctl; $("cardExp").textContent=v.exp; $("cardCha").textContent=v.cha;
+      $("cardOvr").textContent=v.ovr;
+      $("cardSho").textContent=v.sho;
+      $("cardDri").textContent=v.dri;
+      $("cardCon").textContent=v.con;
+      $("cardTac").textContent=v.tac;
+      $("cardChl").textContent=v.chl;
+      $("cardExp").textContent=v.exp;
     }
 
     // START
-    refreshGoalOptions(); renderCustomScoreEditor(); renderProfileUI(); renderChallengePlayerPicker(); renderAnalysisPlanner(); renderAnalysis(); renderHistory(); renderPersonalRecords(); renderCustomGoalAdmin(); renderCard();
+    refreshGoalOptions(); renderCustomScoreEditor(); renderProfileUI(); renderChallengePlayerPicker(); renderAnalysisPlanner(); renderAnalysis(); renderHistory(); renderPersonalRecords(); renderCustomGoalAdmin(); renderCard(); renderSkills();
     if (!state.profiles.length) setTimeout(openProfileModal, 450);
+
+    // PWA: registrer service worker
+    if ("serviceWorker" in navigator) {
+      window.addEventListener("load", () => {
+        navigator.serviceWorker.register("./service-worker.js").catch(error => {
+          console.warn("Service worker kunne ikke registreres:", error);
+        });
+      });
+    }
+
   </script>
 </body>
 </html>
