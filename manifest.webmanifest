@@ -1,7 +1,6 @@
 {
   "name": "Skills Academy",
   "short_name": "Academy",
-  "description": "Skills Academy v2.9 – Premium Player Cards",
   "start_url": "./index.html",
   "scope": "./",
   "display": "standalone",
@@ -21,5 +20,6 @@
       "type": "image/png",
       "purpose": "any maskable"
     }
-  ]
+  ],
+  "description": "Skills Academy v2.9.1 – synlig totalsum på spillerkort"
 }
