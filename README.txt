@@ -1,27 +1,19 @@
-SKILLS ACADEMY v2.8 – PLAYER EVOLUTION
+SKILLS ACADEMY v2.9 – PREMIUM PLAYER CARDS
 
-Last opp alle filene til samme nivå i GitHub-prosjektet:
-- index.html
-- manifest.webmanifest
-- service-worker.js
-- icon-192.png
-- icon-512.png
+Last opp alle filene til samme nivå i GitHub:
+index.html
+manifest.webmanifest
+service-worker.js
+icon-192.png
+icon-512.png
 
-Viktig:
-- Erstatt den gamle index.html og service-worker.js.
-- Behold filnavnene nøyaktig.
-- Eksisterende data bruker samme lagringsnøkkel og skal derfor følge med.
-- Du har allerede eksportert sikkerhetskopi, som kan importeres dersom noe mangler.
-- PWA-en kan vise gammel versjon en kort stund. Lukk appen helt og åpne den igjen etter GitHub-oppdateringen.
+Nytt:
+- Eksklusivt mørkt og metallisk kortdesign
+- Nivåstyrte farger
+- Større spillerbilde
+- Tydelige ferdighetsbokser
+- TOTAL = summen av SHO, DRI, CON, TAC, CHL og EXP
+- Diskré glansanimasjon
 
-Nytt i v2.8:
-- Triksing og dribleløype er beholdt.
-- Trikserekord påvirker CON Ballkontroll.
-- Dribleforsøk og personlige rekorder påvirker DRI Dribling.
-- Skuddanalyse påvirker SHO Skudd.
-- Fotballmerket påvirker TAC Teknikk.
-- Challenges påvirker CHL Challenge.
-- Samlet aktivitet og XP påvirker EXP Erfaring.
-- OVR beregnes fra alle seks ferdigheter.
-- Grafen er fjernet fra historiesiden for et enklere oppsett.
-- Inngang, toppfelt og hovednavigasjon er beholdt som før.
+Samme lagring som v2.8 brukes, slik at eksisterende data skal følge med.
+Erstatt særlig index.html og service-worker.js.

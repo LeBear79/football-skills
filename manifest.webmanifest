@@ -1,7 +1,7 @@
 {
   "name": "Skills Academy",
   "short_name": "Academy",
-  "description": "Skills Academy v2.8 – Train. Track. Improve.",
+  "description": "Skills Academy v2.9 – Premium Player Cards",
   "start_url": "./index.html",
   "scope": "./",
   "display": "standalone",
