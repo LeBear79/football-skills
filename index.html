@@ -4,8 +4,8 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <meta name="theme-color" content="#07130f" />
-  <meta name="description" content="Skills Academy v3.0.1 – VM-stjerne Skills-test.1 – Train. Track. Improve." />
-  <title>Skills Academy v3.0.1 – VM-stjerne Skills-test</title>
+  <meta name="description" content="Skills Academy v3.1 Skills-test.1 – Train. Track. Improve." />
+  <title>Skills Academy v3.1 Skills-test</title>
   <link rel="manifest" href="manifest.webmanifest" />
   <link rel="icon" type="image/png" sizes="192x192" href="icon-192.png" />
   <link rel="apple-touch-icon" href="icon-192.png" />
@@ -468,10 +468,10 @@
     .bottom-nav {
       position: fixed; left: 50%; transform: translateX(-50%); bottom: 0; z-index: 30;
       width: min(1120px,100%); padding: 8px 10px calc(8px + var(--safe-bottom));
-      display: grid; grid-template-columns: repeat(7,1fr); gap: 3px;
+      display: grid; grid-template-columns: repeat(6,1fr); gap: 4px;
       background: rgba(5,14,11,.94); backdrop-filter: blur(20px); border-top: 1px solid var(--line);
     }
-    .nav-btn { border:0; background:transparent; color:var(--muted); border-radius:13px; padding:7px 2px; min-height:55px; cursor:pointer; font-size:.56rem; font-weight:780; }
+    .nav-btn { border:0; background:transparent; color:var(--muted); border-radius:13px; padding:7px 3px; min-height:55px; cursor:pointer; font-size:.61rem; font-weight:780; }
     .nav-btn .nav-icon { display:block; font-size:1.2rem; margin-bottom:3px; }
     .nav-btn.active { color:var(--green); background:var(--green-soft); }
 
@@ -493,6 +493,26 @@
     .other-note { color:var(--muted); font-size:.76rem; line-height:1.5; margin:10px 0 0; }
     .xp-balance-note { margin-top:14px; padding:12px 14px; border-radius:14px; background:rgba(255,193,87,.08); border:1px solid rgba(255,193,87,.2); color:#ffe0a3; font-size:.75rem; line-height:1.5; }
     @media (min-width:720px) { .other-activity-grid { grid-template-columns:repeat(4,minmax(0,1fr)); } }
+
+    .level-up-overlay { position:fixed; inset:0; z-index:10000; display:none; align-items:center; justify-content:center; padding:22px; background:rgba(0,8,5,.9); backdrop-filter:blur(8px); }
+    .level-up-overlay.visible { display:flex; animation:levelOverlayIn .28s ease-out both; }
+    .level-up-stage { width:min(440px,100%); text-align:center; position:relative; }
+    .level-up-card { width:min(310px,78vw); aspect-ratio:.72/1; margin:0 auto 18px; border-radius:24px; display:flex; align-items:center; justify-content:center; position:relative; background:radial-gradient(circle at 75% 18%,rgba(255,224,108,.35),transparent 25%),linear-gradient(145deg,#191006,#050806 55%,#442500); border:2px solid #ffd66a; box-shadow:0 28px 80px rgba(0,0,0,.72),0 0 36px rgba(255,210,82,.38); transform-style:preserve-3d; animation:levelCardReveal 1.15s cubic-bezier(.19,.75,.2,1) both; overflow:hidden; }
+    .level-up-card:before { content:""; position:absolute; inset:-80% -120%; background:linear-gradient(115deg,transparent 42%,rgba(255,255,255,.38) 49%,transparent 57%); animation:levelCardShine 1.6s .8s ease-out both; }
+    .level-up-card-content { position:relative; z-index:2; }
+    .level-up-card-content span { display:block; color:#ffd66a; font-weight:1000; letter-spacing:.16em; font-size:.72rem; }
+    .level-up-card-content strong { display:block; margin-top:8px; font-size:3.2rem; color:#fff; line-height:.95; }
+    .level-up-card-content b { display:block; margin-top:11px; color:#ffd66a; font-size:1rem; letter-spacing:.08em; text-transform:uppercase; }
+    .level-up-title { margin:0; font-size:2rem; }
+    .level-up-subtitle { margin:8px 0 0; color:var(--muted); line-height:1.5; }
+    .level-up-stats { margin:15px auto 0; padding:13px 15px; max-width:330px; border-radius:16px; background:rgba(255,255,255,.055); border:1px solid rgba(255,214,106,.24); }
+    .level-up-stats strong { color:#ffd66a; font-size:1.25rem; }
+    .level-up-continue { width:100%; max-width:330px; margin-top:16px; }
+    .confetti-piece { position:absolute; top:-12vh; width:9px; height:16px; border-radius:2px; animation:confettiFall var(--fall,2.8s) linear var(--delay,0s) forwards; }
+    @keyframes levelOverlayIn { from{opacity:0} to{opacity:1} }
+    @keyframes levelCardReveal { 0%{transform:scale(.62) rotateY(0);opacity:0}35%{transform:scale(.9) rotateY(90deg);opacity:1}70%{transform:scale(1.05) rotateY(180deg)}100%{transform:scale(1) rotateY(360deg)} }
+    @keyframes levelCardShine { from{transform:translateX(-35%)} to{transform:translateX(45%)} }
+    @keyframes confettiFall { to{transform:translate3d(var(--drift,0px),115vh,0) rotate(760deg);opacity:.15} }
 
     .hidden { display:none !important; }
 
@@ -577,7 +597,7 @@
   </style>
 </head>
 <body>
-  <!-- Skills Academy v3.0.1 – VM-stjerne Skills-test.1 – tilpassede mål, dynamiske ruter og sikkerhetskopi -->
+  <!-- Skills Academy v3.1 Skills-test.1 – tilpassede mål, dynamiske ruter og sikkerhetskopi -->
   <div class="app">
     <header class="topbar">
       <div class="brand">
@@ -884,47 +904,32 @@
           </div>
         </div>
       </section>
-
       <section class="page" id="page-other">
-        <div class="section-head"><div><h2>Annet</h2><p>Registrer fotballaktivitet i etterkant. Velg aktivitet, tid og eventuelt bestenotering.</p></div></div>
+        <div class="section-head"><div><h2>Lagspill</h2><p>Fotball sammen med andre. Velg aktivitet og skriv inn tiden du deltok.</p></div></div>
         <div class="panel">
           <h3 class="panel-title">Hva gjorde du?</h3>
           <div class="other-activity-grid" id="otherActivityGrid">
             <button class="other-activity-btn active" type="button" data-other-activity="loekke">⚽ Løkkefotball</button>
             <button class="other-activity-btn" type="button" data-other-activity="club">👥 Klubbtrening</button>
-            <button class="other-activity-btn" type="button" data-other-activity="match">🏟 Kamp</button>
-            <button class="other-activity-btn" type="button" data-other-activity="self">🏃 Egentrening</button>
-            <button class="other-activity-btn" type="button" data-other-activity="shooting">🎯 Skudd</button>
-            <button class="other-activity-btn" type="button" data-other-activity="challenge">🏆 Challenge</button>
-            <button class="other-activity-btn" type="button" data-other-activity="juggling">🎩 Triksing</button>
-            <button class="other-activity-btn" type="button" data-other-activity="dribble">⚡ Dribleløype</button>
-            <button class="other-activity-btn" type="button" data-other-activity="badge">🏅 Fotballmerket</button>
-            <button class="other-activity-btn" type="button" data-other-activity="other">➕ Annet</button>
+            <button class="other-activity-btn" type="button" data-other-activity="match">🏆 Kamp</button>
           </div>
-          <div class="form-grid cols-2" style="margin-top:14px">
-            <div class="field"><label for="otherMinutes">Tid brukt</label><select class="select" id="otherMinutes">
-              <option value="0">Ikke registrer tid</option><option value="15">15 minutter</option><option value="30">30 minutter</option><option value="45">45 minutter</option><option value="60">60 minutter</option><option value="90">90 minutter</option><option value="120">120 minutter</option>
-            </select></div>
-            <div class="field"><label for="otherBest">Bestenotering (valgfritt)</label><input class="input" id="otherBest" type="number" min="0" step="0.01" inputmode="decimal" placeholder="For eksempel 52"></div>
-            <div class="field"><label for="otherUnit">Enhet</label><select class="select" id="otherUnit">
-              <option value="poeng">poeng</option><option value="treff">treff</option><option value="berøringer">berøringer</option><option value="sekunder">sekunder</option><option value="mål">mål</option>
-            </select></div>
-            <div class="field"><label for="otherComment">Kort kommentar (valgfritt)</label><input class="input" id="otherComment" maxlength="80" placeholder="For eksempel spilte med venner"></div>
+          <div class="field" style="margin-top:16px">
+            <label for="otherMinutesInput">Tid brukt (minutter)</label>
+            <input class="input" id="otherMinutesInput" type="number" min="1" max="180" step="1" inputmode="numeric" placeholder="For eksempel 62">
           </div>
           <div class="other-xp-preview"><span>Du får</span><strong id="otherXpPreview">0 XP</strong></div>
-          <p class="other-note">Du må registrere tid eller en bestenotering. Ny personlig rekord gir 50 bonus-XP. Aktiviteten påvirker EXP og samlet XP, men ikke de andre kortferdighetene direkte.</p>
-          <div class="xp-balance-note"><strong>Ny XP-balanse:</strong> Lange fotballøkter belønnes tydeligere. Nye Challenge-resultater gir færre grunnpoeng enn før, slik at faktisk tid ute på banen blir minst like verdifull.</div>
-          <button class="btn primary" type="button" id="saveOtherActivity" style="width:100%;margin-top:14px">Lagre aktivitet</button>
+          <p class="other-note">XP = 2,5 XP per minutt. Maks 180 minutter per registrering. Lagspill påvirker samlet XP og EXP.</p>
+          <button class="btn primary" type="button" id="saveOtherActivity" style="width:100%;margin-top:14px">Lagre lagspill</button>
         </div>
-        <div class="panel" style="margin-top:14px"><h3 class="panel-title">Siste registreringer</h3><div class="history-list" id="otherActivityHistory"></div></div>
+        <div class="panel" style="margin-top:14px"><h3 class="panel-title">Siste lagspill</h3><div class="history-list" id="otherActivityHistory"></div></div>
       </section>
 
-      <section class="page" id="page-history">
+<section class="page" id="page-history">
         <div class="section-head"><div><h2>Historikk</h2><p>Lagret lokalt på denne enheten.</p></div><button type="button" class="btn danger small" id="clearHistory">Slett historikk</button></div>
         <div class="panel">
           <h3 class="panel-title">Filtrer historikken</h3>
           <div class="history-tools">
-            <div class="field"><label for="historyTypeFilter">Type</label><select class="select" id="historyTypeFilter"><option value="all">Alle aktiviteter</option><option value="session">Skuddanalyse</option><option value="challenge">Challenge</option><option value="badge">Fotballmerket</option><option value="juggling">Triksing</option><option value="dribble">Dribleløype</option><option value="other">Annet</option></select></div>
+            <div class="field"><label for="historyTypeFilter">Type</label><select class="select" id="historyTypeFilter"><option value="all">Alle aktiviteter</option><option value="session">Skuddanalyse</option><option value="challenge">Challenge</option><option value="badge">Fotballmerket</option><option value="juggling">Triksing</option><option value="dribble">Dribleløype</option><option value="other">Lagspill</option></select></div>
             <div class="field"><label for="historyGoalFilter">Mål</label><select class="select" id="historyGoalFilter"><option value="all">Alle mål</option></select></div>
             <div class="field"><label for="historyPeriodFilter">Tidsperiode</label><select class="select" id="historyPeriodFilter"><option value="all">Hele perioden</option><option value="7">Siste 7 dager</option><option value="30">Siste 30 dager</option><option value="90">Siste 90 dager</option></select></div>
           </div>
@@ -958,7 +963,7 @@
     <button type="button" class="nav-btn" data-page="challenge"><span class="nav-icon">🏆</span>Challenge</button>
     <button type="button" class="nav-btn" data-page="fotballmerket"><span class="nav-icon">🏅</span>Merket</button>
     <button type="button" class="nav-btn" data-page="card"><span class="nav-icon">⭐</span>Kort</button>
-    <button type="button" class="nav-btn" data-page="other"><span class="nav-icon">＋</span>Annet</button>
+    <button type="button" class="nav-btn" data-page="other"><span class="nav-icon">👥</span>Lagspill</button>
     <button type="button" class="nav-btn" data-page="history"><span class="nav-icon">▤</span>Historikk</button>
   </nav>
 
@@ -993,6 +998,17 @@
         <div class="crop-zoom-row"><span>−</span><input id="cropZoom" type="range" min="1" max="3" step="0.01" value="1" aria-label="Zoom"><span>+</span></div>
         <div class="crop-actions"><button type="button" class="btn ghost" id="resetCrop">Tilbakestill</button><button type="button" class="btn primary" id="saveCrop">Bruk bildet</button></div>
       </div>
+    </div>
+  </div>
+
+  <div class="level-up-overlay" id="levelUpOverlay" role="dialog" aria-modal="true" aria-labelledby="levelUpTitle">
+    <div class="level-up-stage">
+      <div id="levelUpConfetti"></div>
+      <div class="level-up-card"><div class="level-up-card-content"><span>NYTT KORT LÅST OPP</span><strong id="levelUpOvr">50</strong><b id="levelUpCardName">Prospect</b></div></div>
+      <h2 class="level-up-title" id="levelUpTitle">Gratulerer!</h2>
+      <p class="level-up-subtitle" id="levelUpMessage">Du har nådd et nytt nivå.</p>
+      <div class="level-up-stats"><span>OVR</span><strong id="levelUpOvrChange">50 → 51</strong><div style="margin-top:6px;color:var(--muted)">Nytt kortdesign og nye detaljer er låst opp.</div></div>
+      <button type="button" class="btn primary level-up-continue" id="levelUpContinue">Fortsett</button>
     </div>
   </div>
 
@@ -1978,11 +1994,7 @@
           return `<div class="history-item"><div><h3>Fotballmerket · ${escapeHtml(levelName)}</h3><p>${formatDate(item.createdAt)} · ${escapeHtml(exercise)}${item.exerciseId!=="complete"?` · resultat ${item.value}`:""}</p></div>${historyItemActions(item, `<span class="pill">${item.passed?"Bestått":"Trening"} · +${item.xpAwarded||0} XP</span>`)}</div>`;
         }
         if(item.kind==="other"){
-          const details=[];
-          if(item.minutes)details.push(`${item.minutes} min`);
-          if(Number.isFinite(Number(item.bestValue)))details.push(`${Number(item.bestValue).toLocaleString("nb-NO")} ${escapeHtml(item.unit||"")}`);
-          if(item.comment)details.push(escapeHtml(item.comment));
-          return `<div class="history-item"><div><h3>Annet · ${escapeHtml(OTHER_ACTIVITY_LABELS[item.activity]||"Aktivitet")}${item.isRecord?" · Ny rekord":""}</h3><p>${formatDate(item.createdAt)} · ${details.join(" · ")}</p></div>${historyItemActions(item, `<span class="pill">+${item.xpAwarded||0} XP</span>`)}</div>`;
+          return `<div class="history-item"><div><h3>Lagspill · ${escapeHtml(OTHER_ACTIVITY_LABELS[item.activity]||"Aktivitet")}</h3><p>${formatDate(item.createdAt)} · ${item.minutes||0} min</p></div>${historyItemActions(item, `<span class="pill">+${item.xpAwarded||0} XP</span>`)}</div>`;
         }
         const name=item.mode === "points" ? `Førstemann til ${item.target}` : "Treff alle rutene";
         const matchText=item.playMode === "multi" ? `Kamp · ${item.winner ? "Seier" : "Deltok"}` : "Challenge";
@@ -2057,7 +2069,7 @@
 
     // SIKKERHETSKOPI
     $("exportBackup").addEventListener("click",()=>{
-      const backup={app:"Skills Academy",version:"3.0",exportedAt:new Date().toISOString(),data:state};
+      const backup={app:"Skills Academy",version:"3.1",exportedAt:new Date().toISOString(),data:state};
       const blob=new Blob([JSON.stringify(backup,null,2)],{type:"application/json"}),url=URL.createObjectURL(blob),a=document.createElement("a");
       a.href=url;a.download=`skills-academy-sikkerhetskopi-${new Date().toISOString().slice(0,10)}.json`;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1000);toast("Sikkerhetskopien er eksportert");
     });
@@ -2226,36 +2238,75 @@
     });
     $('closeCourseAttempt').addEventListener('click',()=>{$('courseAttemptPanel').classList.add('hidden');activeCourseId=null;});
 
-    // ANNET: REGISTRERING I ETTERKANT
-    const OTHER_ACTIVITY_LABELS={loekke:"Løkkefotball",club:"Klubbtrening",match:"Kamp",self:"Egentrening",shooting:"Skuddtrening",challenge:"Challenge",juggling:"Triksing",dribble:"Dribleløype",badge:"Fotballmerket",other:"Annet"};
-    const OTHER_TIME_XP={0:0,15:35,30:70,45:110,60:150,90:225,120:300};
+    // LAGSPILL
+    const OTHER_ACTIVITY_LABELS={loekke:"Løkkefotball",club:"Klubbtrening",match:"Kamp"};
     let selectedOtherActivity="loekke";
+
     function otherProfileRows(){return(state.otherActivities||[]).filter(x=>x.profileId===state.activeProfileId);}
-    function otherResultIsBetter(activity,value,oldValue){if(!Number.isFinite(value))return false;if(!Number.isFinite(oldValue))return true;return activity==="dribble"?value<oldValue:value>oldValue;}
-    function otherBestBefore(activity){const rows=otherProfileRows().filter(x=>x.activity===activity&&Number.isFinite(Number(x.bestValue)));if(!rows.length)return NaN;const values=rows.map(x=>Number(x.bestValue));return activity==="dribble"?Math.min(...values):Math.max(...values);}
-    function calculateOtherXp(minutes,bestValue,isRecord){return(OTHER_TIME_XP[minutes]||0)+(Number.isFinite(bestValue)?20:0)+(isRecord?50:0);}
-    function updateOtherXpPreview(){const minutes=Number($("otherMinutes").value)||0;const bestValue=Number(String($("otherBest").value).replace(",","."));const isRecord=Number.isFinite(bestValue)&&otherResultIsBetter(selectedOtherActivity,bestValue,otherBestBefore(selectedOtherActivity));$("otherXpPreview").textContent=`${calculateOtherXp(minutes,bestValue,isRecord)} XP`;}
+    function calculateLagspillXp(minutes){return Math.round(minutes*2.5);}
+    function updateOtherXpPreview(){
+      const minutes=Number($("otherMinutesInput").value)||0;
+      $("otherXpPreview").textContent=`${calculateLagspillXp(minutes)} XP`;
+    }
     function renderOtherActivities(){
       if(!state.otherActivities)state.otherActivities=[];
       all("[data-other-activity]").forEach(btn=>btn.classList.toggle("active",btn.dataset.otherActivity===selectedOtherActivity));
       const rows=otherProfileRows().sort((a,b)=>new Date(b.createdAt)-new Date(a.createdAt));
-      $("otherActivityHistory").innerHTML=rows.length?rows.slice(0,10).map(item=>{const details=[];if(item.minutes)details.push(`${item.minutes} min`);if(Number.isFinite(Number(item.bestValue)))details.push(`${Number(item.bestValue).toLocaleString("nb-NO")} ${escapeHtml(item.unit||"")}`);if(item.comment)details.push(escapeHtml(item.comment));return`<div class="history-item"><div><h3>${escapeHtml(OTHER_ACTIVITY_LABELS[item.activity]||"Annet")}${item.isRecord?" · Ny rekord":""}</h3><p>${formatDate(item.createdAt)} · ${details.join(" · ")}</p></div><span class="pill">+${item.xpAwarded||0} XP</span></div>`;}).join(""):'<div class="empty">Ingen aktiviteter registrert ennå.</div>';
+      $("otherActivityHistory").innerHTML=rows.length?rows.slice(0,10).map(item=>`<div class="history-item"><div><h3>${escapeHtml(OTHER_ACTIVITY_LABELS[item.activity]||"Lagspill")}</h3><p>${formatDate(item.createdAt)} · ${item.minutes||0} min</p></div><span class="pill">+${item.xpAwarded||0} XP</span></div>`).join(""):'<div class="empty">Ingen lagspill registrert ennå.</div>';
       updateOtherXpPreview();
     }
     all("[data-other-activity]").forEach(btn=>btn.addEventListener("click",()=>{selectedOtherActivity=btn.dataset.otherActivity;renderOtherActivities();}));
-    $("otherMinutes").addEventListener("change",updateOtherXpPreview);
-    $("otherBest").addEventListener("input",updateOtherXpPreview);
+    $("otherMinutesInput").addEventListener("input",updateOtherXpPreview);
     $("saveOtherActivity").addEventListener("click",()=>{
       if(!ensureProfile())return;
-      const minutes=Number($("otherMinutes").value)||0,raw=$("otherBest").value.trim(),bestValue=raw===""?NaN:Number(raw.replace(",","."));
-      if(!minutes&&!Number.isFinite(bestValue)){toast("Velg tid eller skriv inn en bestenotering");return;}
-      if(Number.isFinite(bestValue)&&bestValue<0){toast("Bestenoteringen må være 0 eller høyere");return;}
-      const isRecord=Number.isFinite(bestValue)&&otherResultIsBetter(selectedOtherActivity,bestValue,otherBestBefore(selectedOtherActivity));
-      const xp=calculateOtherXp(minutes,bestValue,isRecord);
-      state.otherActivities.push({id:uid("other"),profileId:state.activeProfileId,activity:selectedOtherActivity,minutes,bestValue:Number.isFinite(bestValue)?bestValue:null,unit:$("otherUnit").value,comment:$("otherComment").value.trim(),isRecord,xpAwarded:xp,createdAt:new Date().toISOString()});
-      saveState();$("otherMinutes").value="0";$("otherBest").value="";$("otherComment").value="";
+      const minutes=Number($("otherMinutesInput").value);
+      if(!Number.isInteger(minutes)||minutes<1||minutes>180){toast("Skriv inn et helt antall minutter mellom 1 og 180");return;}
+      const xp=calculateLagspillXp(minutes);
+      state.otherActivities.push({id:uid("other"),profileId:state.activeProfileId,activity:selectedOtherActivity,minutes,bestValue:null,unit:"",comment:"",isRecord:false,xpAwarded:xp,createdAt:new Date().toISOString()});
+      saveState();
+      $("otherMinutesInput").value="";
       renderOtherActivities();renderHistory();renderCard();renderPersonalRecords();
-      toast(isRecord?`Ny rekord! +${xp} XP`:`Aktiviteten er lagret · +${xp} XP`);
+      toast(`${OTHER_ACTIVITY_LABELS[selectedOtherActivity]} er lagret · +${xp} XP`);
+    });
+
+    // NIVÅSEREMONI
+    let lastKnownLevelByProfile={};
+
+    function createConfetti(){
+      const host=$("levelUpConfetti"); host.innerHTML="";
+      const palette=["#ffd65d","#39e58c","#ffffff","#5db7ff","#ff6b83"];
+      for(let i=0;i<42;i++){
+        const piece=document.createElement("i");
+        piece.className="confetti-piece";
+        piece.style.left=`${Math.random()*100}%`;
+        piece.style.background=palette[i%palette.length];
+        piece.style.setProperty("--fall",`${2.2+Math.random()*1.8}s`);
+        piece.style.setProperty("--delay",`${Math.random()*.7}s`);
+        piece.style.setProperty("--drift",`${-90+Math.random()*180}px`);
+        host.appendChild(piece);
+      }
+    }
+
+    function maybeShowLevelUp(profile,before,after){
+      if(!profile||!before||!after)return;
+      const gainedLevel=after.levelIndex>before.levelIndex;
+      const gainedWorldStar=before.xp<20000&&after.xp>=20000;
+      if(!gainedLevel&&!gainedWorldStar)return;
+      const title=gainedWorldStar?"VM-stjerne":after.level.name;
+      $("levelUpCardName").textContent=title;
+      $("levelUpOvr").textContent=after.ovr;
+      $("levelUpOvrChange").textContent=`${before.ovr} → ${after.ovr}`;
+      $("levelUpMessage").textContent=gainedWorldStar
+        ? `${profile.name} har fylt opp Legend-nivået og vunnet VM-stjernen!`
+        : `${profile.name} har blitt ${after.level.name}!`;
+      createConfetti();
+      $("levelUpOverlay").classList.add("visible");
+    }
+
+    $("levelUpContinue").addEventListener("click",()=>{
+      $("levelUpOverlay").classList.remove("visible");
+      $("levelUpConfetti").innerHTML="";
+      showPage("card");
     });
 
     // PLAYER CARD / LEVEL SYSTEM
@@ -2370,6 +2421,8 @@
     }
 
     function renderCard() {
+      const previousActiveId=state.activeProfileId;
+
       const p=activeProfile();
       $("cardName").textContent=p ? p.name : "SPILLER";
       $("cardPlayerImage").innerHTML = p?.image ? `<img src="${p.image}" alt="Bilde av ${escapeHtml(p.name)}">` : '<span class="fallback-player">👤</span>';
@@ -2384,6 +2437,12 @@
       $("worldStar").classList.toggle("visible", d.xp >= 20000);
       updateLevelUI(d);
       $("cardMatches").textContent=d.matches; $("cardWins").textContent=d.wins; $("cardCompleted").textContent=d.completed;
+      const previous=lastKnownLevelByProfile[p.id];
+      if(previous) maybeShowLevelUp(p,previous,d);
+      lastKnownLevelByProfile[p.id]={
+        xp:d.xp,ovr:d.ovr,levelIndex:d.levelIndex,
+        level:{...d.level},next:d.next?{...d.next}:null
+      };
     }
 
     function updateLevelUI(d) {

@@ -1,21 +1,32 @@
-SKILLS ACADEMY v3.0.1 – VM-STJERNE ETTER FULLFØRT LEGEND
+SKILLS ACADEMY v3.1
 
-Ny progresjon:
-- Academy Legend låses opp ved 15 000 XP.
-- Legend-nivået fylles fra 15 000 til 20 000 XP.
-- Fremdriftslinjen viser hvor mye som gjenstår.
-- VM-stjernen låses opp permanent ved 20 000 XP.
-- XP, OVR, ferdigheter og historikk beholdes.
+Endringer:
+- Analyse er fjernet fra bunnmenyen.
+- Challenge dekker skuddtrening og konkurranser.
+- Annet er erstattet av Lagspill.
+- Lagspill har bare Løkkefotball, Klubbtrening og Kamp.
+- Spilleren skriver selv inn 1–180 minutter.
+- XP = 2,5 XP per minutt.
+- Lagspill vises i historikken og kan slettes enkeltvis.
 
-Last opp alle filene til samme nivå i GitHub:
-- index.html
-- manifest.webmanifest
-- service-worker.js
-- icon-192.png
-- icon-512.png
+Nivåseremoni:
+- Skjermen mørklegges ved nivåoppgang.
+- Det nye kortet zoomer og snur seg.
+- Konfetti vises.
+- Nytt nivå og OVR-endring vises.
+- Fortsett åpner spillerkortet.
+- Samme seremoni brukes når VM-stjernen låses opp ved 20 000 XP.
 
-Etter opplasting:
-1. Vent på ny GitHub Pages-publisering.
-2. Lukk PWA-en helt.
-3. Åpne nettsiden i Chrome og oppdater.
-4. Åpne PWA-en igjen.
+VM-stjerne:
+- Legend begynner ved 15 000 XP.
+- Legend fylles til 20 000 XP.
+- VM-stjernen låses permanent opp ved 20 000 XP.
+
+Last opp:
+index.html
+manifest.webmanifest
+service-worker.js
+icon-192.png
+icon-512.png
+
+Lukk deretter PWA-en, oppdater GitHub Pages-siden i Chrome og åpne PWA-en igjen.
