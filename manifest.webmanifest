@@ -1,7 +1,7 @@
 {
   "name": "Skills Academy",
   "short_name": "Academy",
-  "description": "Skills Academy v2.9.2 – individuell sletting av aktiviteter",
+  "description": "Skills Academy v2.9.3 – OVR-kalibrering",
   "start_url": "./index.html",
   "scope": "./",
   "display": "standalone",

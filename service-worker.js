@@ -1,4 +1,4 @@
-const CACHE_NAME = "skills-academy-v2-9-2";
+const CACHE_NAME = "skills-academy-v2-9-3";
 const APP_FILES = ["./","./index.html","./manifest.webmanifest","./icon-192.png","./icon-512.png"];
 
 self.addEventListener("install", event => {

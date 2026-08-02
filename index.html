@@ -4,8 +4,8 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <meta name="theme-color" content="#07130f" />
-  <meta name="description" content="Skills Academy v2.9.2 Skills-test.1 – Train. Track. Improve." />
-  <title>Skills Academy v2.9.2 Skills-test</title>
+  <meta name="description" content="Skills Academy v2.9.3 Skills-test.1 – Train. Track. Improve." />
+  <title>Skills Academy v2.9.3 Skills-test</title>
   <link rel="manifest" href="manifest.webmanifest" />
   <link rel="icon" type="image/png" sizes="192x192" href="icon-192.png" />
   <link rel="apple-touch-icon" href="icon-192.png" />
@@ -541,7 +541,7 @@
   </style>
 </head>
 <body>
-  <!-- Skills Academy v2.9.2 Skills-test.1 – tilpassede mål, dynamiske ruter og sikkerhetskopi -->
+  <!-- Skills Academy v2.9.3 Skills-test.1 – tilpassede mål, dynamiske ruter og sikkerhetskopi -->
   <div class="app">
     <header class="topbar">
       <div class="brand">
@@ -902,6 +902,7 @@
       <button type="button" class="btn primary" id="addProfile" style="width:100%;margin-top:12px">Opprett profil</button>
       <input id="profileImageEditor" type="file" accept="image/*" class="hidden" />
       <div class="profile-list" id="profileList"></div>
+      <p class="hint" style="margin-top:12px">«Juster OVR» brukes én gang for profiler som mistet OVR da den nye ferdighetsmodellen ble innført. XP og historikk endres ikke.</p>
     </div>
   </div>
 
@@ -1020,6 +1021,7 @@
           <div style="display:flex;gap:5px;flex-wrap:wrap;justify-content:flex-end">
             <button type="button" class="btn small ${p.id === state.activeProfileId ? "primary" : ""}" data-select-profile="${p.id}">${p.id === state.activeProfileId ? "Valgt" : "Velg"}</button>
             <button type="button" class="btn small" data-edit-image="${p.id}">${p.image ? "Bytt bilde" : "Legg til bilde"}</button>
+            <button type="button" class="btn small" data-adjust-ovr="${p.id}">Juster OVR</button>
             <button type="button" class="btn danger small" data-delete-profile="${p.id}">Slett</button>
           </div>
         </div>`).join("");
@@ -1029,6 +1031,7 @@
         saveState(); renderProfileUI(); renderCard(); renderHistory(); renderPersonalRecords(); renderCustomGoalAdmin(); closeProfileModal(); toast("Profil valgt");
       }));
       all("[data-delete-profile]", list).forEach(btn => btn.addEventListener("click", () => deleteProfile(btn.dataset.deleteProfile)));
+      all("[data-adjust-ovr]", list).forEach(btn => btn.addEventListener("click", () => calibrateProfileOvr(btn.dataset.adjustOvr)));
       all("[data-edit-image]", list).forEach(btn => btn.addEventListener("click", () => {
         editProfileImageId = btn.dataset.editImage;
         $("profileImageEditor").value = "";
@@ -1045,6 +1048,107 @@
     $("profileChip").addEventListener("click", openProfileModal);
     $("closeProfileModal").addEventListener("click", closeProfileModal);
     $("profileModal").addEventListener("click", e => { if (e.target === $("profileModal")) closeProfileModal(); });
+
+    const OVR_WEIGHTS = { sho:.22, dri:.17, con:.17, tac:.14, chl:.14, exp:.16 };
+
+    function weightedOvr(skills) {
+      return Math.round(
+        skills.sho * OVR_WEIGHTS.sho +
+        skills.dri * OVR_WEIGHTS.dri +
+        skills.con * OVR_WEIGHTS.con +
+        skills.tac * OVR_WEIGHTS.tac +
+        skills.chl * OVR_WEIGHTS.chl +
+        skills.exp * OVR_WEIGHTS.exp
+      );
+    }
+
+    function createOvrCalibration(baseSkills, targetOvr) {
+      const skills = { ...baseSkills };
+      const bonuses = { sho:0, dri:0, con:0, tac:0, chl:0, exp:0 };
+      const keys = Object.keys(bonuses);
+      let guard = 0;
+
+      while (weightedOvr(skills) < targetOvr && guard < 1000) {
+        const available = keys.filter(key => skills[key] < 99);
+        if (!available.length) break;
+
+        available.sort((a,b) => {
+          if (skills[a] !== skills[b]) return skills[a] - skills[b];
+          return OVR_WEIGHTS[b] - OVR_WEIGHTS[a];
+        });
+
+        const key = available[0];
+        skills[key] += 1;
+        bonuses[key] += 1;
+        guard += 1;
+      }
+      return bonuses;
+    }
+
+    function calibrateProfileOvr(profileId) {
+      const profile = state.profiles.find(p => p.id === profileId);
+      if (!profile) return;
+
+      const existing = profile.ovrCalibration;
+      profile.ovrCalibration = null;
+      const base = calculatePlayerData(profile);
+      profile.ovrCalibration = existing;
+
+      const current = calculatePlayerData(profile);
+      const answer = prompt(
+        `Tidligere OVR for ${profile.name}\n\nNåværende OVR: ${current.ovr}\nOVR uten justering: ${base.ovr}\n\nSkriv ønsket OVR mellom 40 og 99. Skriv 0 for å fjerne justeringen.`,
+        String(current.ovr)
+      );
+      if (answer === null) return;
+
+      const target = Number(answer);
+      if (!Number.isInteger(target) || (target !== 0 && (target < 40 || target > 99))) {
+        toast("Skriv et helt tall mellom 40 og 99");
+        return;
+      }
+
+      if (target === 0) {
+        if (!confirm(`Fjerne OVR-justeringen for ${profile.name}?`)) return;
+        delete profile.ovrCalibration;
+        saveState();
+        renderProfileUI();
+        renderCard();
+        toast("OVR-justeringen er fjernet");
+        return;
+      }
+
+      if (target < base.ovr) {
+        alert(`Den beregnede OVR-en uten justering er allerede ${base.ovr}. Justeringen brukes bare for å gjenopprette et høyere tidligere nivå.`);
+        return;
+      }
+
+      const baseSkills = {
+        sho:base.sho, dri:base.dri, con:base.con,
+        tac:base.tac, chl:base.chl, exp:base.exp
+      };
+      const bonuses = createOvrCalibration(baseSkills, target);
+      const previewSkills = Object.fromEntries(
+        Object.keys(baseSkills).map(key => [key, Math.min(99, baseSkills[key] + bonuses[key])])
+      );
+      const achieved = weightedOvr(previewSkills);
+
+      if (!confirm(
+        `Gjenopprette OVR for ${profile.name}?\n\nOVR ${base.ovr} → ${achieved}\n` +
+        `Tillegg fordeles på de laveste ferdighetene.\nXP og historikk endres ikke.`
+      )) return;
+
+      profile.ovrCalibration = {
+        targetOvr: target,
+        bonuses,
+        calibratedAt: new Date().toISOString(),
+        sourceVersion: "2.9.3"
+      };
+      saveState();
+      renderProfileUI();
+      renderCard();
+      renderPersonalRecords();
+      toast(`OVR er justert til ${achieved}`);
+    }
 
     function readImageFile(file) {
       return new Promise((resolve, reject) => {
@@ -1857,7 +1961,7 @@
 
     // SIKKERHETSKOPI
     $("exportBackup").addEventListener("click",()=>{
-      const backup={app:"Skills Academy",version:"2.9.2",exportedAt:new Date().toISOString(),data:state};
+      const backup={app:"Skills Academy",version:"2.9.3",exportedAt:new Date().toISOString(),data:state};
       const blob=new Blob([JSON.stringify(backup,null,2)],{type:"application/json"}),url=URL.createObjectURL(blob),a=document.createElement("a");
       a.href=url;a.download=`skills-academy-sikkerhetskopi-${new Date().toISOString().slice(0,10)}.json`;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1000);toast("Sikkerhetskopien er eksportert");
     });
@@ -2108,15 +2212,23 @@
       const wins=challenges.filter(x=>x.playMode==="multi" && x.winner).length;
       const xp=Math.round(sessions.length*120 + totalShots*2 + exact*8 + near*3 + completedChallenges*180 + wins*250 + badgeXp + skillXp);
 
-      const sho=clamp(Math.round(43 + accuracy*40 + Math.min(totalShots,300)/300*14),40,99);
-      const dri=dribblingScore(dribble);
-      const con=jugglingControlScore(juggling);
-      const tac=techniqueScore(badgeResults);
-      const chl=clamp(Math.round(45 + Math.min(completedChallenges,15)*2.5 + Math.min(wins,12)*1.7 + Math.min(challenges.length,20)*.35),40,99);
+      let sho=clamp(Math.round(43 + accuracy*40 + Math.min(totalShots,300)/300*14),40,99);
+      let dri=dribblingScore(dribble);
+      let con=jugglingControlScore(juggling);
+      let tac=techniqueScore(badgeResults);
+      let chl=clamp(Math.round(45 + Math.min(completedChallenges,15)*2.5 + Math.min(wins,12)*1.7 + Math.min(challenges.length,20)*.35),40,99);
       const activityCount=sessions.length+challenges.length+juggling.length+dribble.length+completedBadges;
-      const exp=clamp(Math.round(45 + Math.min(activityCount,35)*1.05 + Math.min(xp,15000)/15000*15),40,99);
+      let exp=clamp(Math.round(45 + Math.min(activityCount,35)*1.05 + Math.min(xp,15000)/15000*15),40,99);
 
-      const ovr=Math.round(sho*.22+dri*.17+con*.17+tac*.14+chl*.14+exp*.16);
+      const calibration=p.ovrCalibration?.bonuses||{};
+      sho=clamp(sho+(Number(calibration.sho)||0),40,99);
+      dri=clamp(dri+(Number(calibration.dri)||0),40,99);
+      con=clamp(con+(Number(calibration.con)||0),40,99);
+      tac=clamp(tac+(Number(calibration.tac)||0),40,99);
+      chl=clamp(chl+(Number(calibration.chl)||0),40,99);
+      exp=clamp(exp+(Number(calibration.exp)||0),40,99);
+
+      const ovr=weightedOvr({sho,dri,con,tac,chl,exp});
       let level=LEVELS[0];
       LEVELS.forEach(l=>{ if(xp>=l.min) level=l; });
       const levelIndex=LEVELS.findIndex(l=>l.key===level.key);

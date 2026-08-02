@@ -1,4 +1,4 @@
-SKILLS ACADEMY v2.9.2 – INDIVIDUELL SLETTING
+SKILLS ACADEMY v2.9.3 – OVR-KALIBRERING
 
 Last opp alle filene til samme nivå i GitHub:
 - index.html
@@ -7,16 +7,21 @@ Last opp alle filene til samme nivå i GitHub:
 - icon-192.png
 - icon-512.png
 
-Nytt:
-- Hver aktivitet i historikken har egen søppelbøtteknapp.
-- Bare valgt aktivitet slettes.
-- Appen spør om bekreftelse.
-- XP, OVR, ferdigheter, TOTAL og rekorder beregnes på nytt.
-- Trikserekorder og driblerekorder beregnes på nytt.
-- «Slett historikk» beholdes for full sletting.
+Slik gjenoppretter du tidligere OVR:
+1. Åpne profilvelgeren øverst til høyre.
+2. Trykk «Juster OVR» ved Vetle.
+3. Skriv 68 og bekreft.
+4. Gjør det samme for Jack.
 
-Etter opplasting:
-1. Vent på ny GitHub Pages-publisering.
-2. Lukk PWA-en helt.
-3. Åpne nettsiden i Chrome og oppdater.
-4. Åpne PWA-en igjen.
+Hva skjer:
+- Appen beregner ferdighetene uten justering.
+- Manglende poeng fordeles på de laveste ferdighetene.
+- OVR og TOTAL blir logiske og sammenhengende.
+- XP, nivå, historikk, seire og rekorder endres ikke.
+- Justeringen lagres på profilen og blir med i sikkerhetskopien.
+- Skriv 0 i «Juster OVR» dersom justeringen senere skal fjernes.
+
+PWA:
+- Erstatt særlig index.html og service-worker.js.
+- Vent på ny GitHub Pages-publisering.
+- Lukk PWA-en helt, oppdater nettsiden i Chrome og åpne PWA-en igjen.
