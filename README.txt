@@ -1,27 +1,30 @@
-SKILLS ACADEMY v2.9.3 – OVR-KALIBRERING
+SKILLS ACADEMY v3.0
 
-Last opp alle filene til samme nivå i GitHub:
-- index.html
-- manifest.webmanifest
-- service-worker.js
-- icon-192.png
-- icon-512.png
+Last opp:
+index.html
+manifest.webmanifest
+service-worker.js
+icon-192.png
+icon-512.png
 
-Slik gjenoppretter du tidligere OVR:
-1. Åpne profilvelgeren øverst til høyre.
-2. Trykk «Juster OVR» ved Vetle.
-3. Skriv 68 og bekreft.
-4. Gjør det samme for Jack.
+Annet:
+- Registrer aktivitet i etterkant
+- Velg aktivitet, tid og/eller bestenotering
+- Ny rekord gir 50 bonus-XP
+- Aktiviteten gir EXP og samlet XP
+- Kan slettes individuelt i historikken
 
-Hva skjer:
-- Appen beregner ferdighetene uten justering.
-- Manglende poeng fordeles på de laveste ferdighetene.
-- OVR og TOTAL blir logiske og sammenhengende.
-- XP, nivå, historikk, seire og rekorder endres ikke.
-- Justeringen lagres på profilen og blir med i sikkerhetskopien.
-- Skriv 0 i «Juster OVR» dersom justeringen senere skal fjernes.
+XP:
+15 min = 35
+30 min = 70
+45 min = 110
+60 min = 150
+90 min = 225
+120 min = 300
+Bestenotering = 20
+Ny rekord = +50
+Nye Challenges gir maks 75 XP per spiller.
+Gamle Challenge-resultater beholder gammel XP-verdi, så eksisterende XP ikke faller.
 
-PWA:
-- Erstatt særlig index.html og service-worker.js.
-- Vent på ny GitHub Pages-publisering.
-- Lukk PWA-en helt, oppdater nettsiden i Chrome og åpne PWA-en igjen.
+Etter opplasting:
+Vent på GitHub Pages, lukk PWA, oppdater nettsiden i Chrome, åpne PWA igjen.
