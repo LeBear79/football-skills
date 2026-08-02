@@ -1,32 +1,17 @@
-SKILLS ACADEMY v3.1
+Kosthold v2.3
 
-Endringer:
-- Analyse er fjernet fra bunnmenyen.
-- Challenge dekker skuddtrening og konkurranser.
-- Annet er erstattet av Lagspill.
-- Lagspill har bare Løkkefotball, Klubbtrening og Kamp.
-- Spilleren skriver selv inn 1–180 minutter.
-- XP = 2,5 XP per minutt.
-- Lagspill vises i historikken og kan slettes enkeltvis.
+Denne ZIP-filen inneholder en ny index.html.
 
-Nivåseremoni:
-- Skjermen mørklegges ved nivåoppgang.
-- Det nye kortet zoomer og snur seg.
-- Konfetti vises.
-- Nytt nivå og OVR-endring vises.
-- Fortsett åpner spillerkortet.
-- Samme seremoni brukes når VM-stjernen låses opp ved 20 000 XP.
+På GitHub:
+1. Pakk ut ZIP-filen.
+2. Last opp index.html.
+3. Erstatt den gamle index.html.
+4. Behold manifest.webmanifest, service-worker.js og ikonfilene uendret.
+5. Vent 1–2 minutter og åpne appen på nytt.
 
-VM-stjerne:
-- Legend begynner ved 15 000 XP.
-- Legend fylles til 20 000 XP.
-- VM-stjernen låses permanent opp ved 20 000 XP.
-
-Last opp:
-index.html
-manifest.webmanifest
-service-worker.js
-icon-192.png
-icon-512.png
-
-Lukk deretter PWA-en, oppdater GitHub Pages-siden i Chrome og åpne PWA-en igjen.
+Ny registrering:
+- Velg måltid én gang.
+- Legg til flere matvarer uten å lukke vinduet.
+- Se løpende total for kalorier og protein.
+- Lagre hele måltidet med ett trykk.
+- Valgfritt: lagre kombinasjonen som et ferdig måltid.
