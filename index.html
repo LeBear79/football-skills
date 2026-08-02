@@ -4,8 +4,8 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <meta name="theme-color" content="#07130f" />
-  <meta name="description" content="Skills Academy v3.0 Skills-test.1 – Train. Track. Improve." />
-  <title>Skills Academy v3.0 Skills-test</title>
+  <meta name="description" content="Skills Academy v3.0.1 – VM-stjerne Skills-test.1 – Train. Track. Improve." />
+  <title>Skills Academy v3.0.1 – VM-stjerne Skills-test</title>
   <link rel="manifest" href="manifest.webmanifest" />
   <link rel="icon" type="image/png" sizes="192x192" href="icon-192.png" />
   <link rel="apple-touch-icon" href="icon-192.png" />
@@ -367,6 +367,32 @@
     .player-card.level-elite { --card-a:#11623e; --card-c:#04150f; --card-ink:#f2fff8; --card-accent:#62eda0; }
     .player-card.level-master { --card-a:#6525a3; --card-c:#12031f; --card-ink:#fff7ff; --card-accent:#d9a4ff; }
     .player-card.level-legend { --card-a:#9c4c13; --card-c:#120704; --card-ink:#fff9e7; --card-accent:#ffd76d; }
+    .world-star {
+      position:absolute; top:112px; right:18px; z-index:6;
+      width:78px; min-height:86px; padding:8px 6px 7px;
+      display:none; align-items:center; justify-content:center; flex-direction:column;
+      text-align:center; color:#171006;
+      background:linear-gradient(145deg,#fff4a8 0%,#f2bf3f 42%,#9c5f08 100%);
+      clip-path:polygon(50% 0%,61% 32%,96% 34%,68% 55%,78% 91%,50% 70%,22% 91%,32% 55%,4% 34%,39% 32%);
+      filter:drop-shadow(0 8px 15px rgba(0,0,0,.55)) drop-shadow(0 0 13px rgba(255,210,83,.38));
+      animation:worldStarPulse 2.8s ease-in-out infinite;
+    }
+    .world-star.visible { display:flex; }
+    .world-star strong { font-size:1.65rem; line-height:.9; }
+    .world-star span {
+      max-width:55px; margin-top:3px; font-size:.39rem; line-height:1.05;
+      font-weight:1000; letter-spacing:.06em; text-transform:uppercase;
+    }
+    @keyframes worldStarPulse {
+      0%,100% { transform:scale(1); filter:drop-shadow(0 8px 15px rgba(0,0,0,.55)) drop-shadow(0 0 10px rgba(255,210,83,.25)); }
+      50% { transform:scale(1.045); filter:drop-shadow(0 9px 17px rgba(0,0,0,.58)) drop-shadow(0 0 20px rgba(255,220,100,.55)); }
+    }
+    .world-star-note {
+      margin-top:10px; padding:11px 13px; border-radius:14px;
+      border:1px solid rgba(255,209,79,.26); background:rgba(255,209,79,.075);
+      color:#ffe7a3; font-size:.73rem; line-height:1.45;
+    }
+
     .card-top { display:flex; justify-content:space-between; align-items:flex-start; gap:12px; position:relative; z-index:3; }
     .ovr { width:78px; min-height:88px; padding:10px 8px 8px; text-align:center;
       background:linear-gradient(145deg,rgba(0,0,0,.68),rgba(255,255,255,.06));
@@ -551,7 +577,7 @@
   </style>
 </head>
 <body>
-  <!-- Skills Academy v3.0 Skills-test.1 – tilpassede mål, dynamiske ruter og sikkerhetskopi -->
+  <!-- Skills Academy v3.0.1 – VM-stjerne Skills-test.1 – tilpassede mål, dynamiske ruter og sikkerhetskopi -->
   <div class="app">
     <header class="topbar">
       <div class="brand">
@@ -746,8 +772,12 @@
       </section>
 
       <section class="page" id="page-card">
-        <div class="section-head"><div><h2>Player Card</h2><p>Et eksklusivt kort som utvikler seg med trening, XP, rekorder og challenges.</p></div></div>
+        <div class="section-head"><div><h2>Player Card</h2><p>Et eksklusivt kort som utvikler seg med trening, XP, rekorder og challenges. Academy Legend låses opp ved 15 000 XP. Når Legend-nivået er fylt opp ved 20 000 XP, låses en permanent VM-stjerne opp på kortet.</p></div></div>
         <div class="player-card level-rookie" id="playerCard">
+          <div class="world-star" id="worldStar" aria-label="VM-stjerne låst opp">
+            <strong>★</strong>
+            <span>VM-stjerne</span>
+          </div>
           <div class="card-top">
             <div class="ovr"><strong id="cardOvr">50</strong><span>OVR</span><div class="card-level-ribbon" id="cardRibbon">ROOKIE</div></div>
             <div class="card-crest"><strong>SKILLS</strong><strong>ACADEMY</strong><span id="cardPrecision">0 XP</span></div>
@@ -2346,10 +2376,12 @@
       if (!p) {
         setCardValues({ovr:50,sho:50,dri:50,con:50,tac:50,chl:50,exp:50});
         updateLevelUI({accuracy:.5,xp:0,sho:50,dri:50,con:50,tac:50,chl:50,exp:50,level:LEVELS[0],next:LEVELS[1],levelIndex:0});
+        $("worldStar").classList.remove("visible");
         $("cardMatches").textContent=0; $("cardWins").textContent=0; $("cardCompleted").textContent=0; return;
       }
       const d=calculatePlayerData(p);
       setCardValues({ovr:d.ovr,sho:d.sho,dri:d.dri,con:d.con,tac:d.tac,chl:d.chl,exp:d.exp});
+      $("worldStar").classList.toggle("visible", d.xp >= 20000);
       updateLevelUI(d);
       $("cardMatches").textContent=d.matches; $("cardWins").textContent=d.wins; $("cardCompleted").textContent=d.completed;
     }
@@ -2364,7 +2396,7 @@
       $("cardTitle").textContent=`${d.level.name} · ${specialtyTitle(d)}`;
       $("cardPrecision").textContent=`${d.xp.toLocaleString("nb-NO")} XP`;
       $("levelName").textContent=d.level.name;
-      $("nextLevelName").textContent=d.next ? d.next.name : "Maksnivå";
+      $("nextLevelName").textContent=d.next ? d.next.name : (d.xp >= 20000 ? "VM-stjerne låst opp" : "VM-stjerne");
       $("xpText").textContent=`${d.xp.toLocaleString("nb-NO")} XP`;
       if (d.next) {
         const span=d.next.min-d.level.min;
@@ -2372,8 +2404,13 @@
         $("xpBarFill").style.width=`${progress}%`;
         $("xpRemaining").textContent=`${(d.next.min-d.xp).toLocaleString("nb-NO")} XP igjen`;
       } else {
-        $("xpBarFill").style.width="100%";
-        $("xpRemaining").textContent="Høyeste nivå nådd";
+        const starStart=15000;
+        const starGoal=20000;
+        const progress=clamp((d.xp-starStart)/(starGoal-starStart)*100,0,100);
+        $("xpBarFill").style.width=`${progress}%`;
+        $("xpRemaining").textContent=d.xp>=starGoal
+          ? "★ VM-stjerne vunnet"
+          : `${(starGoal-d.xp).toLocaleString("nb-NO")} XP igjen`;
       }
       $("levelRoadmap").innerHTML=LEVELS.map((l,i)=>`<div class="level-node ${i===d.levelIndex?'active':i<d.levelIndex?'done':''}">${l.short}<br>${l.min.toLocaleString("nb-NO")} XP</div>`).join("");
     }

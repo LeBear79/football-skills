@@ -1,7 +1,7 @@
 {
   "name": "Skills Academy",
   "short_name": "Academy",
-  "description": "Skills Academy v3.0 – Train. Track. Improve.",
+  "description": "Skills Academy v3.0.1 – VM-stjerne etter fullført Legend-nivå",
   "start_url": "./index.html",
   "scope": "./",
   "display": "standalone",

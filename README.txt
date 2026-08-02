@@ -1,30 +1,21 @@
-SKILLS ACADEMY v3.0
+SKILLS ACADEMY v3.0.1 – VM-STJERNE ETTER FULLFØRT LEGEND
 
-Last opp:
-index.html
-manifest.webmanifest
-service-worker.js
-icon-192.png
-icon-512.png
+Ny progresjon:
+- Academy Legend låses opp ved 15 000 XP.
+- Legend-nivået fylles fra 15 000 til 20 000 XP.
+- Fremdriftslinjen viser hvor mye som gjenstår.
+- VM-stjernen låses opp permanent ved 20 000 XP.
+- XP, OVR, ferdigheter og historikk beholdes.
 
-Annet:
-- Registrer aktivitet i etterkant
-- Velg aktivitet, tid og/eller bestenotering
-- Ny rekord gir 50 bonus-XP
-- Aktiviteten gir EXP og samlet XP
-- Kan slettes individuelt i historikken
-
-XP:
-15 min = 35
-30 min = 70
-45 min = 110
-60 min = 150
-90 min = 225
-120 min = 300
-Bestenotering = 20
-Ny rekord = +50
-Nye Challenges gir maks 75 XP per spiller.
-Gamle Challenge-resultater beholder gammel XP-verdi, så eksisterende XP ikke faller.
+Last opp alle filene til samme nivå i GitHub:
+- index.html
+- manifest.webmanifest
+- service-worker.js
+- icon-192.png
+- icon-512.png
 
 Etter opplasting:
-Vent på GitHub Pages, lukk PWA, oppdater nettsiden i Chrome, åpne PWA igjen.
+1. Vent på ny GitHub Pages-publisering.
+2. Lukk PWA-en helt.
+3. Åpne nettsiden i Chrome og oppdater.
+4. Åpne PWA-en igjen.
