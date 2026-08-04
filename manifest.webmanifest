@@ -1,7 +1,7 @@
 {
   "name": "Skills Academy",
   "short_name": "Academy",
-  "description": "Skills Academy v3.3 – Rekorder og bedre XP-balanse",
+  "description": "Skills Academy v3.3.1 – dartskive-Challenge fjernet",
   "start_url": "./index.html",
   "scope": "./",
   "display": "standalone",

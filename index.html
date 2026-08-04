@@ -4,8 +4,8 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <meta name="theme-color" content="#07130f" />
-  <meta name="description" content="Skills Academy v3.3 Skills-test.1 – Train. Track. Improve." />
-  <title>Skills Academy v3.3 Skills-test</title>
+  <meta name="description" content="Skills Academy v3.3.1 Skills-test.1 – Train. Track. Improve." />
+  <title>Skills Academy v3.3.1 Skills-test</title>
   <link rel="manifest" href="manifest.webmanifest" />
   <link rel="icon" type="image/png" sizes="192x192" href="icon-192.png" />
   <link rel="apple-touch-icon" href="icon-192.png" />
@@ -628,7 +628,7 @@
   </style>
 </head>
 <body>
-  <!-- Skills Academy v3.3 Skills-test.1 – tilpassede mål, dynamiske ruter og sikkerhetskopi -->
+  <!-- Skills Academy v3.3.1 Skills-test.1 – tilpassede mål, dynamiske ruter og sikkerhetskopi -->
   <div class="app">
     <header class="topbar">
       <div class="brand">
@@ -649,17 +649,13 @@
         <div class="hero">
           <div class="eyebrow">Skills Academy</div>
           <h2>Tren smartere.<br>Se fremgangen.</h2>
-          <p>Registrer skudd, gjennomfør konkurranser og bygg spillerkortet ditt over tid.</p>
+          <p>Gjennomfør challenges, tren ballferdigheter og bygg spillerkortet ditt over tid.</p>
           <div class="hero-actions">
-            <button type="button" class="btn primary" data-go="analyse">Start skuddøkt</button>
             <button type="button" class="btn" data-go="challenge">Start challenge</button>
           </div>
         </div>
 
         <div class="quick-grid grid">
-          <button type="button" class="quick-card" data-go="analyse">
-            <span class="icon">🎯</span><h3>Challenge</h3><p>Registrer hvor skuddene treffer og få et enkelt heatmap.</p>
-          </button>
           <button type="button" class="quick-card" data-go="challenge">
             <span class="icon">🏆</span><h3>Challenges</h3><p>Samle poeng eller prøv å treffe alle ni rutene.</p>
           </button>
@@ -677,79 +673,7 @@
           </button>
         </div>
       </section>
-
-      <section class="page" id="page-analyse">
-        <div class="section-head"><div><h2>Skuddtrening</h2><p>Planlegg hvor hvert skudd skal plasseres, og registrer deretter det faktiske treffet.</p></div></div>
-
-        <div class="panel" id="analysisSetupPanel">
-          <h3 class="panel-title">1. Planlegg skuddserien</h3>
-          <div class="form-grid cols-2">
-            <div class="field"><label for="analysisGoalType">Måltype</label><select class="select" id="analysisGoalType"></select></div>
-            <div class="field"><label for="analysisGridSize">Antall ruter</label><select class="select" id="analysisGridSize"><option value="2">2 × 2 (4 ruter)</option><option value="3" selected>3 × 3 (9 ruter)</option><option value="4">4 × 4 (16 ruter)</option><option value="5">5 × 5 (25 ruter)</option></select></div>
-            <div class="field"><label for="analysisSituation">Situasjon</label><select class="select" id="analysisSituation"><option value="Spill">Spill</option><option value="Dødball">Dødball</option><option value="Straffe">Straffe</option></select></div>
-          </div>
-          <details class="panel" style="margin-top:14px;padding:14px;background:rgba(255,255,255,.025)">
-            <summary style="cursor:pointer;font-weight:900">Lag et eget tilpasset mål</summary>
-            <p style="color:var(--muted);font-size:.82rem;line-height:1.5">Passer blant annet til ballvegg, rebounder, garasjevegg eller hjemmelagde mål.</p>
-            <div class="form-grid cols-2">
-              <div class="field"><label for="customGoalName">Navn</label><input class="input" id="customGoalName" maxlength="40" placeholder="For eksempel Vetles ballvegg"></div>
-              <div class="field"><label for="customGoalWidth">Bredde i cm</label><input class="input" id="customGoalWidth" type="number" min="20" max="2000" placeholder="180"></div>
-              <div class="field"><label for="customGoalHeight">Høyde i cm</label><input class="input" id="customGoalHeight" type="number" min="20" max="1000" placeholder="120"></div>
-              <div class="field"><label for="customGoalGrid">Standard ruter</label><select class="select" id="customGoalGrid"><option value="2">2 × 2</option><option value="3" selected>3 × 3</option><option value="4">4 × 4</option><option value="5">5 × 5</option></select></div>
-            </div>
-            <button type="button" class="btn primary small" id="saveCustomGoal" style="margin-top:12px">Lagre eget mål</button>
-          </details>
-          <div class="analysis-planner">
-            <p class="goal-instruction">Trykk på rutene i den rekkefølgen du ønsker å skyte. Samme rute kan velges flere ganger.</p>
-            <div class="planner-layout">
-              <div>
-                <div class="planner-goal" id="analysisPlannerGoal" aria-label="Planlegg målområder"></div>
-              </div>
-              <div>
-                <div class="stat"><strong id="plannedCount">0</strong><span>planlagte skudd</span></div>
-                <div class="plan-list" id="analysisPlanList"></div>
-                <div class="action-row">
-                  <button type="button" class="btn small ghost" id="planUndo">Angre siste</button>
-                  <button type="button" class="btn small ghost" id="planRandom">Lag tilfeldig serie</button>
-                  <button type="button" class="btn small danger" id="planClear">Tøm planen</button>
-                </div>
-              </div>
-            </div>
-          </div>
-          <button type="button" class="btn primary" id="startAnalysisSeries" style="width:100%;margin-top:16px" disabled>Start serien</button>
-        </div>
-
-        <div class="panel hidden" id="analysisPlayPanel">
-          <div class="series-banner">
-            <div><small id="analysisProgress">Skudd 1 av 1</small><strong id="analysisTargetName">Sikt mot øvre venstre</strong></div>
-            <button type="button" class="btn small ghost" id="cancelAnalysisSeries">Avslutt serien</button>
-          </div>
-          <div class="goal-wrap">
-            <p class="goal-instruction">Trykk der ballen faktisk traff. Velg «Bom» dersom skuddet gikk utenfor mål.</p>
-            <div class="goal-stage" id="analysisGoal">
-              <div class="goal-frame"></div>
-              <div class="target-overlay" id="analysisTargetOverlay"></div>
-              <canvas id="shotCanvas"></canvas>
-              <div id="markerLayer"></div>
-            </div>
-          </div>
-
-          <div class="analysis-result-grid">
-            <div class="stat"><strong id="analysisShots">0</strong><span>gjennomført</span></div>
-            <div class="stat"><strong id="analysisExact">0</strong><span>fulltreff</span></div>
-            <div class="stat"><strong id="analysisNear">0</strong><span>nærtreff</span></div>
-            <div class="stat"><strong id="analysisAccuracy">0 %</strong><span>presisjon</span></div>
-          </div>
-          <div class="action-row">
-            <button type="button" class="btn" id="analysisMiss">Bom</button>
-            <button type="button" class="btn ghost" id="analysisUndo">Angre</button>
-            <button type="button" class="btn danger" id="analysisClear">Start serien på nytt</button>
-            <button type="button" class="btn primary" id="analysisSave" disabled>Lagre økt</button>
-          </div>
-        </div>
-      </section>
-
-      <section class="page" id="page-challenge">
+<section class="page" id="page-challenge">
         <div class="section-head"><div><h2>Challenge</h2><p>Spill alene eller konkurrer mot andre profiler på samme enhet.</p></div></div>
 
         <div id="challengeSetup" class="panel">
@@ -1544,7 +1468,7 @@
       applyGridToElements(size);
       const counts=Array(count).fill(0); analysisPlan.forEach(z=>counts[z]++);
       $("analysisPlannerGoal").innerHTML=Array.from({length:count},(_,i)=>`<button type="button" class="planner-cell" data-plan-zone="${i}"><strong>${zoneName(i,size)}</strong>${counts[i] ? `<span class="count">${counts[i]}</span>` : ""}</button>`).join("");
-      all("[data-plan-zone]",$("analysisPlannerGoal")).forEach(btn=>btn.addEventListener("click",()=>{ if (!ensureProfile()) return; analysisPlan.push(Number(btn.dataset.planZone)); renderAnalysisPlanner(); }));
+      all("[data-plan-zone]",$("analysisPlannerGoal")).forEach(btn=>btn.addEventListener("click",()=>{ if (!ensureProfile()) return; analysisPlan.push(Number(btn.dataset.planZone)); }));
       $("plannedCount").textContent=analysisPlan.length;
       $("analysisPlanList").innerHTML=analysisPlan.length ? analysisPlan.map((z,i)=>`<span class="plan-chip"><strong>${i+1}</strong>${zoneName(z,size)}</span>`).join("") : '<span style="color:var(--muted);font-size:.8rem">Ingen skudd planlagt ennå.</span>';
       $("startAnalysisSeries").disabled=!analysisPlan.length;
@@ -1554,12 +1478,12 @@
     $("saveCustomGoal").addEventListener("click",()=>{
       const name=$("customGoalName").value.trim(), width=Number($("customGoalWidth").value), height=Number($("customGoalHeight").value), grid=Number($("customGoalGrid").value);
       if(!name||!width||!height){toast("Fyll inn navn, bredde og høyde");return;}
-      const goal={id:uid("goal"),name,width,height,grid,pointValues:createPresetValues("classic",grid)}; state.customGoals.push(goal); saveState(); refreshGoalOptions(); $("analysisGoalType").value=goal.id; $("challengeGoalType").value=goal.id; $("analysisGridSize").value=String(grid); $("challengeGridSize").value=String(grid); renderAnalysisPlanner(); toast("Det egne målet er lagret");
+      const goal={id:uid("goal"),name,width,height,grid,pointValues:createPresetValues("classic",grid)}; state.customGoals.push(goal); saveState(); refreshGoalOptions(); $("analysisGoalType").value=goal.id; $("challengeGoalType").value=goal.id; $("analysisGridSize").value=String(grid); $("challengeGridSize").value=String(grid); toast("Det egne målet er lagret");
       ["customGoalName","customGoalWidth","customGoalHeight"].forEach(id=>$(id).value="");
     });
-    $("planUndo").addEventListener("click",()=>{ analysisPlan.pop(); renderAnalysisPlanner(); });
-    $("planClear").addEventListener("click",()=>{ analysisPlan=[]; renderAnalysisPlanner(); });
-    $("planRandom").addEventListener("click",()=>{ if (!ensureProfile()) return; const amount=Number(prompt("Hvor mange skudd skal serien inneholde?", "10")); if (!Number.isInteger(amount) || amount<1 || amount>50) { toast("Velg mellom 1 og 50 skudd"); return; } const count=gridSize()*gridSize(); analysisPlan=Array.from({length:amount},()=>Math.floor(Math.random()*count)); renderAnalysisPlanner(); });
+    $("planUndo").addEventListener("click",()=>{ analysisPlan.pop(); });
+    $("planClear").addEventListener("click",()=>{ analysisPlan=[]; });
+    $("planRandom").addEventListener("click",()=>{ if (!ensureProfile()) return; const amount=Number(prompt("Hvor mange skudd skal serien inneholde?", "10")); if (!Number.isInteger(amount) || amount<1 || amount>50) { toast("Velg mellom 1 og 50 skudd"); return; } const count=gridSize()*gridSize(); analysisPlan=Array.from({length:amount},()=>Math.floor(Math.random()*count)); });
     $("startAnalysisSeries").addEventListener("click",()=>{ if (!ensureProfile() || !analysisPlan.length) return; analysisShots=[]; analysisStarted=true; $("analysisSetupPanel").classList.add("hidden"); $("analysisPlayPanel").classList.remove("hidden"); requestAnimationFrame(drawHeatmap); });
     $("cancelAnalysisSeries").addEventListener("click",()=>{ if (analysisShots.length && !confirm("Avslutte serien? Registrerte skudd blir ikke lagret.")) return; resetAnalysisToSetup(false); });
     $("analysisGoal").addEventListener("click", e => { if (!analysisStarted || analysisShots.length>=analysisPlan.length || !ensureProfile()) return; const canvas=$("shotCanvas"), rect=canvas.getBoundingClientRect(); if (e.clientX < rect.left || e.clientX > rect.right || e.clientY < rect.top || e.clientY > rect.bottom) return; const x=clamp((e.clientX-rect.left)/rect.width,0,1), y=clamp((e.clientY-rect.top)/rect.height,0,1), size=gridSize(); const targetZone=analysisPlan[analysisShots.length], actualZone=zoneFromPoint(x,y,size); analysisShots.push({type:"hit",x,y,targetZone,actualZone,result:classifyShot(targetZone,actualZone,size)}); });
@@ -2143,7 +2067,7 @@
 
     // SIKKERHETSKOPI
     $("exportBackup").addEventListener("click",()=>{
-      const backup={app:"Skills Academy",version:"3.3",exportedAt:new Date().toISOString(),data:state};
+      const backup={app:"Skills Academy",version:"3.3.1",exportedAt:new Date().toISOString(),data:state};
       const blob=new Blob([JSON.stringify(backup,null,2)],{type:"application/json"}),url=URL.createObjectURL(blob),a=document.createElement("a");
       a.href=url;a.download=`skills-academy-sikkerhetskopi-${new Date().toISOString().slice(0,10)}.json`;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1000);toast("Sikkerhetskopien er eksportert");
     });
