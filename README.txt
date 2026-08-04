@@ -1,29 +1,20 @@
-SKILLS ACADEMY v3.2
+SKILLS ACADEMY v3.3
 
-NYTT
-- Alle sider har fått ekstra plass nederst.
-- Hele innholdet kan scrolles opp over den faste bunnmenyen.
-- Nederste del av Challenge-brettet og andre lange sider skal ikke skjules.
-- Safe area på Android og iPhone er tatt med.
+- Challenge med dartskive er fjernet.
+- Kun én Challenge-knapp vises.
+- «Personlige rekorder» heter nå «Rekorder».
+- Rekorder viser beste trikserekord, Challenge-seiere, XP og beste fotballmerke.
+- Totalt antall skudd og beste presisjon er fjernet.
+- Lagspill, triksing og dribleløype gir 3,5 XP per minutt.
+- Maks rekordbonus er 60 XP.
+- Første rekord gir 60 bonus-XP.
+- XP-popup vises når en økt lagres.
+- Liten konfetti vises ved ny personlig rekord.
+- Mobilretting, nivåseremoni, VM-stjerne og historikk er beholdt.
 
-BEHOLDT
-- Analyse er fjernet.
-- Lagspill med løkkefotball, klubbtrening og kamp.
-- Fri registrering av minutter.
-- Triksing og dribleløype registreres som hele økter.
-- XP etter tid og prosentvis rekordforbedring.
-- Nivåseremoni og VM-stjerne.
-- Individuell sletting i historikken.
-
-LAST OPP
-- index.html
-- manifest.webmanifest
-- service-worker.js
-- icon-192.png
-- icon-512.png
-
-ETTER OPPLASTING
-1. Vent på GitHub Pages.
-2. Lukk PWA-en helt.
-3. Oppdater nettstedet i Chrome.
-4. Åpne PWA-en igjen.
+Last opp:
+index.html
+manifest.webmanifest
+service-worker.js
+icon-192.png
+icon-512.png

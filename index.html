@@ -4,8 +4,8 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <meta name="theme-color" content="#07130f" />
-  <meta name="description" content="Skills Academy v3.2 Skills-test.1 – Train. Track. Improve." />
-  <title>Skills Academy v3.2 Skills-test</title>
+  <meta name="description" content="Skills Academy v3.3 Skills-test.1 – Train. Track. Improve." />
+  <title>Skills Academy v3.3 Skills-test</title>
   <link rel="manifest" href="manifest.webmanifest" />
   <link rel="icon" type="image/png" sizes="192x192" href="icon-192.png" />
   <link rel="apple-touch-icon" href="icon-192.png" />
@@ -523,6 +523,28 @@
       padding-bottom:calc(24px + env(safe-area-inset-bottom));
     }
 
+    .xp-pop {
+      position:fixed; left:50%; top:22%; z-index:12000;
+      transform:translate(-50%,-50%) scale(.8);
+      min-width:190px; max-width:86vw; padding:16px 20px; border-radius:18px; text-align:center;
+      background:linear-gradient(145deg,rgba(7,30,20,.97),rgba(3,10,8,.97));
+      border:1px solid rgba(57,229,140,.42);
+      box-shadow:0 18px 60px rgba(0,0,0,.55),0 0 28px rgba(57,229,140,.22);
+      opacity:0; pointer-events:none; color:#fff;
+    }
+    .xp-pop.visible { animation:xpPop 1.65s ease both; }
+    .xp-pop strong { display:block; color:var(--green); font-size:2rem; line-height:1; }
+    .xp-pop span { display:block; margin-top:7px; font-weight:900; letter-spacing:.06em; }
+    .mini-confetti { position:fixed; inset:0; z-index:11999; pointer-events:none; overflow:hidden; }
+    .mini-confetti i { position:absolute; top:-20px; width:8px; height:13px; border-radius:2px; animation:miniFall 1.35s linear forwards; }
+    @keyframes xpPop {
+      0%{opacity:0;transform:translate(-50%,-50%) scale(.72)}
+      14%{opacity:1;transform:translate(-50%,-50%) scale(1.05)}
+      75%{opacity:1;transform:translate(-50%,-55%) scale(1)}
+      100%{opacity:0;transform:translate(-50%,-72%) scale(.94)}
+    }
+    @keyframes miniFall { to{transform:translate3d(var(--drift),105vh,0) rotate(620deg);opacity:.15} }
+
     .hidden { display:none !important; }
 
     @media (min-width: 720px) {
@@ -606,7 +628,7 @@
   </style>
 </head>
 <body>
-  <!-- Skills Academy v3.2 Skills-test.1 – tilpassede mål, dynamiske ruter og sikkerhetskopi -->
+  <!-- Skills Academy v3.3 Skills-test.1 – tilpassede mål, dynamiske ruter og sikkerhetskopi -->
   <div class="app">
     <header class="topbar">
       <div class="brand">
@@ -897,7 +919,7 @@
             <span>Foreløpig XP</span>
             <strong id="juggleXpPreview">0 XP</strong>
           </div>
-          <p class="other-note" id="juggleImprovementText">XP = 2,5 per minutt + bonus ved ny personlig rekord.</p>
+          <p class="other-note" id="juggleImprovementText">XP = 3,5 per minutt + bonus ved ny personlig rekord.</p>
           <button class="btn primary" type="button" id="saveJuggle" style="width:100%;margin-top:12px">Lagre trikseøkt</button>
           <div class="history-list" id="juggleHistory" style="margin-top:14px"></div>
         </div>
@@ -931,7 +953,7 @@
               <span>Foreløpig XP</span>
               <strong id="courseXpPreview">0 XP</strong>
             </div>
-            <p class="other-note" id="courseImprovementText">XP = 2,5 per minutt + bonus ved ny personlig rekord.</p>
+            <p class="other-note" id="courseImprovementText">XP = 3,5 per minutt + bonus ved ny personlig rekord.</p>
             <div class="action-row"><button class="btn primary" type="button" id="saveCourseAttempt">Lagre dribleøkt</button><button class="btn ghost" type="button" id="closeCourseAttempt">Lukk</button></div>
             <div class="history-list" id="courseAttemptHistory" style="margin-top:14px"></div>
           </div>
@@ -951,7 +973,7 @@
             <input class="input" id="otherMinutesInput" type="number" min="1" max="180" step="1" inputmode="numeric" placeholder="For eksempel 62">
           </div>
           <div class="other-xp-preview"><span>Du får</span><strong id="otherXpPreview">0 XP</strong></div>
-          <p class="other-note">XP = 2,5 XP per minutt. Maks 180 minutter per registrering. Lagspill påvirker samlet XP og EXP.</p>
+          <p class="other-note">XP = 3,5 XP per minutt. Maks 180 minutter per registrering. Lagspill påvirker samlet XP og EXP.</p>
           <button class="btn primary" type="button" id="saveOtherActivity" style="width:100%;margin-top:14px">Lagre lagspill</button>
         </div>
         <div class="panel" style="margin-top:14px"><h3 class="panel-title">Siste lagspill</h3><div class="history-list" id="otherActivityHistory"></div></div>
@@ -969,7 +991,7 @@
           <div class="history-list" id="historyList"></div>
         </div>
         <div class="panel" style="margin-top:14px">
-          <h3 class="panel-title">Personlige rekorder</h3>
+          <h3 class="panel-title">Rekorder</h3>
           <div class="records-grid" id="personalRecords"></div>
         </div>
         <div class="panel" style="margin-top:14px">
@@ -992,7 +1014,6 @@
 
   <nav class="bottom-nav" aria-label="Hovedmeny">
     <button type="button" class="nav-btn active" data-page="home"><span class="nav-icon">⌂</span>Hjem</button>
-    <button type="button" class="nav-btn" data-page="analyse"><span class="nav-icon">🎯</span>Challenge</button>
     <button type="button" class="nav-btn" data-page="challenge"><span class="nav-icon">🏆</span>Challenge</button>
     <button type="button" class="nav-btn" data-page="fotballmerket"><span class="nav-icon">🏅</span>Merket</button>
     <button type="button" class="nav-btn" data-page="card"><span class="nav-icon">⭐</span>Kort</button>
@@ -1045,6 +1066,8 @@
     </div>
   </div>
 
+  <div class="mini-confetti" id="miniConfetti"></div>
+  <div class="xp-pop" id="xpPop"><strong id="xpPopValue">+0 XP</strong><span id="xpPopText">Økten er lagret</span></div>
   <div class="toast" id="toast"></div>
 
   <script>
@@ -2058,13 +2081,31 @@
     function renderPersonalRecords(){
       const box=$("personalRecords"), p=activeProfile(); if(!box) return;
       if(!p){box.innerHTML='<div class="empty" style="grid-column:1/-1">Velg en profil for å se rekorder.</div>';return;}
-      const sessions=state.sessions.filter(x=>sessionBelongsToProfile(x,p.id)), challenges=state.challenges.filter(x=>x.profileId===p.id);
-      const sessionPcts=sessions.map(x=>({pct:Math.round(sessionPrecision(x)*100),date:x.createdAt}));
-      const best=sessionPcts.length?Math.max(...sessionPcts.map(x=>x.pct)):0;
-      const totalShots=sessions.reduce((a,x)=>a+sessionTotal(x),0);
-      const wins=challenges.filter(x=>x.winner).length;
+
+      const juggling=(state.jugglingResults||[]).filter(x=>x.profileId===p.id);
+      const bestJuggling=juggling.length?Math.max(...juggling.map(x=>Number(x.count)||0)):0;
+
+      const challenges=(state.challenges||[]).filter(x=>x.profileId===p.id);
+      const wins=challenges.filter(x=>x.playMode==="multi"&&x.winner).length;
+
       const d=calculatePlayerData(p);
-      box.innerHTML=`<div class="record-stat"><strong>${best} %</strong><span>beste presisjon i én økt</span></div><div class="record-stat"><strong>${totalShots}</strong><span>registrerte skudd totalt</span></div><div class="record-stat"><strong>${wins}</strong><span>seire i flerspiller</span></div><div class="record-stat"><strong>${d.xp.toLocaleString("nb-NO")}</strong><span>opptjent XP totalt</span></div>`;
+
+      const badgeRows=(state.footballBadgeResults||[]).filter(x=>x.profileId===p.id&&x.passed);
+      const badgeOrder=["bronze","silver","gold","elite","legend"];
+      const badgeNames={bronze:"Bronse",silver:"Sølv",gold:"Gull",elite:"Elite",legend:"Legend"};
+      let bestBadge="Ingen";
+      let bestIndex=-1;
+      badgeRows.forEach(row=>{
+        const key=String(row.level||"").toLowerCase();
+        const index=badgeOrder.indexOf(key);
+        if(index>bestIndex){bestIndex=index;bestBadge=badgeNames[key]||row.level||"Oppnådd";}
+      });
+
+      box.innerHTML=`
+        <div class="record-stat"><strong>${bestJuggling.toLocaleString("nb-NO")}</strong><span>beste trikserekord</span></div>
+        <div class="record-stat"><strong>${wins.toLocaleString("nb-NO")}</strong><span>Challenge-seiere</span></div>
+        <div class="record-stat"><strong>${d.xp.toLocaleString("nb-NO")}</strong><span>opptjent XP totalt</span></div>
+        <div class="record-stat"><strong>${escapeHtml(bestBadge)}</strong><span>beste fotballmerke</span></div>`;
     }
 
     function drawProgressChart(){
@@ -2102,7 +2143,7 @@
 
     // SIKKERHETSKOPI
     $("exportBackup").addEventListener("click",()=>{
-      const backup={app:"Skills Academy",version:"3.2",exportedAt:new Date().toISOString(),data:state};
+      const backup={app:"Skills Academy",version:"3.3",exportedAt:new Date().toISOString(),data:state};
       const blob=new Blob([JSON.stringify(backup,null,2)],{type:"application/json"}),url=URL.createObjectURL(blob),a=document.createElement("a");
       a.href=url;a.download=`skills-academy-sikkerhetskopi-${new Date().toISOString().slice(0,10)}.json`;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1000);toast("Sikkerhetskopien er eksportert");
     });
@@ -2218,7 +2259,7 @@
     }
 
     function skillTimeXp(minutes){
-      return Math.round(minutes*2.5);
+      return Math.round(minutes*3.5);
     }
 
     function improvementPercent(oldValue,newValue,lowerIsBetter=false){
@@ -2228,7 +2269,7 @@
     }
 
     function improvementBonus(percent){
-      return Math.min(50,Math.round(percent*2.5));
+      return Math.min(60,Math.round(percent*3));
     }
 
     function renderSkills(){
@@ -2262,12 +2303,12 @@
       const oldBest=skillsProfileResults('juggling').reduce((m,x)=>Math.max(m,Number(x.count)||0),0);
       const isRecord=Number.isFinite(count)&&count>oldBest;
       const percent=isRecord&&oldBest>0?improvementPercent(oldBest,count,false):0;
-      const bonus=isRecord?(oldBest===0?50:improvementBonus(percent)):0;
+      const bonus=isRecord?(oldBest===0?60:improvementBonus(percent)):0;
       const xp=skillTimeXp(minutes)+bonus;
       if($('juggleXpPreview'))$('juggleXpPreview').textContent=`${xp} XP`;
       if($('juggleImprovementText'))$('juggleImprovementText').textContent=isRecord
         ? `Ny rekord${oldBest>0?` · ${percent.toFixed(1).replace('.',',')} % forbedring · +${bonus} bonus-XP`:` · +${bonus} bonus-XP`}`
-        : 'XP = 2,5 per minutt. Bonus gis bare ved ny personlig rekord.';
+        : 'XP = 3,5 per minutt. Bonus gis bare ved ny personlig rekord.';
     }
 
     $('juggleMinutes').addEventListener('input',updateJugglePreview);
@@ -2283,7 +2324,7 @@
       const oldBest=skillsProfileResults('juggling').reduce((m,x)=>Math.max(m,Number(x.count)||0),0);
       const isRecord=count>oldBest;
       const percent=isRecord&&oldBest>0?improvementPercent(oldBest,count,false):0;
-      const bonus=isRecord?(oldBest===0?50:improvementBonus(percent)):0;
+      const bonus=isRecord?(oldBest===0?60:improvementBonus(percent)):0;
       const xp=skillTimeXp(minutes)+bonus;
 
       state.jugglingResults.push({
@@ -2294,7 +2335,7 @@
       $('juggleMinutes').value='';
       $('juggleCount').value='';
       renderSkills();renderCard();renderHistory();
-      toast(isRecord?`Ny rekord! +${xp} XP`:`Trikseøkten er lagret · +${xp} XP`);
+      showXpFeedback(xp,isRecord); toast(isRecord?`Ny rekord! +${xp} XP`:`Trikseøkten er lagret · +${xp} XP`);
     });
 
     function renderCourses(){
@@ -2354,12 +2395,12 @@
       const oldBest=rows.length?Math.min(...rows.map(x=>Number(x.time))):Infinity;
       const isRecord=Number.isFinite(time)&&time>0&&time<oldBest;
       const percent=isRecord&&oldBest!==Infinity?improvementPercent(oldBest,time,true):0;
-      const bonus=isRecord?(oldBest===Infinity?50:improvementBonus(percent)):0;
+      const bonus=isRecord?(oldBest===Infinity?60:improvementBonus(percent)):0;
       const xp=skillTimeXp(minutes)+bonus;
       $('courseXpPreview').textContent=`${xp} XP`;
       $('courseImprovementText').textContent=isRecord
         ? `Ny rekord${oldBest!==Infinity?` · ${percent.toFixed(1).replace('.',',')} % forbedring · +${bonus} bonus-XP`:` · +${bonus} bonus-XP`}`
-        : 'XP = 2,5 per minutt. Bonus gis bare ved ny personlig rekord.';
+        : 'XP = 3,5 per minutt. Bonus gis bare ved ny personlig rekord.';
     }
 
     $('courseMinutes').addEventListener('input',updateCoursePreview);
@@ -2376,7 +2417,7 @@
       const oldBest=rows.length?Math.min(...rows.map(x=>Number(x.time))):Infinity;
       const isRecord=time<oldBest;
       const percent=isRecord&&oldBest!==Infinity?improvementPercent(oldBest,time,true):0;
-      const bonus=isRecord?(oldBest===Infinity?50:improvementBonus(percent)):0;
+      const bonus=isRecord?(oldBest===Infinity?60:improvementBonus(percent)):0;
       const xp=skillTimeXp(minutes)+bonus;
 
       state.dribbleResults.push({
@@ -2387,7 +2428,7 @@
       $('courseMinutes').value='';
       $('courseTime').value='';
       renderSkills();renderCard();renderHistory();
-      toast(isRecord?`Ny rekord! +${xp} XP`:`Dribleøkten er lagret · +${xp} XP`);
+      showXpFeedback(xp,isRecord); toast(isRecord?`Ny rekord! +${xp} XP`:`Dribleøkten er lagret · +${xp} XP`);
     });
 
     $('closeCourseAttempt').addEventListener('click',()=>{
@@ -2400,7 +2441,7 @@
     let selectedOtherActivity="loekke";
 
     function otherProfileRows(){return(state.otherActivities||[]).filter(x=>x.profileId===state.activeProfileId);}
-    function calculateLagspillXp(minutes){return Math.round(minutes*2.5);}
+    function calculateLagspillXp(minutes){return Math.round(minutes*3.5);}
     function updateOtherXpPreview(){
       const minutes=Number($("otherMinutesInput").value)||0;
       $("otherXpPreview").textContent=`${calculateLagspillXp(minutes)} XP`;
@@ -2423,8 +2464,36 @@
       saveState();
       $("otherMinutesInput").value="";
       renderOtherActivities();renderHistory();renderCard();renderPersonalRecords();
-      toast(`${OTHER_ACTIVITY_LABELS[selectedOtherActivity]} er lagret · +${xp} XP`);
+      showXpFeedback(xp,false); toast(`${OTHER_ACTIVITY_LABELS[selectedOtherActivity]} er lagret · +${xp} XP`);
     });
+
+    // XP-TILBAKEMELDING
+    function showXpFeedback(xp,isRecord=false){
+      const pop=$("xpPop");
+      if(!pop)return;
+      $("xpPopValue").textContent=`+${xp} XP`;
+      $("xpPopText").textContent=isRecord?"NY PERSONLIG REKORD!":"Økten er lagret";
+      pop.classList.remove("visible");
+      void pop.offsetWidth;
+      pop.classList.add("visible");
+      if(isRecord)showMiniConfetti();
+    }
+
+    function showMiniConfetti(){
+      const host=$("miniConfetti");
+      if(!host)return;
+      host.innerHTML="";
+      const colors=["#ffd65d","#39e58c","#ffffff","#5db7ff","#ff6b83"];
+      for(let i=0;i<28;i++){
+        const piece=document.createElement("i");
+        piece.style.left=`${Math.random()*100}%`;
+        piece.style.background=colors[i%colors.length];
+        piece.style.setProperty("--drift",`${-70+Math.random()*140}px`);
+        piece.style.animationDelay=`${Math.random()*.22}s`;
+        host.appendChild(piece);
+      }
+      setTimeout(()=>{host.innerHTML="";},1800);
+    }
 
     // NIVÅSEREMONI
     let lastKnownLevelByProfile={};
