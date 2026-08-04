@@ -4,8 +4,8 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <meta name="theme-color" content="#07130f" />
-  <meta name="description" content="Skills Academy v3.3.2 Skills-test.1 – Train. Track. Improve." />
-  <title>Skills Academy v3.3.2 Skills-test</title>
+  <meta name="description" content="Skills Academy v3.4 Skills-test.1 – Train. Track. Improve." />
+  <title>Skills Academy v3.4 Skills-test</title>
   <link rel="manifest" href="manifest.webmanifest" />
   <link rel="icon" type="image/png" sizes="192x192" href="icon-192.png" />
   <link rel="apple-touch-icon" href="icon-192.png" />
@@ -628,7 +628,7 @@
   </style>
 </head>
 <body>
-  <!-- Skills Academy v3.3.2 Skills-test.1 – tilpassede mål, dynamiske ruter og sikkerhetskopi -->
+  <!-- Skills Academy v3.4 Skills-test.1 – tilpassede mål, dynamiske ruter og sikkerhetskopi -->
   <div class="app">
     <header class="topbar">
       <div class="brand">
@@ -897,6 +897,7 @@
         <div class="skills-tabs">
           <button class="skills-tab active" type="button" data-skills-tab="juggling">Triksing</button>
           <button class="skills-tab" type="button" data-skills-tab="dribble">Dribleløype</button>
+          <button class="skills-tab" type="button" data-skills-tab="custom">Egne øvelser</button>
         </div>
 
         <div id="jugglingPanel" class="panel">
@@ -952,6 +953,57 @@
             <p class="other-note" id="courseImprovementText">XP = 3,5 per minutt + bonus ved ny personlig rekord.</p>
             <div class="action-row"><button class="btn primary" type="button" id="saveCourseAttempt">Lagre dribleøkt</button><button class="btn ghost" type="button" id="closeCourseAttempt">Lukk</button></div>
             <div class="history-list" id="courseAttemptHistory" style="margin-top:14px"></div>
+          </div>
+        </div>
+
+        <div id="customExercisesPanel" class="panel hidden">
+          <h3 class="panel-title">Egne øvelser</h3>
+
+          <div class="form-grid cols-2">
+            <div class="field">
+              <label for="customExerciseName">Navn på øvelsen</label>
+              <input class="input" id="customExerciseName" maxlength="50" placeholder="For eksempel Pasning mot vegg">
+            </div>
+            <div class="field">
+              <label for="customExerciseRecord">Mulighet for rekord</label>
+              <select class="select" id="customExerciseRecord">
+                <option value="yes">Ja</option>
+                <option value="no">Nei</option>
+              </select>
+            </div>
+          </div>
+
+          <button class="btn primary" type="button" id="saveCustomExercise" style="width:100%;margin-top:12px">Legg til øvelse</button>
+
+          <div class="course-list" id="customExerciseList" style="margin-top:14px"></div>
+
+          <div class="panel hidden" id="customExerciseSessionPanel" style="margin-top:14px;background:rgba(255,255,255,.025)">
+            <h3 class="panel-title" id="activeCustomExerciseName">Egen øvelse</h3>
+
+            <div class="form-grid cols-2">
+              <div class="field">
+                <label for="customExerciseMinutes">Tid brukt (minutter)</label>
+                <input class="input" id="customExerciseMinutes" type="number" min="1" max="180" step="1" inputmode="numeric" placeholder="For eksempel 20">
+              </div>
+              <div class="field" id="customExerciseResultField">
+                <label for="customExerciseResult">Beste resultat</label>
+                <input class="input" id="customExerciseResult" type="number" min="0" step="0.01" inputmode="decimal" placeholder="For eksempel 30">
+              </div>
+            </div>
+
+            <div class="other-xp-preview">
+              <span>Foreløpig XP</span>
+              <strong id="customExerciseXpPreview">0 XP</strong>
+            </div>
+
+            <p class="other-note" id="customExerciseXpText"></p>
+
+            <div class="action-row">
+              <button class="btn primary" type="button" id="saveCustomExerciseSession">Lagre økt</button>
+              <button class="btn ghost" type="button" id="closeCustomExerciseSession">Lukk</button>
+            </div>
+
+            <div class="history-list" id="customExerciseHistory" style="margin-top:14px"></div>
           </div>
         </div>
       </section>
@@ -1071,7 +1123,7 @@
 
     const STORAGE_KEY = "skillsAcademyV2";
     const LEGACY_STORAGE_KEY = "ballSkillsV2";
-    const defaultState = { profiles: [], activeProfileId: null, sessions: [], challenges: [], footballBadgeResults: [], customGoals: [], jugglingResults: [], dribbleCourses: [], dribbleResults: [], otherActivities: [] };
+    const defaultState = { profiles: [], activeProfileId: null, sessions: [], challenges: [], footballBadgeResults: [], customGoals: [], jugglingResults: [], dribbleCourses: [], dribbleResults: [], otherActivities: [], customExercises: [], customExerciseResults: [] };
     let state = loadState();
     let analysisShots = [];
     let analysisPlan = [];
@@ -2139,7 +2191,7 @@
 
     // SIKKERHETSKOPI
     $("exportBackup").addEventListener("click",()=>{
-      const backup={app:"Skills Academy",version:"3.3.2",exportedAt:new Date().toISOString(),data:state};
+      const backup={app:"Skills Academy",version:"3.4",exportedAt:new Date().toISOString(),data:state};
       const blob=new Blob([JSON.stringify(backup,null,2)],{type:"application/json"}),url=URL.createObjectURL(blob),a=document.createElement("a");
       a.href=url;a.download=`skills-academy-sikkerhetskopi-${new Date().toISOString().slice(0,10)}.json`;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1000);toast("Sikkerhetskopien er eksportert");
     });
@@ -2148,7 +2200,7 @@
       const file=e.target.files?.[0];e.target.value="";if(!file)return;
       try{const parsed=JSON.parse(await file.text()),incoming=parsed.data||parsed;if(!incoming||!Array.isArray(incoming.profiles)||!Array.isArray(incoming.sessions)){throw new Error("Ugyldig fil");}
         if(!confirm("Importen erstatter alle data som ligger i appen nå. Fortsette?"))return;
-        state={...structuredClone(defaultState),...incoming,customGoals:Array.isArray(incoming.customGoals)?incoming.customGoals:[],footballBadgeResults:Array.isArray(incoming.footballBadgeResults)?incoming.footballBadgeResults:[],jugglingResults:Array.isArray(incoming.jugglingResults)?incoming.jugglingResults:[],dribbleCourses:Array.isArray(incoming.dribbleCourses)?incoming.dribbleCourses:[],dribbleResults:Array.isArray(incoming.dribbleResults)?incoming.dribbleResults:[],otherActivities:Array.isArray(incoming.otherActivities)?incoming.otherActivities:[]};saveState();analysisPlan=[];analysisShots=[];challenge=null;refreshGoalOptions();renderProfileUI();renderChallengePlayerPicker();renderAnalysisPlanner();renderAnalysis();renderHistory();renderPersonalRecords();renderCustomGoalAdmin();renderCard();renderFootballBadge();renderOtherActivities();requestAnimationFrame(drawProgressChart);toast("Sikkerhetskopien er importert");
+        state={...structuredClone(defaultState),...incoming,customGoals:Array.isArray(incoming.customGoals)?incoming.customGoals:[],footballBadgeResults:Array.isArray(incoming.footballBadgeResults)?incoming.footballBadgeResults:[],jugglingResults:Array.isArray(incoming.jugglingResults)?incoming.jugglingResults:[],dribbleCourses:Array.isArray(incoming.dribbleCourses)?incoming.dribbleCourses:[],dribbleResults:Array.isArray(incoming.dribbleResults)?incoming.dribbleResults:[],otherActivities:Array.isArray(incoming.otherActivities)?incoming.otherActivities:[],customExercises:Array.isArray(incoming.customExercises)?incoming.customExercises:[],customExerciseResults:Array.isArray(incoming.customExerciseResults)?incoming.customExerciseResults:[]};saveState();analysisPlan=[];analysisShots=[];challenge=null;refreshGoalOptions();renderProfileUI();renderChallengePlayerPicker();renderAnalysisPlanner();renderAnalysis();renderHistory();renderPersonalRecords();renderCustomGoalAdmin();renderCard();renderFootballBadge();renderOtherActivities();requestAnimationFrame(drawProgressChart);toast("Sikkerhetskopien er importert");
       }catch(err){alert("Filen kunne ikke importeres. Kontroller at dette er en sikkerhetskopi fra Skills Academy.");}
     });
 
@@ -2275,8 +2327,10 @@
       all('[data-skills-tab]').forEach(b=>b.classList.toggle('active',b.dataset.skillsTab===skillsTab));
       $('jugglingPanel').classList.toggle('hidden',skillsTab!=="juggling");
       $('dribblePanel').classList.toggle('hidden',skillsTab!=="dribble");
+      $('customExercisesPanel').classList.toggle('hidden',skillsTab!=="custom");
       renderJuggling();
       renderCourses();
+      renderCustomExercises();
       updateJugglePreview();
       updateCoursePreview();
     }
@@ -2430,6 +2484,200 @@
     $('closeCourseAttempt').addEventListener('click',()=>{
       $('courseAttemptPanel').classList.add('hidden');
       activeCourseId=null;
+    });
+
+    // EGNE ØVELSER
+    let activeCustomExerciseId=null;
+
+    function customExerciseRows(exerciseId){
+      return (state.customExerciseResults||[]).filter(
+        x=>x.profileId===state.activeProfileId&&x.exerciseId===exerciseId
+      );
+    }
+
+    function renderCustomExercises(){
+      if(!state.customExercises)state.customExercises=[];
+      if(!state.customExerciseResults)state.customExerciseResults=[];
+
+      const rows=state.customExercises.filter(
+        x=>x.profileId===state.activeProfileId
+      );
+
+      $("customExerciseList").innerHTML=rows.length
+        ? rows.map(exercise=>`
+          <div class="course-row">
+            <div>
+              <strong>${escapeHtml(exercise.name)}</strong>
+              <small>${exercise.hasRecord?"Mulighet for rekord":"Kun tid"}</small>
+            </div>
+            <div style="display:flex;gap:6px">
+              <button class="btn small primary" type="button" data-use-custom-exercise="${exercise.id}">Registrer økt</button>
+              <button class="btn small danger" type="button" data-delete-custom-exercise="${exercise.id}">Slett</button>
+            </div>
+          </div>`).join("")
+        : '<div class="empty">Ingen egne øvelser er lagt til ennå.</div>';
+
+      all("[data-use-custom-exercise]").forEach(button=>{
+        button.onclick=()=>openCustomExercise(button.dataset.useCustomExercise);
+      });
+
+      all("[data-delete-custom-exercise]").forEach(button=>{
+        button.onclick=()=>{
+          const exercise=state.customExercises.find(x=>x.id===button.dataset.deleteCustomExercise);
+          if(!exercise||!confirm(`Slette øvelsen ${exercise.name}? Registrerte økter for denne øvelsen slettes også.`))return;
+          state.customExercises=state.customExercises.filter(x=>x.id!==exercise.id);
+          state.customExerciseResults=state.customExerciseResults.filter(x=>x.exerciseId!==exercise.id);
+          if(activeCustomExerciseId===exercise.id){
+            activeCustomExerciseId=null;
+            $("customExerciseSessionPanel").classList.add("hidden");
+          }
+          saveState();
+          renderCustomExercises();
+          renderCard();
+        };
+      });
+
+      if(activeCustomExerciseId)renderCustomExerciseSession();
+    }
+
+    $("saveCustomExercise").addEventListener("click",()=>{
+      if(!ensureProfile())return;
+      const name=$("customExerciseName").value.trim();
+      if(!name){toast("Skriv inn navn på øvelsen");return;}
+
+      state.customExercises.push({
+        id:uid("exercise"),
+        profileId:state.activeProfileId,
+        name,
+        hasRecord:$("customExerciseRecord").value==="yes",
+        createdAt:new Date().toISOString()
+      });
+
+      saveState();
+      $("customExerciseName").value="";
+      $("customExerciseRecord").value="yes";
+      renderCustomExercises();
+      toast("Øvelsen er lagt til");
+    });
+
+    function openCustomExercise(id){
+      activeCustomExerciseId=id;
+      $("customExerciseSessionPanel").classList.remove("hidden");
+      $("customExerciseMinutes").value="";
+      $("customExerciseResult").value="";
+      renderCustomExerciseSession();
+      $("customExerciseSessionPanel").scrollIntoView({behavior:"smooth",block:"start"});
+    }
+
+    function customExerciseRecordInfo(exercise,result){
+      const previous=customExerciseRows(exercise.id)
+        .map(x=>Number(x.result))
+        .filter(Number.isFinite);
+      const oldBest=previous.length?Math.max(...previous):NaN;
+      const isRecord=exercise.hasRecord&&Number.isFinite(result)&&(!Number.isFinite(oldBest)||result>oldBest);
+      const percent=isRecord&&Number.isFinite(oldBest)&&oldBest>0
+        ? Math.max(0,(result-oldBest)/oldBest*100)
+        : 0;
+      const bonus=isRecord
+        ? (Number.isFinite(oldBest)?Math.min(60,Math.round(percent*3)):60)
+        : 0;
+      return {oldBest,isRecord,percent,bonus};
+    }
+
+    function updateCustomExercisePreview(){
+      const exercise=state.customExercises.find(x=>x.id===activeCustomExerciseId);
+      if(!exercise)return;
+
+      const minutes=Number($("customExerciseMinutes").value)||0;
+      const raw=$("customExerciseResult").value.trim().replace(",",".");
+      const result=raw===""?NaN:Number(raw);
+      const recordInfo=customExerciseRecordInfo(exercise,result);
+
+      const baseXp=Math.round(minutes*(exercise.hasRecord?3.5:3.54));
+      const xp=baseXp+recordInfo.bonus;
+
+      $("customExerciseXpPreview").textContent=`${xp} XP`;
+      $("customExerciseXpText").textContent=exercise.hasRecord
+        ? (recordInfo.isRecord
+            ? `Ny rekord${Number.isFinite(recordInfo.oldBest)?` · ${recordInfo.percent.toFixed(1).replace(".",",")} % forbedring · +${recordInfo.bonus} bonus-XP`:` · +${recordInfo.bonus} bonus-XP`}`
+            : "3,5 XP per minutt. Bonus gis ved ny personlig rekord.")
+        : "3,54 XP per minutt. Denne øvelsen har ingen rekord.";
+    }
+
+    function renderCustomExerciseSession(){
+      const exercise=state.customExercises.find(x=>x.id===activeCustomExerciseId);
+      if(!exercise)return;
+
+      $("activeCustomExerciseName").textContent=exercise.name;
+      $("customExerciseResultField").classList.toggle("hidden",!exercise.hasRecord);
+
+      const rows=customExerciseRows(exercise.id).sort(
+        (a,b)=>new Date(b.createdAt)-new Date(a.createdAt)
+      );
+
+      $("customExerciseHistory").innerHTML=rows.length
+        ? rows.slice(0,8).map(row=>`
+          <div class="history-item">
+            <div>
+              <h3>${row.isRecord?"Ny personlig rekord":"Treningsøkt"}</h3>
+              <p>${formatDate(row.createdAt)} · ${row.minutes} min${exercise.hasRecord&&Number.isFinite(Number(row.result))?` · beste ${Number(row.result).toLocaleString("nb-NO")}`:""}</p>
+            </div>
+            <span class="pill">+${row.xpAwarded} XP</span>
+          </div>`).join("")
+        : '<div class="empty">Ingen økter registrert ennå.</div>';
+
+      updateCustomExercisePreview();
+    }
+
+    $("customExerciseMinutes").addEventListener("input",updateCustomExercisePreview);
+    $("customExerciseResult").addEventListener("input",updateCustomExercisePreview);
+
+    $("saveCustomExerciseSession").addEventListener("click",()=>{
+      if(!ensureProfile())return;
+      const exercise=state.customExercises.find(x=>x.id===activeCustomExerciseId);
+      if(!exercise)return;
+
+      const minutes=Number($("customExerciseMinutes").value);
+      if(!Number.isInteger(minutes)||minutes<1||minutes>180){
+        toast("Skriv inn 1–180 minutter");
+        return;
+      }
+
+      const raw=$("customExerciseResult").value.trim().replace(",",".");
+      const result=raw===""?NaN:Number(raw);
+      if(exercise.hasRecord&&(!Number.isFinite(result)||result<0)){
+        toast("Skriv inn beste resultat");
+        return;
+      }
+
+      const recordInfo=customExerciseRecordInfo(exercise,result);
+      const baseXp=Math.round(minutes*(exercise.hasRecord?3.5:3.54));
+      const xp=baseXp+recordInfo.bonus;
+
+      state.customExerciseResults.push({
+        id:uid("exerciseResult"),
+        profileId:state.activeProfileId,
+        exerciseId:exercise.id,
+        minutes,
+        result:exercise.hasRecord?result:null,
+        isRecord:recordInfo.isRecord,
+        improvementPercent:recordInfo.percent,
+        xpAwarded:xp,
+        createdAt:new Date().toISOString()
+      });
+
+      saveState();
+      $("customExerciseMinutes").value="";
+      $("customExerciseResult").value="";
+      renderCustomExerciseSession();
+      renderCard();
+      showXpFeedback(xp,recordInfo.isRecord);
+      toast(recordInfo.isRecord?`Ny rekord! +${xp} XP`:`Økten er lagret · +${xp} XP`);
+    });
+
+    $("closeCustomExerciseSession").addEventListener("click",()=>{
+      activeCustomExerciseId=null;
+      $("customExerciseSessionPanel").classList.add("hidden");
     });
 
     // LAGSPILL
@@ -2610,20 +2858,22 @@
       const skillXp=[...juggling,...dribble].reduce((sum,x)=>sum+(Number(x.xpAwarded)||0),0);
       const other=(state.otherActivities||[]).filter(x=>x.profileId===p.id);
       const otherXp=other.reduce((sum,x)=>sum+(Number(x.xpAwarded)||0),0);
+      const customExerciseResults=(state.customExerciseResults||[]).filter(x=>x.profileId===p.id);
+      const customExerciseXp=customExerciseResults.reduce((sum,x)=>sum+(Number(x.xpAwarded)||0),0);
       const legacyChallenges=challenges.filter(x=>!Number.isFinite(Number(x.xpAwarded)));
       const modernChallengeXp=challenges.reduce((sum,x)=>sum+(Number(x.xpAwarded)||0),0);
       const legacyChallengeXp=legacyChallenges.filter(x=>x.completed).length*180+legacyChallenges.filter(x=>x.playMode==="multi"&&x.winner).length*250;
-      const completed=sessions.length+completedChallenges+completedBadges+juggling.length+dribble.length+other.length;
+      const completed=sessions.length+completedChallenges+completedBadges+juggling.length+dribble.length+other.length+customExerciseResults.length;
       const matches=challenges.filter(x=>x.playMode==="multi").length;
       const wins=challenges.filter(x=>x.playMode==="multi" && x.winner).length;
-      const xp=Math.round(sessions.length*120+totalShots*2+exact*8+near*3+legacyChallengeXp+modernChallengeXp+badgeXp+skillXp+otherXp);
+      const xp=Math.round(sessions.length*120+totalShots*2+exact*8+near*3+legacyChallengeXp+modernChallengeXp+badgeXp+skillXp+otherXp+customExerciseXp);
 
       let sho=clamp(Math.round(43 + accuracy*40 + Math.min(totalShots,300)/300*14),40,99);
       let dri=dribblingScore(dribble);
       let con=jugglingControlScore(juggling);
       let tac=techniqueScore(badgeResults);
       let chl=clamp(Math.round(45 + Math.min(completedChallenges,15)*2.5 + Math.min(wins,12)*1.7 + Math.min(challenges.length,20)*.35),40,99);
-      const activityCount=sessions.length+challenges.length+juggling.length+dribble.length+completedBadges+other.length;
+      const activityCount=sessions.length+challenges.length+juggling.length+dribble.length+completedBadges+other.length+customExerciseResults.length;
       let exp=clamp(Math.round(45 + Math.min(activityCount,35)*1.05 + Math.min(xp,15000)/15000*15),40,99);
 
       const calibration=p.ovrCalibration?.bonuses||{};

@@ -1,7 +1,7 @@
 {
   "name": "Skills Academy",
   "short_name": "Academy",
-  "description": "Skills Academy v3.3.2 – trygg fjerning av dartskive-valget",
+  "description": "Skills Academy v3.4 – Egne øvelser",
   "start_url": "./index.html",
   "scope": "./",
   "display": "standalone",
