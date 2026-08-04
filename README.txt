@@ -1,11 +1,15 @@
-SKILLS ACADEMY v3.3.1
+SKILLS ACADEMY v3.3.2 – TRYGG KORRIGERING
+
+VIKTIG
+Denne versjonen er bygget fra den fungerende v3.3, ikke fra den ødelagte v3.3.1.
 
 RETTET
-- Hele den gamle dartskive-/Analyse-siden er fjernet.
-- Hurtigknappen med dartskiven på startsiden er fjernet.
-- «Start skuddøkt» som åpnet dartskiven er fjernet.
-- Bare den ordinære Challenge-funksjonen med pokalen er beholdt.
-- Alle gamle lenker til Analyse/Dartskive peker nå til Challenge.
+- Dartskive-/Analyse-valget er fjernet fra startsiden.
+- «Start skuddøkt» er fjernet.
+- Analyse-siden er skjult og kan ikke åpnes.
+- Den underliggende Analyse-koden er beholdt fordi resten av appen fortsatt
+  forventer at disse elementene finnes ved oppstart.
+- Poeng, knapper, Fotballmerket og øvrige funksjoner skal derfor fungere igjen.
 
 BEHOLDT FRA v3.3
 - Rekorder
@@ -29,3 +33,5 @@ ETTER OPPLASTING
 2. Lukk PWA-en helt.
 3. Åpne nettsiden i Chrome og oppdater.
 4. Åpne PWA-en igjen.
+
+Ikke bruk v3.3.1 videre.
