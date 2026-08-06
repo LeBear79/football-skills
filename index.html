@@ -4,8 +4,8 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <meta name="theme-color" content="#07130f" />
-  <meta name="description" content="Skills Academy v3.4.1 Skills-test.1 – Train. Track. Improve." />
-  <title>Skills Academy v3.4.1 Skills-test</title>
+  <meta name="description" content="Skills Academy v3.4.2 Skills-test.1 – Train. Track. Improve." />
+  <title>Skills Academy v3.4.2 Skills-test</title>
   <link rel="manifest" href="manifest.webmanifest" />
   <link rel="icon" type="image/png" sizes="192x192" href="icon-192.png" />
   <link rel="apple-touch-icon" href="icon-192.png" />
@@ -628,13 +628,16 @@
   </style>
 </head>
 <body>
-  <!-- Skills Academy v3.4.1 Skills-test.1 – tilpassede mål, dynamiske ruter og sikkerhetskopi -->
+  <!-- Skills Academy v3.4.2 Skills-test.1 – tilpassede mål, dynamiske ruter og sikkerhetskopi -->
   <div class="app">
     <header class="topbar">
       <div class="brand">
         <div class="brand-mark" aria-label="Skills Academy-logo"><span>S</span><span>A</span><i></i></div>
         <div>
-          <h1>Skills Academy</h1>
+          <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+            <h1>Skills Academy</h1>
+            <span id="appVersionBadge" style="font-size:11px;font-weight:800;letter-spacing:.04em;padding:4px 8px;border-radius:999px;background:rgba(255,255,255,.10);border:1px solid rgba(255,255,255,.18);color:#dfffe8">v3.4.2</span>
+          </div>
           <p>Train. Track. Improve.</p>
         </div>
       </div>
@@ -743,6 +746,7 @@
             <button type="button" class="btn primary" id="analysisSave" disabled>Lagre økt</button>
           </div>
         </div>
+        <div style="text-align:center;margin:18px 0 4px;color:rgba(255,255,255,.55);font-size:12px;font-weight:700">Skills Academy v3.4.2</div>
       </section>
 
       <section class="page" id="page-challenge">
@@ -1119,6 +1123,7 @@
   <div class="toast" id="toast"></div>
 
   <script>
+    const APP_VERSION = "3.4.2";
     "use strict";
 
     const STORAGE_KEY = "skillsAcademyV2";
@@ -2235,7 +2240,7 @@
 
     // SIKKERHETSKOPI
     $("exportBackup").addEventListener("click",()=>{
-      const backup={app:"Skills Academy",version:"3.4.1",exportedAt:new Date().toISOString(),data:state};
+      const backup={app:"Skills Academy",version:"3.4.2",exportedAt:new Date().toISOString(),data:state};
       const blob=new Blob([JSON.stringify(backup,null,2)],{type:"application/json"}),url=URL.createObjectURL(blob),a=document.createElement("a");
       a.href=url;a.download=`skills-academy-sikkerhetskopi-${new Date().toISOString().slice(0,10)}.json`;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1000);toast("Sikkerhetskopien er eksportert");
     });
@@ -3020,10 +3025,36 @@
 
     // PWA: registrer service worker
     if ("serviceWorker" in navigator) {
-      window.addEventListener("load", () => {
-        navigator.serviceWorker.register("./service-worker.js").catch(error => {
+      window.addEventListener("load", async () => {
+        try {
+          const registration = await navigator.serviceWorker.register("./service-worker.js?v=3.4.2", {
+            updateViaCache: "none"
+          });
+
+          await registration.update();
+
+          if (registration.waiting) {
+            registration.waiting.postMessage({ type: "SKIP_WAITING" });
+          }
+
+          registration.addEventListener("updatefound", () => {
+            const worker = registration.installing;
+            if (!worker) return;
+            worker.addEventListener("statechange", () => {
+              if (worker.state === "installed" && navigator.serviceWorker.controller) {
+                worker.postMessage({ type: "SKIP_WAITING" });
+              }
+            });
+          });
+
+          navigator.serviceWorker.addEventListener("controllerchange", () => {
+            if (sessionStorage.getItem("sa-reloaded-342")) return;
+            sessionStorage.setItem("sa-reloaded-342", "1");
+            window.location.reload();
+          });
+        } catch (error) {
           console.warn("Service worker kunne ikke registreres:", error);
-        });
+        }
       });
     }
 

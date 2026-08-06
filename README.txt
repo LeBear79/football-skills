@@ -1,23 +1,27 @@
-SKILLS ACADEMY v3.4.1
+SKILLS ACADEMY v3.4.2
 
-RETTET
-- Sletting av en profil sletter ikke lenger Challenge-resultatene til andre spillere.
-- Bare Challenge-radene som tilhører den slettede profilen fjernes.
-- Historiske resultater hos motstandere beholdes.
-- Profilen som slettes får en tydelig advarsel før sletting.
+Denne pakken erstatter v3.4.1 og er laget for å løse problemet med at GitHub Pages/PWA viser gammel versjon.
 
-REPARASJON AV VETLE
-- Reparert sikkerhetskopi setter Vetle til 10 550 XP.
-- Beregnet XP i sikkerhetskopien ved reparasjon: 3091 XP.
-- Nye aktiviteter legges videre oppå 10 550 XP.
-- XP-beskyttelsen hindrer at fremgangen faller tilbake ved ny beregning.
+NYTT
+- Versjonsnummer v3.4.2 vises tydelig øverst i appen.
+- Versjonsnummer vises også nederst på startsiden.
+- Service worker registreres uten nettleserbuffer.
+- Gammel cache slettes ved aktivering.
+- Appen laster siden på nytt én gang når ny service worker overtar.
+- Challenge-beskyttelsen og XP-reparasjonen fra v3.4.1 er beholdt.
 
-FREMGANGSMÅTE
-1. Last opp alle PWA-filene til GitHub.
-2. Vent til GitHub Pages er ferdig.
-3. Lukk appen helt og åpne den på nytt.
-4. Gå til sikkerhetskopi/import i appen.
-5. Importer filen:
-   skills-academy-reparert-vetle-10550-xp.json
+LAST OPP ALLE DISSE FILENE TIL GITHUB
+- index.html
+- manifest.webmanifest
+- service-worker.js
+- icon-192.png
+- icon-512.png
 
-Ta gjerne en ny eksport etter at du har kontrollert at Vetle står på 10 550 XP.
+VIKTIG
+Ikke legg filene i en undermappe. De skal ligge samme sted som den eksisterende index.html-filen.
+
+ETTER OPPLASTING
+Åpne:
+https://lebear79.github.io/football-skills/?v=342
+
+Når du ser v3.4.2 øverst i appen, er oppdateringen aktiv.
