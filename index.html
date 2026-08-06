@@ -4,8 +4,8 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <meta name="theme-color" content="#07130f" />
-  <meta name="description" content="Skills Academy v3.4 Skills-test.1 – Train. Track. Improve." />
-  <title>Skills Academy v3.4 Skills-test</title>
+  <meta name="description" content="Skills Academy v3.4.1 Skills-test.1 – Train. Track. Improve." />
+  <title>Skills Academy v3.4.1 Skills-test</title>
   <link rel="manifest" href="manifest.webmanifest" />
   <link rel="icon" type="image/png" sizes="192x192" href="icon-192.png" />
   <link rel="apple-touch-icon" href="icon-192.png" />
@@ -628,7 +628,7 @@
   </style>
 </head>
 <body>
-  <!-- Skills Academy v3.4 Skills-test.1 – tilpassede mål, dynamiske ruter og sikkerhetskopi -->
+  <!-- Skills Academy v3.4.1 Skills-test.1 – tilpassede mål, dynamiske ruter og sikkerhetskopi -->
   <div class="app">
     <header class="topbar">
       <div class="brand">
@@ -1541,12 +1541,56 @@
 
     function deleteProfile(id) {
       const p = state.profiles.find(x => x.id === id);
-      if (!p || !confirm(`Slette profilen ${p.name} og alle lagrede data for spilleren?`)) return;
+      if (!p) return;
+
+      const ownChallengeRows=(state.challenges||[]).filter(x=>x.profileId===id).length;
+      const sharedChallengeRows=(state.challenges||[]).filter(
+        x=>x.profileId!==id&&(x.playerIds||[]).includes(id)
+      ).length;
+
+      const message=[
+        `Slette profilen ${p.name}?`,
+        ownChallengeRows?`${ownChallengeRows} Challenge-resultater som tilhører profilen blir slettet.`:"",
+        sharedChallengeRows?`${sharedChallengeRows} Challenge-resultater hos andre spillere blir beholdt.`:"",
+        "Denne handlingen kan ikke angres."
+      ].filter(Boolean).join("\n\n");
+
+      if (!confirm(message)) return;
+
       state.profiles = state.profiles.filter(x => x.id !== id);
       state.sessions = state.sessions.filter(x => x.profileId !== id);
-      state.challenges = state.challenges.filter(x => x.profileId !== id && !(x.playerIds || []).includes(id));
+
+      // Slett bare resultatene som faktisk tilhører profilen.
+      // Andre spilleres historiske Challenge-resultater beholdes.
+      state.challenges = (state.challenges||[])
+        .filter(x => x.profileId !== id)
+        .map(x => {
+          if (!(x.playerIds||[]).includes(id)) return x;
+          return {
+            ...x,
+            playerIds:(x.playerIds||[]).filter(playerId=>playerId!==id),
+            deletedOpponentNames:[
+              ...(x.deletedOpponentNames||[]),
+              p.name
+            ].filter((name,index,array)=>array.indexOf(name)===index)
+          };
+        });
+
+      state.footballBadgeResults=(state.footballBadgeResults||[]).filter(x=>x.profileId!==id);
+      state.jugglingResults=(state.jugglingResults||[]).filter(x=>x.profileId!==id);
+      state.dribbleCourses=(state.dribbleCourses||[]).filter(x=>x.profileId!==id);
+      state.dribbleResults=(state.dribbleResults||[]).filter(x=>x.profileId!==id);
+      state.otherActivities=(state.otherActivities||[]).filter(x=>x.profileId!==id);
+      state.customExercises=(state.customExercises||[]).filter(x=>x.profileId!==id);
+      state.customExerciseResults=(state.customExerciseResults||[]).filter(x=>x.profileId!==id);
+
       if (state.activeProfileId === id) state.activeProfileId = state.profiles[0]?.id || null;
-      saveState(); renderProfileUI(); renderChallengePlayerPicker(); renderHistory(); renderCard();
+      saveState();
+      renderProfileUI();
+      renderChallengePlayerPicker();
+      renderHistory();
+      renderCard();
+      toast("Profilen er slettet. Andre spilleres Challenge-resultater er beholdt.");
     }
 
     // ANALYSE
@@ -2191,7 +2235,7 @@
 
     // SIKKERHETSKOPI
     $("exportBackup").addEventListener("click",()=>{
-      const backup={app:"Skills Academy",version:"3.4",exportedAt:new Date().toISOString(),data:state};
+      const backup={app:"Skills Academy",version:"3.4.1",exportedAt:new Date().toISOString(),data:state};
       const blob=new Blob([JSON.stringify(backup,null,2)],{type:"application/json"}),url=URL.createObjectURL(blob),a=document.createElement("a");
       a.href=url;a.download=`skills-academy-sikkerhetskopi-${new Date().toISOString().slice(0,10)}.json`;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1000);toast("Sikkerhetskopien er eksportert");
     });
@@ -2866,7 +2910,14 @@
       const completed=sessions.length+completedChallenges+completedBadges+juggling.length+dribble.length+other.length+customExerciseResults.length;
       const matches=challenges.filter(x=>x.playMode==="multi").length;
       const wins=challenges.filter(x=>x.playMode==="multi" && x.winner).length;
-      const xp=Math.round(sessions.length*120+totalShots*2+exact*8+near*3+legacyChallengeXp+modernChallengeXp+badgeXp+skillXp+otherXp+customExerciseXp);
+      const calculatedXp=Math.round(sessions.length*120+totalShots*2+exact*8+near*3+legacyChallengeXp+modernChallengeXp+badgeXp+skillXp+otherXp+customExerciseXp);
+      const protection=p.xpProtection;
+      const xp=protection&&Number.isFinite(Number(protection.baseXp))&&Number.isFinite(Number(protection.baselineCalculatedXp))
+        ? Math.max(
+            Number(protection.baseXp),
+            Number(protection.baseXp)+Math.max(0,calculatedXp-Number(protection.baselineCalculatedXp))
+          )
+        : calculatedXp;
 
       let sho=clamp(Math.round(43 + accuracy*40 + Math.min(totalShots,300)/300*14),40,99);
       let dri=dribblingScore(dribble);
@@ -2889,7 +2940,7 @@
       LEVELS.forEach(l=>{ if(xp>=l.min) level=l; });
       const levelIndex=LEVELS.findIndex(l=>l.key===level.key);
       const next=LEVELS[levelIndex+1]||null;
-      return {sessions,challenges,totalShots,exact,near,accuracy,completed,completedChallenges,matches,wins,xp,sho,dri,con,tac,chl,exp,ovr,level,next,levelIndex};
+      return {sessions,challenges,totalShots,exact,near,accuracy,completed,completedChallenges,matches,wins,xp,calculatedXp,sho,dri,con,tac,chl,exp,ovr,level,next,levelIndex};
     }
 
     function renderCard() {

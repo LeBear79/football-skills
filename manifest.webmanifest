@@ -1,7 +1,7 @@
 {
   "name": "Skills Academy",
   "short_name": "Academy",
-  "description": "Skills Academy v3.4 – Egne øvelser",
+  "description": "Skills Academy v3.4.1 – beskyttet XP og Challenge-historikk",
   "start_url": "./index.html",
   "scope": "./",
   "display": "standalone",

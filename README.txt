@@ -1,28 +1,23 @@
-SKILLS ACADEMY v3.4
+SKILLS ACADEMY v3.4.1
 
-KUN NYTT I DENNE VERSJONEN
-- Ny fane «Egne øvelser» under Ballferdigheter.
-- Opprett øvelse med:
-  - navn
-  - mulighet for rekord: ja eller nei
-- Øvelse med rekord:
-  - tid brukt
-  - beste resultat
-  - 3,5 XP per minutt
-  - eksisterende prosentbasert rekordbonus, maks 60 XP
-- Øvelse uten rekord:
-  - kun tid brukt
-  - 3,54 XP per minutt
-  - ingen rekordbonus
-- Øvelser kan slettes.
+RETTET
+- Sletting av en profil sletter ikke lenger Challenge-resultatene til andre spillere.
+- Bare Challenge-radene som tilhører den slettede profilen fjernes.
+- Historiske resultater hos motstandere beholdes.
+- Profilen som slettes får en tydelig advarsel før sletting.
 
-INGEN ANDRE ENDRINGER
-- Menyer, eksisterende XP-satser, Rekorder, Challenge, Fotballmerket,
-  Lagspill, spillerkort og øvrige funksjoner er beholdt fra v3.3.2.
+REPARASJON AV VETLE
+- Reparert sikkerhetskopi setter Vetle til 10 550 XP.
+- Beregnet XP i sikkerhetskopien ved reparasjon: 3091 XP.
+- Nye aktiviteter legges videre oppå 10 550 XP.
+- XP-beskyttelsen hindrer at fremgangen faller tilbake ved ny beregning.
 
-LAST OPP
-- index.html
-- manifest.webmanifest
-- service-worker.js
-- icon-192.png
-- icon-512.png
+FREMGANGSMÅTE
+1. Last opp alle PWA-filene til GitHub.
+2. Vent til GitHub Pages er ferdig.
+3. Lukk appen helt og åpne den på nytt.
+4. Gå til sikkerhetskopi/import i appen.
+5. Importer filen:
+   skills-academy-reparert-vetle-10550-xp.json
+
+Ta gjerne en ny eksport etter at du har kontrollert at Vetle står på 10 550 XP.
