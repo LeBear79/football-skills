@@ -4,8 +4,8 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <meta name="theme-color" content="#07130f" />
-  <meta name="description" content="Skills Academy v3.4.2 Skills-test.1 – Train. Track. Improve." />
-  <title>Skills Academy v3.4.2 Skills-test</title>
+  <meta name="description" content="Skills Academy v3.4.3 Skills-test.1 – Train. Track. Improve." />
+  <title>Skills Academy v3.4.3 Skills-test</title>
   <link rel="manifest" href="manifest.webmanifest" />
   <link rel="icon" type="image/png" sizes="192x192" href="icon-192.png" />
   <link rel="apple-touch-icon" href="icon-192.png" />
@@ -628,7 +628,7 @@
   </style>
 </head>
 <body>
-  <!-- Skills Academy v3.4.2 Skills-test.1 – tilpassede mål, dynamiske ruter og sikkerhetskopi -->
+  <!-- Skills Academy v3.4.3 Skills-test.1 – tilpassede mål, dynamiske ruter og sikkerhetskopi -->
   <div class="app">
     <header class="topbar">
       <div class="brand">
@@ -636,7 +636,7 @@
         <div>
           <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
             <h1>Skills Academy</h1>
-            <span id="appVersionBadge" style="font-size:11px;font-weight:800;letter-spacing:.04em;padding:4px 8px;border-radius:999px;background:rgba(255,255,255,.10);border:1px solid rgba(255,255,255,.18);color:#dfffe8">v3.4.2</span>
+            <span id="appVersionBadge" style="font-size:11px;font-weight:800;letter-spacing:.04em;padding:4px 8px;border-radius:999px;background:rgba(255,255,255,.10);border:1px solid rgba(255,255,255,.18);color:#dfffe8">v3.4.3</span>
           </div>
           <p>Train. Track. Improve.</p>
         </div>
@@ -746,7 +746,7 @@
             <button type="button" class="btn primary" id="analysisSave" disabled>Lagre økt</button>
           </div>
         </div>
-        <div style="text-align:center;margin:18px 0 4px;color:rgba(255,255,255,.55);font-size:12px;font-weight:700">Skills Academy v3.4.2</div>
+        <div style="text-align:center;margin:18px 0 4px;color:rgba(255,255,255,.55);font-size:12px;font-weight:700">Skills Academy v3.4.3</div>
       </section>
 
       <section class="page" id="page-challenge">
@@ -1019,13 +1019,14 @@
             <button class="other-activity-btn active" type="button" data-other-activity="loekke">⚽ Løkkefotball</button>
             <button class="other-activity-btn" type="button" data-other-activity="club">👥 Klubbtrening</button>
             <button class="other-activity-btn" type="button" data-other-activity="match">🏆 Kamp</button>
+            <button class="other-activity-btn" type="button" data-other-activity="camp">⛺ Treningsleir</button>
           </div>
           <div class="field" style="margin-top:16px">
             <label for="otherMinutesInput">Tid brukt (minutter)</label>
-            <input class="input" id="otherMinutesInput" type="number" min="1" max="180" step="1" inputmode="numeric" placeholder="For eksempel 62">
+            <input class="input" id="otherMinutesInput" type="number" min="1" max="600" step="1" inputmode="numeric" placeholder="For eksempel 62">
           </div>
           <div class="other-xp-preview"><span>Du får</span><strong id="otherXpPreview">0 XP</strong></div>
-          <p class="other-note">XP = 3,5 XP per minutt. Maks 180 minutter per registrering. Lagspill påvirker samlet XP og EXP.</p>
+          <p class="other-note" id="otherXpNote">XP = 3,5 XP per minutt. Maks 180 minutter per registrering. Lagspill påvirker samlet XP og EXP.</p>
           <button class="btn primary" type="button" id="saveOtherActivity" style="width:100%;margin-top:14px">Lagre lagspill</button>
         </div>
         <div class="panel" style="margin-top:14px"><h3 class="panel-title">Siste lagspill</h3><div class="history-list" id="otherActivityHistory"></div></div>
@@ -1123,7 +1124,7 @@
   <div class="toast" id="toast"></div>
 
   <script>
-    const APP_VERSION = "3.4.2";
+    const APP_VERSION = "3.4.3";
     "use strict";
 
     const STORAGE_KEY = "skillsAcademyV2";
@@ -2240,7 +2241,7 @@
 
     // SIKKERHETSKOPI
     $("exportBackup").addEventListener("click",()=>{
-      const backup={app:"Skills Academy",version:"3.4.2",exportedAt:new Date().toISOString(),data:state};
+      const backup={app:"Skills Academy",version:"3.4.3",exportedAt:new Date().toISOString(),data:state};
       const blob=new Blob([JSON.stringify(backup,null,2)],{type:"application/json"}),url=URL.createObjectURL(blob),a=document.createElement("a");
       a.href=url;a.download=`skills-academy-sikkerhetskopi-${new Date().toISOString().slice(0,10)}.json`;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1000);toast("Sikkerhetskopien er eksportert");
     });
@@ -2730,14 +2731,18 @@
     });
 
     // LAGSPILL
-    const OTHER_ACTIVITY_LABELS={loekke:"Løkkefotball",club:"Klubbtrening",match:"Kamp"};
+    const OTHER_ACTIVITY_LABELS={loekke:"Løkkefotball",club:"Klubbtrening",match:"Kamp",camp:"Treningsleir"};
     let selectedOtherActivity="loekke";
 
     function otherProfileRows(){return(state.otherActivities||[]).filter(x=>x.profileId===state.activeProfileId);}
-    function calculateLagspillXp(minutes){return Math.round(minutes*3.5);}
+    function calculateLagspillXp(minutes){return Math.round(minutes*(selectedOtherActivity==="camp"?1:3.5));}
     function updateOtherXpPreview(){
       const minutes=Number($("otherMinutesInput").value)||0;
       $("otherXpPreview").textContent=`${calculateLagspillXp(minutes)} XP`;
+      const note=$("otherXpNote");
+      if(note)note.textContent=selectedOtherActivity==="camp"
+        ?"XP = 1 XP per minutt. Treningsleir kan registreres med opptil 600 minutter."
+        :"XP = 3,5 XP per minutt. Maks 180 minutter per registrering. Lagspill påvirker samlet XP og EXP.";
     }
     function renderOtherActivities(){
       if(!state.otherActivities)state.otherActivities=[];
@@ -2751,7 +2756,8 @@
     $("saveOtherActivity").addEventListener("click",()=>{
       if(!ensureProfile())return;
       const minutes=Number($("otherMinutesInput").value);
-      if(!Number.isInteger(minutes)||minutes<1||minutes>180){toast("Skriv inn et helt antall minutter mellom 1 og 180");return;}
+      const maxMinutes=selectedOtherActivity==="camp"?600:180;
+      if(!Number.isInteger(minutes)||minutes<1||minutes>maxMinutes){toast(`Skriv inn et helt antall minutter mellom 1 og ${maxMinutes}`);return;}
       const xp=calculateLagspillXp(minutes);
       state.otherActivities.push({id:uid("other"),profileId:state.activeProfileId,activity:selectedOtherActivity,minutes,bestValue:null,unit:"",comment:"",isRecord:false,xpAwarded:xp,createdAt:new Date().toISOString()});
       saveState();
@@ -3027,7 +3033,7 @@
     if ("serviceWorker" in navigator) {
       window.addEventListener("load", async () => {
         try {
-          const registration = await navigator.serviceWorker.register("./service-worker.js?v=3.4.2", {
+          const registration = await navigator.serviceWorker.register("./service-worker.js?v=3.4.3", {
             updateViaCache: "none"
           });
 
@@ -3048,8 +3054,8 @@
           });
 
           navigator.serviceWorker.addEventListener("controllerchange", () => {
-            if (sessionStorage.getItem("sa-reloaded-342")) return;
-            sessionStorage.setItem("sa-reloaded-342", "1");
+            if (sessionStorage.getItem("sa-reloaded-343")) return;
+            sessionStorage.setItem("sa-reloaded-343", "1");
             window.location.reload();
           });
         } catch (error) {
@@ -3058,6 +3064,23 @@
       });
     }
 
-  </script>
+  
+    function applyV343Repair(){
+      const jack=(state.profiles||[]).find(p=>(p.name||"").trim().toLowerCase()==="jack");
+      if(!jack)return;
+      const existingBase=Number(jack.xpProtection?.baseXp)||0;
+      if(existingBase>=4500)return;
+      const current=calculatePlayerData(jack);
+      jack.xpProtection={
+        baseXp:4500,
+        baselineCalculatedXp:Number(current.calculatedXp)||Number(current.xp)||0,
+        reason:"Gjenopprettet etter tidligere profiltap",
+        createdAt:new Date().toISOString()
+      };
+      saveState();
+    }
+
+    applyV343Repair();
+</script>
 </body>
 </html>
