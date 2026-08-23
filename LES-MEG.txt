@@ -1,0 +1,3 @@
+Kvintsirkelen v5.2
+
+Ny Stemming-fane med DADGAD og Åpen D, akkordforslag, diagram og tablatur. Resten av v5.1 er beholdt. Last opp hele innholdet til GitHub og oppdater siden etter publisering.
