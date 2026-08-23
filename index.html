@@ -4,8 +4,8 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <meta name="theme-color" content="#07130f" />
-  <meta name="description" content="Skills Academy v3.4.5 Skills-test.1 – Train. Track. Improve." />
-  <title>Skills Academy v3.4.5 Skills-test</title>
+  <meta name="description" content="Skills Academy v3.4.7 Skills-test.1 – Train. Track. Improve." />
+  <title>Skills Academy v3.4.7 Skills-test</title>
   <link rel="manifest" href="manifest.webmanifest" />
   <link rel="icon" type="image/png" sizes="192x192" href="icon-192.png" />
   <link rel="apple-touch-icon" href="icon-192.png" />
@@ -371,7 +371,43 @@
     .player-card.level-player { --card-a:#a97516; --card-c:#2c1c02; --card-ink:#fff8db; --card-accent:#f4c95b; }
     .player-card.level-elite { --card-a:#11623e; --card-c:#04150f; --card-ink:#f2fff8; --card-accent:#62eda0; }
     .player-card.level-master { --card-a:#6525a3; --card-c:#12031f; --card-ink:#fff7ff; --card-accent:#d9a4ff; }
-    .player-card.level-legend { --card-a:#9c4c13; --card-c:#120704; --card-ink:#fff9e7; --card-accent:#ffd76d; }
+    .player-card.level-legend {
+      --card-a:#ff334f; --card-c:#390008; --card-ink:#fff8e8; --card-accent:#ffd76d;
+      border:3px solid #ffd76d;
+      background:
+        radial-gradient(circle at 18% 14%,rgba(255,255,255,.38),transparent 8%),
+        radial-gradient(circle at 78% 20%,rgba(255,74,102,.34),transparent 22%),
+        radial-gradient(circle at 50% 78%,rgba(122,0,18,.58),transparent 35%),
+        linear-gradient(135deg,#4a000b 0%,#9e001b 22%,#e0002b 43%,#7a0014 63%,#2a0007 100%);
+      box-shadow:
+        0 38px 105px rgba(0,0,0,.78),
+        0 0 0 2px rgba(255,226,126,.20),
+        0 0 30px rgba(255,35,71,.48),
+        0 0 58px rgba(255,208,92,.18),
+        inset 0 0 0 2px rgba(255,242,188,.18),
+        inset 0 0 46px rgba(255,0,43,.22);
+    }
+    .player-card.level-legend:before {
+      inset:9px;
+      border:2px solid rgba(255,221,112,.86);
+      box-shadow:
+        inset 0 0 0 1px rgba(255,255,255,.18),
+        0 0 20px rgba(255,28,67,.24);
+      background:
+        linear-gradient(118deg,transparent 0 31%,rgba(255,255,255,.24) 38%,transparent 45%),
+        repeating-linear-gradient(45deg,transparent 0 20px,rgba(255,222,135,.055) 21px 22px),
+        repeating-linear-gradient(-45deg,transparent 0 20px,rgba(255,255,255,.035) 21px 22px);
+    }
+    .player-card.level-legend .card-ribbon {
+      background:linear-gradient(105deg,#6f4300,#ffd76d 31%,#fff4bc 49%,#e7a900 68%,#6f4300);
+      color:#260006;
+      border-color:rgba(255,245,201,.92);
+      box-shadow:0 0 20px rgba(255,207,79,.42);
+    }
+    .player-card.level-legend .ovr strong {
+      color:#fff7d2;
+      text-shadow:0 0 10px rgba(255,255,255,.25),0 0 20px rgba(255,31,69,.62);
+    }
     .world-star {
       position:absolute; top:112px; right:18px; z-index:6;
       width:78px; min-height:86px; padding:8px 6px 7px;
@@ -628,7 +664,7 @@
   </style>
 </head>
 <body>
-  <!-- Skills Academy v3.4.5 Skills-test.1 – tilpassede mål, dynamiske ruter og sikkerhetskopi -->
+  <!-- Skills Academy v3.4.7 Skills-test.1 – tilpassede mål, dynamiske ruter og sikkerhetskopi -->
   <div class="app">
     <header class="topbar">
       <div class="brand">
@@ -636,7 +672,7 @@
         <div>
           <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
             <h1>Skills Academy</h1>
-            <span id="appVersionBadge" style="font-size:11px;font-weight:800;letter-spacing:.04em;padding:4px 8px;border-radius:999px;background:rgba(255,255,255,.10);border:1px solid rgba(255,255,255,.18);color:#dfffe8">v3.4.5</span>
+            <span id="appVersionBadge" style="font-size:11px;font-weight:800;letter-spacing:.04em;padding:4px 8px;border-radius:999px;background:rgba(255,255,255,.10);border:1px solid rgba(255,255,255,.18);color:#dfffe8">v3.4.7</span>
           </div>
           <p>Train. Track. Improve.</p>
         </div>
@@ -746,7 +782,7 @@
             <button type="button" class="btn primary" id="analysisSave" disabled>Lagre økt</button>
           </div>
         </div>
-        <div style="text-align:center;margin:18px 0 4px;color:rgba(255,255,255,.55);font-size:12px;font-weight:700">Skills Academy v3.4.5</div>
+        <div style="text-align:center;margin:18px 0 4px;color:rgba(255,255,255,.55);font-size:12px;font-weight:700">Skills Academy v3.4.7</div>
       </section>
 
       <section class="page" id="page-challenge">
@@ -1124,7 +1160,7 @@
   <div class="toast" id="toast"></div>
 
   <script>
-    const APP_VERSION = "3.4.5";
+    const APP_VERSION = "3.4.7";
     "use strict";
 
     const STORAGE_KEY = "skillsAcademyV2";
@@ -2274,7 +2310,7 @@
 
     // SIKKERHETSKOPI
     $("exportBackup").addEventListener("click",()=>{
-      const backup={app:"Skills Academy",version:"3.4.5",exportedAt:new Date().toISOString(),data:state};
+      const backup={app:"Skills Academy",version:"3.4.7",exportedAt:new Date().toISOString(),data:state};
       const blob=new Blob([JSON.stringify(backup,null,2)],{type:"application/json"}),url=URL.createObjectURL(blob),a=document.createElement("a");
       a.href=url;a.download=`skills-academy-sikkerhetskopi-${new Date().toISOString().slice(0,10)}.json`;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1000);toast("Sikkerhetskopien er eksportert");
     });
@@ -2391,6 +2427,10 @@
 
     function skillTimeXp(minutes){
       return Math.round(minutes*3.5);
+    }
+
+    function dribbleTimeXp(minutes){
+      return Math.round(minutes*4);
     }
 
     function improvementPercent(oldValue,newValue,lowerIsBetter=false){
@@ -2529,11 +2569,11 @@
       const isRecord=Number.isFinite(time)&&time>0&&time<oldBest;
       const percent=isRecord&&oldBest!==Infinity?improvementPercent(oldBest,time,true):0;
       const bonus=isRecord?(oldBest===Infinity?60:improvementBonus(percent)):0;
-      const xp=skillTimeXp(minutes)+bonus;
+      const xp=dribbleTimeXp(minutes)+bonus;
       $('courseXpPreview').textContent=`${xp} XP`;
       $('courseImprovementText').textContent=isRecord
         ? `Ny rekord${oldBest!==Infinity?` · ${percent.toFixed(1).replace('.',',')} % forbedring · +${bonus} bonus-XP`:` · +${bonus} bonus-XP`}`
-        : 'XP = 3,5 per minutt. Bonus gis bare ved ny personlig rekord.';
+        : 'XP = 4,0 per minutt. Bonus gis bare ved ny personlig rekord.';
     }
 
     $('courseMinutes').addEventListener('input',updateCoursePreview);
@@ -2551,7 +2591,7 @@
       const isRecord=time<oldBest;
       const percent=isRecord&&oldBest!==Infinity?improvementPercent(oldBest,time,true):0;
       const bonus=isRecord?(oldBest===Infinity?60:improvementBonus(percent)):0;
-      const xp=skillTimeXp(minutes)+bonus;
+      const xp=dribbleTimeXp(minutes)+bonus;
 
       state.dribbleResults.push({
         id:uid('dribble'),profileId:state.activeProfileId,courseId:activeCourseId,
@@ -3066,7 +3106,7 @@
     if ("serviceWorker" in navigator) {
       window.addEventListener("load", async () => {
         try {
-          const registration = await navigator.serviceWorker.register("./service-worker.js?v=3.4.5", {
+          const registration = await navigator.serviceWorker.register("./service-worker.js?v=3.4.7", {
             updateViaCache: "none"
           });
 
@@ -3087,8 +3127,8 @@
           });
 
           navigator.serviceWorker.addEventListener("controllerchange", () => {
-            if (sessionStorage.getItem("sa-reloaded-345")) return;
-            sessionStorage.setItem("sa-reloaded-345", "1");
+            if (sessionStorage.getItem("sa-reloaded-347")) return;
+            sessionStorage.setItem("sa-reloaded-347", "1");
             window.location.reload();
           });
         } catch (error) {
@@ -3098,7 +3138,7 @@
     }
 
   
-    function applyV345Repair(){
+    function applyV347Repair(){
       const jack=(state.profiles||[]).find(p=>(p.name||"").trim().toLowerCase()==="jack");
       if(!jack)return;
       const existingBase=Number(jack.xpProtection?.baseXp)||0;
@@ -3113,7 +3153,7 @@
       saveState();
     }
 
-    applyV345Repair();
+    applyV347Repair();
 </script>
 </body>
 </html>
