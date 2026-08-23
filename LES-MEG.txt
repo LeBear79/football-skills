@@ -1,3 +1,7 @@
 Kvintsirkelen v5.2
 
 Ny Stemming-fane med DADGAD og Åpen D, akkordforslag, diagram og tablatur. Resten av v5.1 er beholdt. Last opp hele innholdet til GitHub og oppdater siden etter publisering.
+
+RETTELSE v5.2.1
+- Rettet en JavaScript-feil i Åpen D-dataene som gjorde at hele skriptet stoppet.
+- Kvintsirkelen og faneknappene fungerer igjen.
