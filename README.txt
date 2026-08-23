@@ -1,8 +1,7 @@
-Skills Academy v3.4.4
+Skills Academy v3.4.5
 
 Endring:
-- Historikk kan nå filtreres etter måned.
-- Inneværende måned velges automatisk når den finnes i historikken.
-- «Alle måneder» viser hele historikken.
-- Eksisterende aktivitetsfilter og målfilter beholdes.
-- Ingen endringer i XP, profiler, Challenge, Lagspill eller øvrige funksjoner.
+- Rekorder er flyttet øverst på Historikk-siden.
+- Filtre og aktivitetsliste kommer rett under.
+- Tilpassede mål og sikkerhetskopi ligger nederst.
+- Ingen endringer i XP, profiler eller øvrig funksjonalitet.
