@@ -4,8 +4,8 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <meta name="theme-color" content="#07130f" />
-  <meta name="description" content="Skills Academy v3.4.7 Skills-test.1 – Train. Track. Improve." />
-  <title>Skills Academy v3.4.7 Skills-test</title>
+  <meta name="description" content="Skills Academy v3.4.8 Skills-test.1 – Train. Track. Improve." />
+  <title>Skills Academy v3.4.8 Skills-test</title>
   <link rel="manifest" href="manifest.webmanifest" />
   <link rel="icon" type="image/png" sizes="192x192" href="icon-192.png" />
   <link rel="apple-touch-icon" href="icon-192.png" />
@@ -664,7 +664,7 @@
   </style>
 </head>
 <body>
-  <!-- Skills Academy v3.4.7 Skills-test.1 – tilpassede mål, dynamiske ruter og sikkerhetskopi -->
+  <!-- Skills Academy v3.4.8 Skills-test.1 – tilpassede mål, dynamiske ruter og sikkerhetskopi -->
   <div class="app">
     <header class="topbar">
       <div class="brand">
@@ -672,7 +672,7 @@
         <div>
           <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
             <h1>Skills Academy</h1>
-            <span id="appVersionBadge" style="font-size:11px;font-weight:800;letter-spacing:.04em;padding:4px 8px;border-radius:999px;background:rgba(255,255,255,.10);border:1px solid rgba(255,255,255,.18);color:#dfffe8">v3.4.7</span>
+            <span id="appVersionBadge" style="font-size:11px;font-weight:800;letter-spacing:.04em;padding:4px 8px;border-radius:999px;background:rgba(255,255,255,.10);border:1px solid rgba(255,255,255,.18);color:#dfffe8">v3.4.8</span>
           </div>
           <p>Train. Track. Improve.</p>
         </div>
@@ -782,7 +782,7 @@
             <button type="button" class="btn primary" id="analysisSave" disabled>Lagre økt</button>
           </div>
         </div>
-        <div style="text-align:center;margin:18px 0 4px;color:rgba(255,255,255,.55);font-size:12px;font-weight:700">Skills Academy v3.4.7</div>
+        <div style="text-align:center;margin:18px 0 4px;color:rgba(255,255,255,.55);font-size:12px;font-weight:700">Skills Academy v3.4.8</div>
       </section>
 
       <section class="page" id="page-challenge">
@@ -956,7 +956,7 @@
             <span>Foreløpig XP</span>
             <strong id="juggleXpPreview">0 XP</strong>
           </div>
-          <p class="other-note" id="juggleImprovementText">XP = 3,5 per minutt + bonus ved ny personlig rekord.</p>
+          <p class="other-note" id="juggleImprovementText">XP ≈ 4,0 per minutt + bonus ved ny personlig rekord.</p>
           <button class="btn primary" type="button" id="saveJuggle" style="width:100%;margin-top:12px">Lagre trikseøkt</button>
           <div class="history-list" id="juggleHistory" style="margin-top:14px"></div>
         </div>
@@ -990,7 +990,7 @@
               <span>Foreløpig XP</span>
               <strong id="courseXpPreview">0 XP</strong>
             </div>
-            <p class="other-note" id="courseImprovementText">XP = 3,5 per minutt + bonus ved ny personlig rekord.</p>
+            <p class="other-note" id="courseImprovementText">XP ≈ 4,0 per minutt + bonus ved ny personlig rekord.</p>
             <div class="action-row"><button class="btn primary" type="button" id="saveCourseAttempt">Lagre dribleøkt</button><button class="btn ghost" type="button" id="closeCourseAttempt">Lukk</button></div>
             <div class="history-list" id="courseAttemptHistory" style="margin-top:14px"></div>
           </div>
@@ -1160,7 +1160,9 @@
   <div class="toast" id="toast"></div>
 
   <script>
-    const APP_VERSION = "3.4.7";
+    const APP_VERSION = "3.4.8";
+    const XP_MULTIPLIER = 1.15;
+    function boostXp(value){ return Math.round((Number(value)||0)*XP_MULTIPLIER); }
     "use strict";
 
     const STORAGE_KEY = "skillsAcademyV2";
@@ -1715,7 +1717,8 @@
     function saveAnalysis() {
       if(!ensureProfile())return;if(!analysisPlan.length||analysisShots.length!==analysisPlan.length){toast("Fullfør hele serien først");return;}
       const hits=analysisShots.filter(s=>s.type==="hit").length,exact=analysisShots.filter(s=>s.result==="exact").length,near=analysisShots.filter(s=>s.result==="near").length,goal=selectedGoal("analysisGoalType"),size=gridSize();
-      state.sessions.unshift({id:uid("session"),profileId:state.activeProfileId,createdAt:new Date().toISOString(),goalType:goal.id,targetName:goal.name,gridSize:size,situation:$("analysisSituation").value,plan:[...analysisPlan],shots:analysisShots.map(s=>({...s})),total:analysisShots.length,hits,exact,near,hitPercentage:analysisShots.length?hits/analysisShots.length:0,accuracy:analysisShots.length?exact/analysisShots.length:0});
+      const xpAwarded=boostXp(120+analysisShots.length*2+exact*8+near*3);
+    state.sessions.unshift({id:uid("session"),profileId:state.activeProfileId,createdAt:new Date().toISOString(),goalType:goal.id,targetName:goal.name,gridSize:size,situation:$("analysisSituation").value,plan:[...analysisPlan],shots:analysisShots.map(s=>({...s})),total:analysisShots.length,hits,exact,near,hitPercentage:analysisShots.length?hits/analysisShots.length:0,accuracy:analysisShots.length?exact/analysisShots.length:0,xpAwarded});
       saveState();resetAnalysisToSetup(true);renderHistory();renderPersonalRecords();renderCard();requestAnimationFrame(drawProgressChart);toast("Økten er lagret");
     }
 
@@ -2020,7 +2023,7 @@
         goalType:challenge.goalType, targetName:challenge.targetName, gridSize:challenge.gridSize, target:challenge.target, rounds:challenge.rounds, preset:challenge.preset,
         score:playerScore(p), attempts:p.attempts, correct:p.correct||0, hitsOnTarget:p.hits.reduce((a,b)=>a+b,0), hitPercentage:p.attempts ? p.hits.reduce((a,b)=>a+b,0)/p.attempts : 0, completed:["chosen","random","planned"].includes(challenge.mode)?p.attempts>=challenge.shotLimit:playerScore(p)>=challenge.target,
         winner:p.profileId===challenge.winnerId, winnerId:challenge.winnerId, hits:[...p.hits],
-        xpAwarded:Math.min(75,20+Math.round((p.correct||0)*3)+(p.profileId===challenge.winnerId?20:0))
+        xpAwarded:boostXp(Math.min(75,20+Math.round((p.correct||0)*3)+(p.profileId===challenge.winnerId?20:0)))
       }));
       saveState(); renderCard(); renderHistory(); renderPersonalRecords(); requestAnimationFrame(drawProgressChart); toast(challenge.playMode === "multi" ? "Kampen er lagret" : "Challenge lagret");
       challenge=null; $("challengePlay").classList.add("hidden"); $("challengeSetup").classList.remove("hidden"); renderChallengePlayerPicker();
@@ -2310,7 +2313,7 @@
 
     // SIKKERHETSKOPI
     $("exportBackup").addEventListener("click",()=>{
-      const backup={app:"Skills Academy",version:"3.4.7",exportedAt:new Date().toISOString(),data:state};
+      const backup={app:"Skills Academy",version:"3.4.8",exportedAt:new Date().toISOString(),data:state};
       const blob=new Blob([JSON.stringify(backup,null,2)],{type:"application/json"}),url=URL.createObjectURL(blob),a=document.createElement("a");
       a.href=url;a.download=`skills-academy-sikkerhetskopi-${new Date().toISOString().slice(0,10)}.json`;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1000);toast("Sikkerhetskopien er eksportert");
     });
@@ -2379,7 +2382,7 @@
       const checks=all("[data-mini-step]");
       if(!checks.every(c=>c.checked)){ toast("Alle delene må være gjennomført"); return; }
       if(!$("miniAdultVerified").checked){ toast("Merk av at prøven er godkjent av en voksen"); return; }
-      const already=miniCompleted(type); const xp=already?0:(type==="mini1"?150:250);
+      const already=miniCompleted(type); const xp=already?0:boostXp(type==="mini1"?150:250);
       state.footballBadgeResults.push({id:uid("badge"),profileId:state.activeProfileId,type,level:type,exerciseId:"complete",value:1,passed:true,verified:true,xpAwarded:xp,createdAt:new Date().toISOString()});
       saveState(); renderFootballBadge(); renderCard(); toast(already?"Resultatet er lagret":"Minimerket bestått! +"+xp+" XP");
     }
@@ -2404,11 +2407,11 @@
       if(!Number.isFinite(value)||value<0){toast("Skriv inn et gyldig resultat");return;}
       const verified=badgeAdultVerified || $("techAdultVerified").checked; const passed=isTechniquePassed(ex,value,badgeLevel) && verified;
       const wasPassed=hasPassedBadgeResult("technique",badgeLevel,exerciseId);
-      let xp=passed&&!wasPassed?level.exerciseXp:10;
+      let xp=boostXp(passed&&!wasPassed?level.exerciseXp:10);
       const completedBefore=techniqueLevelCompleted(badgeLevel);
       state.footballBadgeResults.push({id:uid("badge"),profileId:state.activeProfileId,type:"technique",level:badgeLevel,exerciseId,value,passed,verified,xpAwarded:xp,createdAt:new Date().toISOString()});
       const completedAfter=techniqueLevelCompleted(badgeLevel);
-      if(completedAfter&&!completedBefore){ state.footballBadgeResults.push({id:uid("badge"),profileId:state.activeProfileId,type:"technique",level:badgeLevel,exerciseId:"complete",value:1,passed:true,verified:true,xpAwarded:level.bonusXp,createdAt:new Date().toISOString()}); xp+=level.bonusXp; }
+      if(completedAfter&&!completedBefore){ const completionXp=boostXp(level.bonusXp); state.footballBadgeResults.push({id:uid("badge"),profileId:state.activeProfileId,type:"technique",level:badgeLevel,exerciseId:"complete",value:1,passed:true,verified:true,xpAwarded:completionXp,createdAt:new Date().toISOString()}); xp+=completionXp; }
       saveState(); renderFootballBadge(); renderCard();
       toast(passed?`Bestått! +${xp} XP`:verified?`Resultatet er lagret · +${xp} XP`:`Lagret som trening · godkjenning av voksen mangler`);
     }
@@ -2477,11 +2480,11 @@
       const isRecord=Number.isFinite(count)&&count>oldBest;
       const percent=isRecord&&oldBest>0?improvementPercent(oldBest,count,false):0;
       const bonus=isRecord?(oldBest===0?60:improvementBonus(percent)):0;
-      const xp=skillTimeXp(minutes)+bonus;
+      const xp=boostXp(skillTimeXp(minutes)+bonus);
       if($('juggleXpPreview'))$('juggleXpPreview').textContent=`${xp} XP`;
       if($('juggleImprovementText'))$('juggleImprovementText').textContent=isRecord
         ? `Ny rekord${oldBest>0?` · ${percent.toFixed(1).replace('.',',')} % forbedring · +${bonus} bonus-XP`:` · +${bonus} bonus-XP`}`
-        : 'XP = 3,5 per minutt. Bonus gis bare ved ny personlig rekord.';
+        : 'XP ≈ 4,0 per minutt. Bonus gis bare ved ny personlig rekord.';
     }
 
     $('juggleMinutes').addEventListener('input',updateJugglePreview);
@@ -2498,7 +2501,7 @@
       const isRecord=count>oldBest;
       const percent=isRecord&&oldBest>0?improvementPercent(oldBest,count,false):0;
       const bonus=isRecord?(oldBest===0?60:improvementBonus(percent)):0;
-      const xp=skillTimeXp(minutes)+bonus;
+      const xp=boostXp(skillTimeXp(minutes)+bonus);
 
       state.jugglingResults.push({
         id:uid('juggle'),profileId:state.activeProfileId,minutes,count,isRecord,
@@ -2569,11 +2572,11 @@
       const isRecord=Number.isFinite(time)&&time>0&&time<oldBest;
       const percent=isRecord&&oldBest!==Infinity?improvementPercent(oldBest,time,true):0;
       const bonus=isRecord?(oldBest===Infinity?60:improvementBonus(percent)):0;
-      const xp=dribbleTimeXp(minutes)+bonus;
+      const xp=boostXp(dribbleTimeXp(minutes)+bonus);
       $('courseXpPreview').textContent=`${xp} XP`;
       $('courseImprovementText').textContent=isRecord
         ? `Ny rekord${oldBest!==Infinity?` · ${percent.toFixed(1).replace('.',',')} % forbedring · +${bonus} bonus-XP`:` · +${bonus} bonus-XP`}`
-        : 'XP = 4,0 per minutt. Bonus gis bare ved ny personlig rekord.';
+        : 'XP = 4,6 per minutt. Bonus gis bare ved ny personlig rekord.';
     }
 
     $('courseMinutes').addEventListener('input',updateCoursePreview);
@@ -2591,7 +2594,7 @@
       const isRecord=time<oldBest;
       const percent=isRecord&&oldBest!==Infinity?improvementPercent(oldBest,time,true):0;
       const bonus=isRecord?(oldBest===Infinity?60:improvementBonus(percent)):0;
-      const xp=dribbleTimeXp(minutes)+bonus;
+      const xp=boostXp(dribbleTimeXp(minutes)+bonus);
 
       state.dribbleResults.push({
         id:uid('dribble'),profileId:state.activeProfileId,courseId:activeCourseId,
@@ -2717,13 +2720,13 @@
       const recordInfo=customExerciseRecordInfo(exercise,result);
 
       const baseXp=Math.round(minutes*(exercise.hasRecord?3.5:3.54));
-      const xp=baseXp+recordInfo.bonus;
+      const xp=boostXp(baseXp+recordInfo.bonus);
 
       $("customExerciseXpPreview").textContent=`${xp} XP`;
       $("customExerciseXpText").textContent=exercise.hasRecord
         ? (recordInfo.isRecord
             ? `Ny rekord${Number.isFinite(recordInfo.oldBest)?` · ${recordInfo.percent.toFixed(1).replace(".",",")} % forbedring · +${recordInfo.bonus} bonus-XP`:` · +${recordInfo.bonus} bonus-XP`}`
-            : "3,5 XP per minutt. Bonus gis ved ny personlig rekord.")
+            : "Ca. 4,0 XP per minutt. Bonus gis ved ny personlig rekord.")
         : "3,54 XP per minutt. Denne øvelsen har ingen rekord.";
     }
 
@@ -2775,7 +2778,7 @@
 
       const recordInfo=customExerciseRecordInfo(exercise,result);
       const baseXp=Math.round(minutes*(exercise.hasRecord?3.5:3.54));
-      const xp=baseXp+recordInfo.bonus;
+      const xp=boostXp(baseXp+recordInfo.bonus);
 
       state.customExerciseResults.push({
         id:uid("exerciseResult"),
@@ -2808,14 +2811,14 @@
     let selectedOtherActivity="loekke";
 
     function otherProfileRows(){return(state.otherActivities||[]).filter(x=>x.profileId===state.activeProfileId);}
-    function calculateLagspillXp(minutes){return Math.round(minutes*(selectedOtherActivity==="camp"?1:3.5));}
+    function calculateLagspillXp(minutes){return boostXp(minutes*(selectedOtherActivity==="camp"?1:3.5));}
     function updateOtherXpPreview(){
       const minutes=Number($("otherMinutesInput").value)||0;
       $("otherXpPreview").textContent=`${calculateLagspillXp(minutes)} XP`;
       const note=$("otherXpNote");
       if(note)note.textContent=selectedOtherActivity==="camp"
-        ?"XP = 1 XP per minutt. Treningsleir kan registreres med opptil 600 minutter."
-        :"XP = 3,5 XP per minutt. Maks 180 minutter per registrering. Lagspill påvirker samlet XP og EXP.";
+        ?"XP = 1,15 XP per minutt. Treningsleir kan registreres med opptil 600 minutter."
+        :"XP ≈ 4,0 XP per minutt. Maks 180 minutter per registrering. Lagspill påvirker samlet XP og EXP.";
     }
     function renderOtherActivities(){
       if(!state.otherActivities)state.otherActivities=[];
@@ -2994,7 +2997,13 @@
       const completed=sessions.length+completedChallenges+completedBadges+juggling.length+dribble.length+other.length+customExerciseResults.length;
       const matches=challenges.filter(x=>x.playMode==="multi").length;
       const wins=challenges.filter(x=>x.playMode==="multi" && x.winner).length;
-      const calculatedXp=Math.round(sessions.length*120+totalShots*2+exact*8+near*3+legacyChallengeXp+modernChallengeXp+badgeXp+skillXp+otherXp+customExerciseXp);
+      const legacySessions=sessions.filter(x=>!Number.isFinite(Number(x.xpAwarded)));
+    const legacySessionShots=legacySessions.reduce((sum,x)=>sum+sessionTotal(x),0);
+    const legacySessionExact=legacySessions.reduce((sum,x)=>sum+sessionExact(x),0);
+    const legacySessionNear=legacySessions.reduce((sum,x)=>sum+sessionNear(x),0);
+    const legacySessionXp=Math.round(legacySessions.length*120+legacySessionShots*2+legacySessionExact*8+legacySessionNear*3);
+    const modernSessionXp=sessions.reduce((sum,x)=>sum+(Number.isFinite(Number(x.xpAwarded))?Number(x.xpAwarded):0),0);
+    const calculatedXp=Math.round(legacySessionXp+modernSessionXp+legacyChallengeXp+modernChallengeXp+badgeXp+skillXp+otherXp+customExerciseXp);
       const protection=p.xpProtection;
       const xp=protection&&Number.isFinite(Number(protection.baseXp))&&Number.isFinite(Number(protection.baselineCalculatedXp))
         ? Math.max(
@@ -3106,7 +3115,7 @@
     if ("serviceWorker" in navigator) {
       window.addEventListener("load", async () => {
         try {
-          const registration = await navigator.serviceWorker.register("./service-worker.js?v=3.4.7", {
+          const registration = await navigator.serviceWorker.register("./service-worker.js?v=3.4.8", {
             updateViaCache: "none"
           });
 
@@ -3127,8 +3136,8 @@
           });
 
           navigator.serviceWorker.addEventListener("controllerchange", () => {
-            if (sessionStorage.getItem("sa-reloaded-347")) return;
-            sessionStorage.setItem("sa-reloaded-347", "1");
+            if (sessionStorage.getItem("sa-reloaded-348")) return;
+            sessionStorage.setItem("sa-reloaded-348", "1");
             window.location.reload();
           });
         } catch (error) {
@@ -3138,7 +3147,7 @@
     }
 
   
-    function applyV347Repair(){
+    function applyV348Repair(){
       const jack=(state.profiles||[]).find(p=>(p.name||"").trim().toLowerCase()==="jack");
       if(!jack)return;
       const existingBase=Number(jack.xpProtection?.baseXp)||0;
@@ -3153,7 +3162,7 @@
       saveState();
     }
 
-    applyV347Repair();
+    applyV348Repair();
 </script>
 </body>
 </html>
