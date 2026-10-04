@@ -4,8 +4,8 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <meta name="theme-color" content="#07130f" />
-  <meta name="description" content="Skills Academy v3.4.9 – Train. Track. Improve." />
-  <title>Skills Academy v3.4.9</title>
+  <meta name="description" content="Skills Academy v3.5.0 – Train. Track. Improve." />
+  <title>Skills Academy v3.5.0</title>
   <link rel="manifest" href="manifest.webmanifest" />
   <link rel="icon" type="image/png" sizes="192x192" href="icon-192.png" />
   <link rel="apple-touch-icon" href="icon-192.png" />
@@ -661,7 +661,7 @@
   </style>
 </head>
 <body>
-  <!-- Skills Academy v3.4.9 – tilpassede mål, dynamiske ruter og sikkerhetskopi -->
+  <!-- Skills Academy v3.5.0 – tilpassede mål, dynamiske ruter og sikkerhetskopi -->
   <div class="app">
     <header class="topbar">
       <div class="brand">
@@ -2885,8 +2885,9 @@
     function maybeShowLevelUp(profile,before,after){
       if(!profile||!before||!after)return;
       const gainedLevel=after.levelIndex>before.levelIndex;
-      const beforeStars=Math.max(0,Math.floor((before.xp-15000)/5000));
-      const afterStars=Math.max(0,Math.floor((after.xp-15000)/5000));
+      const starCycle=xp=>{const y=Math.max(0,xp-20000);const cycle=15000;return Math.floor(y/cycle)+1;};
+      const beforeStars=before.xp<20000?0:starCycle(before.xp);
+      const afterStars=after.xp<20000?0:starCycle(after.xp);
       const gainedWorldStar=afterStars>beforeStars;
       if(!gainedLevel&&!gainedWorldStar)return;
       const title=gainedWorldStar?(afterStars===1?"1 stjerne":afterStars+" stjerner"):after.level.name;
@@ -3046,7 +3047,7 @@
       }
       const d=calculatePlayerData(p);
       setCardValues({ovr:d.ovr,sho:d.sho,dri:d.dri,con:d.con,tac:d.tac,chl:d.chl,exp:d.exp});
-      const starCount=Math.max(0,Math.floor((d.xp-15000)/5000));
+      const starCount=d.xp<20000?0:(Math.floor((d.xp-20000)/15000)+1);
       $("worldStar").classList.toggle("visible", starCount>0);
       $("worldStar").innerHTML=starCount>0?Array.from({length:starCount},()=>'<strong class="star-symbol">★</strong>').join(""):"";
       $("worldStar").setAttribute("aria-label",starCount===1?"1 stjerne":starCount+" stjerner");
@@ -3070,8 +3071,17 @@
       $("cardTitle").textContent=`${d.level.name} · ${specialtyTitle(d)}`;
       $("cardPrecision").textContent=`${d.xp.toLocaleString("nb-NO")} XP`;
       $("levelName").textContent=d.level.name;
-      const starCount=Math.max(0,Math.floor((d.xp-15000)/5000));
-      $("nextLevelName").textContent=d.next ? d.next.name : (starCount+1)+". stjerne";
+      const starCount=d.xp<20000?0:(Math.floor((d.xp-20000)/15000)+1);
+      const cycleXp=d.xp<20000?d.xp-15000:(d.xp-20000)%15000;
+      const postLegendLevels=[
+        {name:"Rookie",min:0,max:1000},
+        {name:"Prospect",min:1000,max:3000},
+        {name:"Player",min:3000,max:6000},
+        {name:"Elite",min:6000,max:10000},
+        {name:"Master",min:10000,max:15000}
+      ];
+      const postLevel=postLegendLevels.find(x=>cycleXp>=x.min&&cycleXp<x.max)||postLegendLevels[0];
+      $("nextLevelName").textContent=d.next ? d.next.name : (starCount+1)+". stjerne · "+postLevel.name;
       $("xpText").textContent=`${d.xp.toLocaleString("nb-NO")} XP`;
       if (d.next) {
         const span=d.next.min-d.level.min;
@@ -3079,12 +3089,22 @@
         $("xpBarFill").style.width=`${progress}%`;
         $("xpRemaining").textContent=`${(d.next.min-d.xp).toLocaleString("nb-NO")} XP igjen`;
       } else {
-        const starCount=Math.max(0,Math.floor((d.xp-15000)/5000));
-        const starStart=15000+(starCount*5000);
-        const starGoal=starStart+5000;
-        const progress=clamp((d.xp-starStart)/(starGoal-starStart)*100,0,100);
-        $("xpBarFill").style.width=`${progress}%`;
-        $("xpRemaining").textContent=`${(starGoal-d.xp).toLocaleString("nb-NO")} XP igjen til ${starCount+1}. stjerne`;
+        const starCount=d.xp<20000?0:(Math.floor((d.xp-20000)/15000)+1);
+        if(d.xp<20000){
+          const progress=clamp((d.xp-15000)/5000*100,0,100);
+          $("xpBarFill").style.width=`${progress}%`;
+          $("xpRemaining").textContent=`${(20000-d.xp).toLocaleString("nb-NO")} XP igjen til 1. stjerne`;
+        } else {
+          const cycleXp=(d.xp-20000)%15000;
+          const cycleStart=20000+((starCount-1)*15000);
+          const starGoal=cycleStart+15000;
+          const bounds=[0,1000,3000,6000,10000,15000];
+          const idx=Math.max(0,bounds.findIndex((b,i)=>i<bounds.length-1&&cycleXp>=b&&cycleXp<bounds[i+1]));
+          const localStart=bounds[idx], localEnd=bounds[idx+1];
+          const progress=clamp((cycleXp-localStart)/(localEnd-localStart)*100,0,100);
+          $("xpBarFill").style.width=`${progress}%`;
+          $("xpRemaining").textContent=`${(starGoal-d.xp).toLocaleString("nb-NO")} XP igjen til ${starCount+1}. stjerne`;
+        }
       }
       $("levelRoadmap").innerHTML=LEVELS.map((l,i)=>`<div class="level-node ${i===d.levelIndex?'active':i<d.levelIndex?'done':''}">${l.short}<br>${l.min.toLocaleString("nb-NO")} XP</div>`).join("");
     }
