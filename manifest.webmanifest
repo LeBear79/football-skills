@@ -1,7 +1,7 @@
 {
-  "name": "Skills Academy v3.5.0",
+  "name": "Skills Academy v3.5.1",
   "short_name": "Academy",
-  "description": "Skills Academy v3.5.0",
+  "description": "Skills Academy v3.5.1",
   "id": "/football-skills/",
   "start_url": "./index.html?v=3.4.8",
   "scope": "./",
