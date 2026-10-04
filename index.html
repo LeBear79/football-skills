@@ -4,8 +4,8 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <meta name="theme-color" content="#07130f" />
-  <meta name="description" content="Skills Academy v3.5.1 – Train. Track. Improve." />
-  <title>Skills Academy v3.5.1</title>
+  <meta name="description" content="Skills Academy v3.5.2 – Train. Track. Improve." />
+  <title>Skills Academy v3.5.2</title>
   <link rel="manifest" href="manifest.webmanifest" />
   <link rel="icon" type="image/png" sizes="192x192" href="icon-192.png" />
   <link rel="apple-touch-icon" href="icon-192.png" />
@@ -661,7 +661,7 @@
   </style>
 </head>
 <body>
-  <!-- Skills Academy v3.5.1 – tilpassede mål, dynamiske ruter og sikkerhetskopi -->
+  <!-- Skills Academy v3.5.2 – tilpassede mål, dynamiske ruter og sikkerhetskopi -->
   <div class="app">
     <header class="topbar">
       <div class="brand">
@@ -3067,8 +3067,11 @@
       card.classList.add(`level-${d.level.key}`);
       LEVELS.forEach(l=>document.body.classList.remove(`theme-${l.key}`));
       document.body.classList.add(`theme-${d.level.key}`);
+      const earnedStars=d.xp<20000?0:(Math.floor((d.xp-20000)/20000)+1);
       $("cardRibbon").textContent=d.level.short;
-      $("cardTitle").textContent=`${d.level.name} · ${specialtyTitle(d)}`;
+      $("cardTitle").textContent=earnedStars>0
+        ? `${earnedStars}-stjernespiller · ${specialtyTitle(d)}`
+        : `${d.level.name} · ${specialtyTitle(d)}`;
       $("cardPrecision").textContent=`${d.xp.toLocaleString("nb-NO")} XP`;
       $("levelName").textContent=d.level.name;
       const starCount=d.xp<20000?0:(Math.floor((d.xp-20000)/20000)+1);
